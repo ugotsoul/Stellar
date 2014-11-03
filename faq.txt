@@ -1,10 +1,14 @@
 Html5 Tutorial: http://www.somethinghitme.com/2013/01/09/creating-a-canvas-platformer-tutorial-part-one/
 
 ==================================
-Basic Shite: Make a game canvas
+Basic Shite: HTML5 Canvas
 ==================================
 
 
-1. Make your HTML File.
+How to Make a Circle:
 
-2. 
+--------------------------------------------------------
+your_var_crx.beginPath();
+your_var_crx.arc(x, y, radius, 0, Math.PI * 2, false);
+your_var_crx.closePath();
+--------------------------------------------------------
