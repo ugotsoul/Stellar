@@ -1,0 +1,10 @@
+Html5 Tutorial: http://www.somethinghitme.com/2013/01/09/creating-a-canvas-platformer-tutorial-part-one/
+
+==================================
+Basic Shite: Make a game canvas
+==================================
+
+
+1. Make your HTML File.
+
+2. 
