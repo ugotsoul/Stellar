@@ -15,16 +15,12 @@ Oops, your browser does not support Html5 canvas. Dang.
 	<script>
 
 	$(document).ready( function(){
-		update();      });
+		update();    
+		console.log(canvas);
+		  });
 
 	var canvas = document.getElementById("canvas");
 	var	ctx = canvas.getContext('2d');
-
-	//clear canvas
-	function gameClear() {}; 
-
-	// draw canvas
-	function gameDraw() {};
 
 	//player object
 	var player = {
@@ -35,7 +31,7 @@ Oops, your browser does not support Html5 canvas. Dang.
 	};
 
 	//enemy object
-	enemy = {
+	var enemy = {
 		x: 500,
 		y: 500,
 		r: 100
@@ -96,8 +92,6 @@ function update () {
 		});
 	}; 
 
-//constructor function
-function Player(x, y, w, h, fill) {};
 
 	</script>
 </body>

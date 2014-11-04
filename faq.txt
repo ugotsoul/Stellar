@@ -1,10 +1,20 @@
+==================================
+Javascript: Classes
+==================================
+http://dean.edwards.name/weblog/2006/03/base/
 
+==================================
+Javascript: VAR/Function scoping
+==================================
+http://stackoverflow.com/questions/336859/var-functionname-function-vs-function-functionname?rq=1
 
 ==================================
 Javascript: Game Development
 ==================================
-http://nokarma.org/2011/02/02/javascript-game-development-the-game-loop/
+http://blog.sklambert.com/object-oriented-javascript-classes/
 
+http://nokarma.org/2011/02/02/javascript-game-development-the-game-loop/
+http://www.ibm.com/developerworks/library/wa-objectorientedjs/
 
 ==================================
 Javascript: Design Patterns
