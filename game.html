@@ -23,50 +23,72 @@ Oops, your browser does not support Html5 canvas. Dang.
 	var	ctx = canvas.getContext('2d');
 
 	//player object
-	player = {
+	var player = {
 		x: 100,
 		y: 150,
 		width: 75,
 		height: 75
 	};
 
-	//enemy object
-	enemy = {
-		x: 500,
-		y: 500,
-		r: 100
-	};
+	// //enemy object
 
-
+	// enemy = {
+	// 	x: 500,
+	// 	y: 500,
+	// 	r: 100
+	// };
 	
 	//draw player
-	ctx.fillStyle="blue";
-	ctx.fillRect(player.x, player.y, player.width, player.height);
 
-	//draw enemy
-	ctx.fillStyle="red";
-	ctx.beginPath();
-	ctx.arc(enemy.x, enemy.y, enemy.r, 0, Math.PI*2, false);
-	ctx.closePath();
-	ctx.fill();
+	function drawPlayer(x ,y, width, height, oldPlayer) {
 
-	//move player using mouse - AHHHhhhhhhhrggg
+		//clear canvas at old player coordinates
 
-	// use mouseClickX & mouseClickY to redraw player
+		// delete old player object
+		ctx.clearRect(oldPlayer.x, oldPlayer.y, oldPlayer.width, oldPlayer.height);
+		
+		var newPlayer = {
+			x: x,
+			y: y,
+			width: width+10,
+			height: height+10,
+		}
+		//flow control: redraw pass old object, return new object with new coordinates
+		ctx.fillStyle="blue";
+		ctx.fillRect(newPlayer.x, newPlayer.y, newPlayer.height, newPlayer.width);
+
+		return(newPlayer);
+
+		//
+
+	};
+
+	function drawEnemy(x, y, r) {
+
+		//draw enemy
+		ctx.fillStyle="red";
+		ctx.beginPath();
+		ctx.arc(x, y, r, 0, Math.PI*2, false);
+		ctx.closePath();
+		ctx.fill();
+	}
+
 
 	//create an update function that redraws board
 
 	function update () {
+
 		//all that shit above goes in here
 
 		//event handler to get mouse position
 		$("#canvas").click(function (evt) {
-			//redraw player
-			player.x = evt.screenX;
-			player.y = evt.screenY;
 
-			// delete old player object
-			
+			//draw enemy 
+			// drawEnemy(enemy.x,enemy.y,enemy.r);
+
+			//draw player 
+			player = drawPlayer(evt.clientX, evt.clientY, player.width, player.height, player);
+			//console.log('X:' + evt.clientX + ' Y:' + evt.clientY);
 		});
 	}; 
 

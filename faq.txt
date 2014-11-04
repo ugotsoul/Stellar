@@ -1,13 +1,29 @@
-Html5 Tutorial: http://www.somethinghitme.com/2013/01/09/creating-a-canvas-platformer-tutorial-part-one/
 
-Better HTML5 Tutorial: 
-http://joshondesign.com/p/books/canvasdeepdive/chapter03.html#events
 
+
+==================================
+Javascript: Design Patterns
+==================================
+
+READ THIS:
+http://addyosmani.com/resources/essentialjsdesignpatterns/book/#commandpatternjavascript
+
+==================================
+Javascript: Execution
+==================================
+
+Read THIS:
+
+https://www.inkling.com/read/javascript-definitive-guide-david-flanagan-6th/chapter-13/execution-of-javascript-programs
 
 ==================================
 Basic Shite: HTML5 Canvas
 ==================================
 
+Html5 Tutorial: http://www.somethinghitme.com/2013/01/09/creating-a-canvas-platformer-tutorial-part-one/
+
+Better HTML5 Tutorial: 
+http://joshondesign.com/p/books/canvasdeepdive/chapter03.html#events
 
 How to Make a Circle: 
 
