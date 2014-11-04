@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>My First Canvas</title>
+	<title>My First Canvas Game Thingie</title>
 	<link rel="stylesheet" href="style.css">
+	<script src="jquery.min.js"></script>
 </head>
 <body>
 	
@@ -13,42 +14,77 @@ Oops, your browser does not support Html5 canvas. Dang.
 
 	<script>
 
+	$(document).ready( function(){
+		update();
+	});
+
+
 	var canvas = document.getElementById("canvas");
 	var	ctx = canvas.getContext('2d');
 
 	//player object
-
 	player = {
-
-		x: 200,
-		y: 200,
-		width: 100,
-		height: 100
+		x: 500,
+		y: 500,
+		r: 100
 	};
 
 	//enemy object
 
 	enemy = {
 
-		x: 600,
-		y: 600,
-		width: 100,
-		height: 100
+		x: 100,
+		y: 150,
+		width: 75,
+		height: 75
 	};
 
 	//draw player
 	ctx.fillStyle="red";
-	ctx.fillRect(player.x, player.y, player.width, player.height);
+	//ctx.fillRect(player.x, player.y, player.width, player.height);
 
+	ctx.beginPath();
+	ctx.arc(player.x, player.y, player.r, 0, Math.PI*2, false);
+	ctx.closePath();
+	ctx.fill();
+	
 	//draw enemy
 	ctx.fillStyle="blue";
 	ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
 
-	//animate player
+	//move player using mouse - AHHHhhhhhhhrggg
+
+	//get mouse position only within the Canvas element id
+
+	function playerMovements(){
+
+ 		console.log('Instanciated mouse object');
+
+		// x = $("#canvas").click(function (evt) {return evt.clientX;});
+		// y = $("#canvas").click(function (evt) {return evt.clientY;});
+		//alert('You clicked me @ X:'+ mouseX+'px and Y:'+ mouseY+'px. OUCH.'); 
+	};
+
+	gamePlayer = new playerMovements();
 
 
-	//move player
+	playerMovements.prototype.posX = function() {
+		// body...
+	};
 
+	console.log(gamePlayer.posX);
+	// use mouseClickX & mouseClickY to redraw player
+
+	//create an update function that redraws board
+
+	function update () {
+		//all that shit above goes in here
+		$("#canvas").click(function (evt) {
+			console.log('X:' + evt.clientX + ' Y:' + evt.clientY);
+		});
+		
+		
+	}; 
 
 	</script>
 </body>

@@ -1,14 +1,26 @@
 Html5 Tutorial: http://www.somethinghitme.com/2013/01/09/creating-a-canvas-platformer-tutorial-part-one/
 
+Better HTML5 Tutorial: 
+http://joshondesign.com/p/books/canvasdeepdive/chapter03.html#events
+
+
 ==================================
 Basic Shite: HTML5 Canvas
 ==================================
 
 
-How to Make a Circle:
+How to Make a Circle: 
+
+def Direction flag: (false for clockwise, true for counter-clockwise)
 
 --------------------------------------------------------
-your_var_crx.beginPath();
-your_var_crx.arc(x, y, radius, 0, Math.PI * 2, false);
-your_var_crx.closePath();
+your_context_var.beginPath();
+your_context_var.arc(x, y, radius, 0, Math.PI * 2, [Bool for direction flag]);
+your_context_var.closePath();
 --------------------------------------------------------
+
+
+How to record mouse events:
+
+Helpful guide
+http://www.ibm.com/developerworks/library/wa-games/
