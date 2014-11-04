@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Test Game</title>
+	<link rel="stylesheet" href="style.css">
+	<script src="jquery.min.js"></script>
+</head>
+<body>
+	
+<canvas id="canvas" height="800" width="800">
+Oops, your browser does not support Html5 canvas. Dang.
+</canvas>
+
+<script>
+
+	$(document).ready( function(){
+		var player = new Player(100,100,75,75,"red");
+		var enemy = new Enemy(500, 500, 100, "blue");
+
+		console.log(player);
+
+		player.update();
+		enemy.update();
+
+		
+		});
+
+var canvas = document.getElementById("canvas");
+var	ctx = canvas.getContext('2d');
+
+//constructor functions//
+
+
+//update/redraw method
+function update() {}
+
+//render/draw method
+function render() {}
+
+//parent class of player & enemy
+function Sprite() {}
+
+// make things that draw them selves 
+
+// make a list of instanciated objects
+
+// have the players and the enemies in the same list
+
+// make the game have an update loop (type update into console)
+
+
+//child classes of sprite
+function Player(x, y, w, h, fill) {
+
+	//player attributes
+	this.x = x;
+	this.y = y;
+	this.w = w;
+	this.h = h;
+	this.fill = fill;
+
+	//draw player method
+	this.update = function() {
+		ctx.fillStyle = this.fill;
+		ctx.fillRect(this.x, this.y, this.w, this.h); 
+	}
+
+}
+
+
+
+function Enemy(x, y, r, fill) {
+
+	//enemy attributes
+	this.x = x;
+	this.y = y;
+	this.r = r;
+	this.fill = fill;
+
+	//draw enemy method
+	this.update = function() {
+		ctx.fillStyle = this.fill;
+		ctx.beginPath();
+		ctx.arc(this.x, this.y, this.r, 0, Math.PI*2, false);
+		ctx.closePath();
+		ctx.fill();
+	}
+
+}
+
+
+
+
+
+</script>
+</body>
+</html>
