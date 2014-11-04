@@ -24,3 +24,9 @@ How to record mouse events:
 
 Helpful guide
 http://www.ibm.com/developerworks/library/wa-games/
+
+
+Browser Events:
+http://eloquentjavascript.net/1st_edition/chapter13.html
+
+ In programmer jargon, browser JavaScript is single-threaded, there are never two 'threads' running at the same time.
