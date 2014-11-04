@@ -1,5 +1,10 @@
 
 
+==================================
+Javascript: Game Development
+==================================
+http://nokarma.org/2011/02/02/javascript-game-development-the-game-loop/
+
 
 ==================================
 Javascript: Design Patterns
@@ -28,6 +33,11 @@ http://joshondesign.com/p/books/canvasdeepdive/chapter03.html#events
 How to Make a Circle: 
 
 def Direction flag: (false for clockwise, true for counter-clockwise)
+
+More HTML5 Canvas:
+http://www.rgraph.net/html5-canvas
+
+http://simonsarris.com/blog/510-making-html5-canvas-useful
 
 --------------------------------------------------------
 your_context_var.beginPath();

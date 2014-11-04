@@ -15,12 +15,16 @@ Oops, your browser does not support Html5 canvas. Dang.
 	<script>
 
 	$(document).ready( function(){
-		update();
-	});
-
+		update();      });
 
 	var canvas = document.getElementById("canvas");
 	var	ctx = canvas.getContext('2d');
+
+	//clear canvas
+	function gameClear() {}; 
+
+	// draw canvas
+	function gameDraw() {};
 
 	//player object
 	var player = {
@@ -30,19 +34,15 @@ Oops, your browser does not support Html5 canvas. Dang.
 		height: 75
 	};
 
-	// //enemy object
-
-	// enemy = {
-	// 	x: 500,
-	// 	y: 500,
-	// 	r: 100
-	// };
+	//enemy object
+	enemy = {
+		x: 500,
+		y: 500,
+		r: 100
+	};
 	
 	//draw player
-
 	function drawPlayer(x ,y, width, height, oldPlayer) {
-
-		//clear canvas at old player coordinates
 
 		// delete old player object
 		ctx.clearRect(oldPlayer.x, oldPlayer.y, oldPlayer.width, oldPlayer.height);
@@ -50,51 +50,54 @@ Oops, your browser does not support Html5 canvas. Dang.
 		var newPlayer = {
 			x: x,
 			y: y,
-			width: width+10,
-			height: height+10,
+			width: width,
+			height: height,
 		}
+
 		//flow control: redraw pass old object, return new object with new coordinates
 		ctx.fillStyle="blue";
 		ctx.fillRect(newPlayer.x, newPlayer.y, newPlayer.height, newPlayer.width);
 
 		return(newPlayer);
 
-		//
-
 	};
 
-	function drawEnemy(x, y, r) {
+	function drawEnemy(x, y, r, oldEnemy) {
+
+		//delete old enemy object
+
+		var newEnemy = {
+			x: x,
+			y: y,
+			r: r,
+		}
 
 		//draw enemy
 		ctx.fillStyle="red";
 		ctx.beginPath();
-		ctx.arc(x, y, r, 0, Math.PI*2, false);
+		ctx.arc(newEnemy.x, newEnemy.y, newEnemy.r, 0, Math.PI*2, false);
 		ctx.closePath();
 		ctx.fill();
-	}
 
+		return(oldEnemy);
+	}
 
 	//create an update function that redraws board
 
-	function update () {
+function update () {
 
-		//all that shit above goes in here
+	//event handler to get mouse position
+	$("#canvas").click(function (evt) {
 
-		//event handler to get mouse position
-		$("#canvas").click(function (evt) {
-
-			//draw enemy 
-			// drawEnemy(enemy.x,enemy.y,enemy.r);
-
-			//draw player 
-			player = drawPlayer(evt.clientX, evt.clientY, player.width, player.height, player);
-			//console.log('X:' + evt.clientX + ' Y:' + evt.clientY);
+		//draw enemy
+		enemy = drawEnemy(enemy.x, enemy.y, enemy.r, enemy);
+		//draw player
+		player = drawPlayer(evt.clientX, evt.clientY, player.width, player.height, player);
 		});
 	}; 
 
-	//check if stuff is being drawn for an update function
-	//FPS for game board draw
-	//gameLoop = setInterval(update, 500);
+//constructor function
+function Player(x, y, w, h, fill) {};
 
 	</script>
 </body>
