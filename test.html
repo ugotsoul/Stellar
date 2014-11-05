@@ -12,6 +12,10 @@
 Oops, your browser does not support Html5 canvas. Dang.
 </canvas>
 
+<div id="status">
+	This is a game about stars and stuff.
+</div>
+
 <script>
 
 	$(document).ready( function(){
@@ -82,41 +86,43 @@ function keyPosition() {
 	// event listener for keys
 	$(window).keypress(function(evt) {
 
-			console.log(evt.keyCode);
-
-			//log key movements
-
+		console.log(evt.keyCode);
+		
+		//log key movements
 		for (var e = 0; e < gameElements.length; e++){
 
+			//problem: I have more than 1 enemy with the same attributes. HOW DO I FIX for multiple enemies. Do I need to randomly generate x/y cordinates constrained by the board size?
 			if (gameElements[e] instanceof Enemy === true) {
 
 				if (evt.keyCode === 40) {
 					// + y
 					gameElements[e].y+=10;
-					console.log("You moved up by 10 pixels"); 
-				}
+					$('#status').html("You moved down by 10 pixels");
+					console.log("You moved down by 10 pixels"); 
+					}
 
 				else if (evt.keyCode === 38) {
 					// - y
 					gameElements[e].y-=10; 
-					console.log("You moved down by 10 pixels");
-				}
+					$('#status').html("You moved up by 10 pixels");
+					console.log("You moved up by 10 pixels");
+					}
 
 				else if (evt.keyCode === 39) {
 					// + x
 					gameElements[e].x+=10; 
+					$('#status').html("You moved right by 10 pixels");
 					console.log("You moved right by 10 pixels");
-				}
+					}
 
 				else if (evt.keyCode === 37) {
 					// - x
 					gameElements[e].x-=10;
-					console.log("You moved down by 10 pixels"); 
+					$('#status').html("You moved left by 10 pixels");
+					console.log("You moved left by 10 pixels"); 
+					}
 				}
-
-				updateBoard();
-
-				}
+							updateBoard();
 			}
 		});
 }
@@ -135,11 +141,11 @@ function drawElements() {
 function updateBoard() {
 
 	//clear board
-	console.log("Clearing Board");
+	//console.log("Clearing Board");
 	ctx.clearRect(0,0,canvas.width,canvas.height);
 
 	//redraw objects
-	console.log("Redrawing Board");
+	//console.log("Redrawing Board");
 	//getElements();
 	drawElements();
 
