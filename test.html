@@ -58,7 +58,6 @@ function getElements() {
 	}
 }
 
-
 //get player position
 function mousePosition() {
 
@@ -68,11 +67,21 @@ function mousePosition() {
 	$("#canvas").click(function (evt) {
 	//store mouse clicks
 	//the X & Y are off - Offset? WHYE
-	window.mouseX = evt.clientX;
-	window.mouseY = evt.clientY;
+	// Player.x = evt.clientX;
+	// Player.y = evt.clientY;
 
-	console.log(window.mouseX);
-	console.log(window.mouseY);
+	for (var a = 0; a < gameElements.length; a++) {
+		if (gameElements[a] instanceof Player === true) {
+			gameElements[a].x = evt.clientX - 40;
+			gameElements[a].y = evt.clientY - 40;
+
+			updateBoard();
+
+			console.log(gameElements[a].x);
+			console.log(gameElements[a].y);
+		}
+	}
+
 
 	});
 }
@@ -80,7 +89,6 @@ function mousePosition() {
 
 //draw game elements on canvas
 function drawElements() {
-
 	// itterate through the array of objects
 	for (var c =0; c < gameElements.length; c++) {
 		//draw element on canvas
@@ -92,18 +100,24 @@ function drawElements() {
 function updateBoard() {
 
 	//clear board
-	console.log("Clearing Board")
+	console.log("Clearing Board");
 	ctx.clearRect(0,0,canvas.width,canvas.height);
 
-	//redraw player
+	//redraw objects
+	console.log("Redrawing Board");
+	//getElements();
+	drawElements();
+
+
 }
 
+// game state object where your player is, where your enemies are
 
-function Player(mouseX, mouseY, w, h, fill) {
+function Player(x, y, w, h, fill) {
 
 	//player attributes
-	this.x = mouseX || 100;
-	this.y = mouseY || 100;
+	this.x = x || 100;
+	this.y = y || 100;
 	this.w = w || 75;
 	this.h = h || 75;
 	this.fill = fill || "red";
@@ -135,6 +149,20 @@ function Enemy(x, y, r, fill) {
 
 }
 
+
+// make it so arrow keys do player movement 
+
+// put the player in the dead center of the box
+
+//player 
+
+//console log I've moved this far
+
+//redaw canvas
+
+//paralax effect
+
+ 
 
 </script>
 </body>
