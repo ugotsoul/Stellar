@@ -16,12 +16,6 @@ Oops, your browser does not support Html5 canvas. Dang.
 
 	$(document).ready( function(){
 		
-		//var player = new Player(100,100,75,75,"red");
-		//var enemy = new Enemy(500, 500, 100, "blue");
-
-		// player.update();
-		// enemy.update();
-
 		getElements();
 
 
@@ -29,6 +23,8 @@ Oops, your browser does not support Html5 canvas. Dang.
 
 
 		mousePosition();
+
+		keyPosition();
 
 
 		});
@@ -61,15 +57,10 @@ function getElements() {
 //get player position
 function mousePosition() {
 
-	// get mouse clicks
-
-	//event listener
+	//mouseEvent listener
 	$("#canvas").click(function (evt) {
+	
 	//store mouse clicks
-	//the X & Y are off - Offset? WHYE
-	// Player.x = evt.clientX;
-	// Player.y = evt.clientY;
-
 	for (var a = 0; a < gameElements.length; a++) {
 		if (gameElements[a] instanceof Player === true) {
 			gameElements[a].x = evt.clientX - 40;
@@ -84,6 +75,35 @@ function mousePosition() {
 
 
 	});
+}
+
+function keyPosition() {
+
+	// event listener for keys
+	$(window).keypress(function(evt) {
+
+			console.log(evt.keyCode);
+
+			//log key movements
+
+			if (evt.keyCode === 40) {
+				console.log("You pressed down!");
+			}
+
+			if (evt.keyCode === 38) {
+				console.log("You pressed up!");
+			}
+
+			if (evt.keyCode === 39) {
+				console.log("You pressed right!");
+			}
+
+			if (evt.keyCode === 37) {
+				console.log("You pressed left!");
+			}
+
+
+			});
 }
 
 
@@ -162,7 +182,7 @@ function Enemy(x, y, r, fill) {
 
 //paralax effect
 
- 
+
 
 </script>
 </body>
