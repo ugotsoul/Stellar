@@ -8,7 +8,7 @@
 </head>
 <body>
 	
-<canvas id="canvas" height="800" width="800">
+<canvas id="canvas" height="700" width="1800">
 Oops, your browser does not support Html5 canvas. Dang.
 </canvas>
 
@@ -18,14 +18,11 @@ Oops, your browser does not support Html5 canvas. Dang.
 		
 		getElements();
 
-
 		drawElements();
 
-
-		mousePosition();
+		//mousePosition();
 
 		keyPosition();
-
 
 		});
 
@@ -54,28 +51,31 @@ function getElements() {
 	}
 }
 
-//get player position
-function mousePosition() {
+// ###############################
+//  Get player position with Mouse
+// ###############################
 
-	//mouseEvent listener
-	$("#canvas").click(function (evt) {
+// function mousePosition() {
+
+// 	//mouseEvent listener
+// 	$("#canvas").click(function (evt) {
 	
-	//store mouse clicks
-	for (var a = 0; a < gameElements.length; a++) {
-		if (gameElements[a] instanceof Player === true) {
-			gameElements[a].x = evt.clientX - 40;
-			gameElements[a].y = evt.clientY - 40;
+// 	//store mouse clicks
+// 	for (var d = 0; d < gameElements.length; d++) {
+// 		if (gameElements[a] instanceof Player === true) {
+// 			gameElements[a].x = evt.clientX - 40;
+// 			gameElements[a].y = evt.clientY - 40;
 
-			updateBoard();
+// 			updateBoard();
 
-			console.log(gameElements[a].x);
-			console.log(gameElements[a].y);
-		}
-	}
+// 			console.log(gameElements[a].x);
+// 			console.log(gameElements[a].y);
+// 		}
+// 	}
 
 
-	});
-}
+// 	});
+// }
 
 function keyPosition() {
 
@@ -86,24 +86,39 @@ function keyPosition() {
 
 			//log key movements
 
-			if (evt.keyCode === 40) {
-				console.log("You pressed down!");
+		for (var e = 0; e < gameElements.length; e++){
+
+			if (gameElements[e] instanceof Enemy === true) {
+
+				if (evt.keyCode === 40) {
+					// + y
+					gameElements[e].y+=10;
+					console.log("You moved up by 10 pixels"); 
+				}
+
+				else if (evt.keyCode === 38) {
+					// - y
+					gameElements[e].y-=10; 
+					console.log("You moved down by 10 pixels");
+				}
+
+				else if (evt.keyCode === 39) {
+					// + x
+					gameElements[e].x+=10; 
+					console.log("You moved right by 10 pixels");
+				}
+
+				else if (evt.keyCode === 37) {
+					// - x
+					gameElements[e].x-=10;
+					console.log("You moved down by 10 pixels"); 
+				}
+
+				updateBoard();
+
+				}
 			}
-
-			if (evt.keyCode === 38) {
-				console.log("You pressed up!");
-			}
-
-			if (evt.keyCode === 39) {
-				console.log("You pressed right!");
-			}
-
-			if (evt.keyCode === 37) {
-				console.log("You pressed left!");
-			}
-
-
-			});
+		});
 }
 
 
@@ -136,8 +151,8 @@ function updateBoard() {
 function Player(x, y, w, h, fill) {
 
 	//player attributes
-	this.x = x || 100;
-	this.y = y || 100;
+	this.x = x || 900;
+	this.y = y || 500;
 	this.w = w || 75;
 	this.h = h || 75;
 	this.fill = fill || "red";
@@ -153,8 +168,8 @@ function Player(x, y, w, h, fill) {
 function Enemy(x, y, r, fill) {
 
 	//enemy attributes
-	this.x = x || 500;
-	this.y = y || 500;
+	this.x = x || 1400;
+	this.y = y || 200;
 	this.r = r || 75;
 	this.fill = fill || "blue"; 
 
