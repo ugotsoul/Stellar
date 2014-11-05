@@ -28,6 +28,9 @@ Oops, your browser does not support Html5 canvas. Dang.
 		drawElements();
 		console.log(drawElements);
 
+		mousePosition();
+		console.log(mousePosition);
+
 		});
 
 var canvas = document.getElementById("canvas");
@@ -56,11 +59,34 @@ function getElements() {
 }
 
 //draw game elements on canvas
+
+//get player position
+function mousePosition() {
+
+	// get mouse clicks
+
+	//event listener
+	$("#canvas").click(function (evt) {
+	// store mouse clicks
+
+	//the X & Y are off - WHYEE
+	mouseX = evt.clientX;
+	mouseY = evt.clientY;
+
+	console.log("This is X: " + mouseX);
+	console.log("This is Y: " + mouseY);
+
+	});
+}
+
+
+
+
 function drawElements() {
 
 	// itterate through the array of objects
 	for (var c =0; c < gameElements.length; c++) {
-		//draw element
+		//draw element on canvas
 		gameElements[c].update();
 	}
 }
