@@ -26,6 +26,7 @@ Oops, your browser does not support Html5 canvas. Dang.
 
 		//mousePosition();
 
+		//moving stuff function
 		keyPosition();
 
 		});
@@ -33,9 +34,11 @@ Oops, your browser does not support Html5 canvas. Dang.
 var canvas = document.getElementById("canvas");
 var	ctx = canvas.getContext('2d');
 
-//constructor functions//
+// ###############################
+//  Constructer Objects
+// ###############################
 
-//instanciate an array of objects javascript
+// nums of Player & Enemy Objects on board
 p = 1;
 e = 1;
 
@@ -59,8 +62,6 @@ function getElements() {
 	for (var b = 0; b < (e); b++) {
 
 		// instanciate enemies in random places on the board
-
-		// generate a random integer for x & y
 		var rx = getRandomInteger(75, 1700);
 		var ry = getRandomInteger(75, 600);
 		gameElements.push(new Enemy(rx, ry));
@@ -92,6 +93,10 @@ function getElements() {
 
 // 	});
 // }
+
+// #################################
+//  Get player position with Keypad
+// #################################
 
 function keyPosition() {
 
@@ -155,15 +160,8 @@ function drawElements() {
 function updateBoard() {
 
 	//clear board
-	//console.log("Clearing Board");
 	ctx.clearRect(0,0,canvas.width,canvas.height);
-
-	//redraw objects
-	//console.log("Redrawing Board");
-	//getElements();
 	drawElements();
-
-
 }
 
 // game state object where your player is, where your enemies are
@@ -182,7 +180,6 @@ function Player(x, y, w, h, fill) {
 		ctx.fillStyle = this.fill;
 		ctx.fillRect(this.x, this.y, this.w, this.h); 
 	}
-
 }
 
 function Enemy(x, y, r, fill) {
@@ -201,22 +198,7 @@ function Enemy(x, y, r, fill) {
 		ctx.closePath();
 		ctx.fill();
 	}
-
 }
-
-
-// make it so arrow keys do player movement 
-
-// put the player in the dead center of the box
-
-//player 
-
-//console log I've moved this far
-
-//redaw canvas
-
-//paralax effect
-
 
 
 </script>
