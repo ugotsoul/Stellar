@@ -23,13 +23,13 @@ Oops, your browser does not support Html5 canvas. Dang.
 		// enemy.update();
 
 		getElements();
-		console.log(gameElements);
+
 
 		drawElements();
-		console.log(drawElements);
+
 
 		mousePosition();
-		console.log(mousePosition);
+
 
 		});
 
@@ -58,7 +58,6 @@ function getElements() {
 	}
 }
 
-//draw game elements on canvas
 
 //get player position
 function mousePosition() {
@@ -67,21 +66,19 @@ function mousePosition() {
 
 	//event listener
 	$("#canvas").click(function (evt) {
-	// store mouse clicks
+	//store mouse clicks
+	//the X & Y are off - Offset? WHYE
+	window.mouseX = evt.clientX;
+	window.mouseY = evt.clientY;
 
-	//the X & Y are off - WHYEE
-	mouseX = evt.clientX;
-	mouseY = evt.clientY;
-
-	console.log("This is X: " + mouseX);
-	console.log("This is Y: " + mouseY);
+	console.log(window.mouseX);
+	console.log(window.mouseY);
 
 	});
 }
 
 
-
-
+//draw game elements on canvas
 function drawElements() {
 
 	// itterate through the array of objects
@@ -92,14 +89,12 @@ function drawElements() {
 }
 
 
-//get mouse event info & update board
 
-
-function Player(x, y, w, h, fill) {
+function Player(mouseX, mouseY, w, h, fill) {
 
 	//player attributes
-	this.x = x || 100;
-	this.y = y || 100;
+	this.x = mouseX || 100;
+	this.y = mouseY || 100;
 	this.w = w || 75;
 	this.h = h || 75;
 	this.fill = fill || "red";
