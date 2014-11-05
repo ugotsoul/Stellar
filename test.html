@@ -15,15 +15,16 @@ Oops, your browser does not support Html5 canvas. Dang.
 <script>
 
 	$(document).ready( function(){
-		var player = new Player(100,100,75,75,"red");
-		var enemy = new Enemy(500, 500, 100, "blue");
-
-		console.log(player);
-
-		player.update();
-		enemy.update();
-
 		
+		//var player = new Player(100,100,75,75,"red");
+		//var enemy = new Enemy(500, 500, 100, "blue");
+
+		// player.update();
+		// enemy.update();
+
+		getElements();
+		console.log(gameElements);
+
 		});
 
 var canvas = document.getElementById("canvas");
@@ -31,34 +32,41 @@ var	ctx = canvas.getContext('2d');
 
 //constructor functions//
 
+//instanciate an array of objects javascript
+p = 1;
+e = 2;
 
-//update/redraw method
-function update() {}
+//creates an array of length player + enemy objects
+var gameElements = new Array();
 
-//render/draw method
-function render() {}
+//add game objects
+function getElements() {
+	//add p# of p to game element array
+	for (var a = 0; a < (p); a++) {
+		gameElements.push(new Player());
+	}
 
-//parent class of player & enemy
-function Sprite() {}
+	//add e# of enemy to game element array
+	for (var b = 0; b < (e); b++) {
+		gameElements.push(new Enemy());
+	}
+}
 
-// make things that draw them selves 
+function drawElements() {
 
-// make a list of instanciated objects
+	// itterate through the array of objects
 
-// have the players and the enemies in the same list
+	for () {}
+}
 
-// make the game have an update loop (type update into console)
-
-
-//child classes of sprite
 function Player(x, y, w, h, fill) {
 
 	//player attributes
-	this.x = x;
-	this.y = y;
-	this.w = w;
-	this.h = h;
-	this.fill = fill;
+	this.x = x || 100;
+	this.y = y || 100;
+	this.w = w || 75;
+	this.h = h || 75;
+	this.fill = fill || "red";
 
 	//draw player method
 	this.update = function() {
@@ -73,9 +81,9 @@ function Player(x, y, w, h, fill) {
 function Enemy(x, y, r, fill) {
 
 	//enemy attributes
-	this.x = x;
-	this.y = y;
-	this.r = r;
+	this.x = x || 500;
+	this.y = y || 500;
+	this.r = r || 75;
 	this.fill = fill;
 
 	//draw enemy method
@@ -88,9 +96,6 @@ function Enemy(x, y, r, fill) {
 	}
 
 }
-
-
-
 
 
 </script>
