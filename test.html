@@ -25,6 +25,9 @@ Oops, your browser does not support Html5 canvas. Dang.
 		getElements();
 		console.log(gameElements);
 
+		drawElements();
+		console.log(drawElements);
+
 		});
 
 var canvas = document.getElementById("canvas");
@@ -52,12 +55,19 @@ function getElements() {
 	}
 }
 
+//draw game elements on canvas
 function drawElements() {
 
 	// itterate through the array of objects
-
-	for () {}
+	for (var c =0; c < gameElements.length; c++) {
+		//draw element
+		gameElements[c].update();
+	}
 }
+
+
+//get mouse event info & update board
+
 
 function Player(x, y, w, h, fill) {
 
@@ -76,15 +86,13 @@ function Player(x, y, w, h, fill) {
 
 }
 
-
-
 function Enemy(x, y, r, fill) {
 
 	//enemy attributes
 	this.x = x || 500;
 	this.y = y || 500;
 	this.r = r || 75;
-	this.fill = fill;
+	this.fill = fill || "blue"; 
 
 	//draw enemy method
 	this.update = function() {
