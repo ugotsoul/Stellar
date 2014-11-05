@@ -26,8 +26,8 @@ Oops, your browser does not support Html5 canvas. Dang.
 
 		//mousePosition();
 
-		//moving stuff function
-		keyPosition();
+		//Change this function name, it don't make no sense
+		keyPosition();		
 
 		});
 
@@ -102,50 +102,71 @@ function keyPosition() {
 
 	// event listener for keys
 	$(window).keypress(function(evt) {
-
-		console.log(evt.keyCode);
 		
+		getGameElementsPos();
 		//log key movements
 		for (var e = 0; e < gameElements.length; e++){
 
-			//problem: I have more than 1 enemy with the same attributes. HOW DO I FIX for multiple enemies. Do I need to randomly generate x/y cordinates constrained by the board size?
 			if (gameElements[e] instanceof Enemy === true) {
 
 				if (evt.keyCode === 40) {
 					// + y
 					gameElements[e].y-=10; 
 					$('#status').html("You moved down by 10 pixels");
-					console.log("You moved down by 10 pixels"); 
 					}
 
 				else if (evt.keyCode === 38) {
 					// - y
-
 					gameElements[e].y+=10;
 					$('#status').html("You moved up by 10 pixels");
-					console.log("You moved up by 10 pixels");
 					}
 
 				else if (evt.keyCode === 37) {
 					// + x
 					gameElements[e].x+=10; 
 					$('#status').html("You moved left by 10 pixels");
-					console.log("You moved left by 10 pixels");
 					}
 
 				else if (evt.keyCode === 39) {
 					// - x
 					gameElements[e].x-=10;
 					$('#status').html("You moved right by 10 pixels");
-					console.log("You moved right by 10 pixels");
- 
-					}
 				}
 				updateBoard();
 			}
-		});
+		}
+	});
 }
 
+
+function getGameElementsPos() {
+ 	//get player cordinates
+ 	for (var f = 0; f < gameElements.length; f++){ 
+
+ 		//get player cordinates
+ 		if (gameElements[f] instanceof Player === true){
+ 			playerX = gameElements[f].x;
+ 			playerY = gameElements[f].y;
+ 			console.log('Player Position is X: '+playerX+' and Y: '+playerY);
+
+ 		} 
+ 		//get enemy cordinates
+ 		else if (gameElements[f] instanceof Enemy === true){
+ 			enemyX = gameElements[f].x;
+ 			enemyY = gameElements[f].y;
+ 			console.log('Enemy Position is X: '+enemyX+' and Y: '+enemyY);
+
+ 		distX = playerX - enemyX;
+ 		distY = playerY - enemyY;
+
+ 		console.log('Total distance away from the player is X: '+distX+' Y:'+distY);
+
+ 		//draw a line
+
+
+ 		} 
+ 	}
+}
 
 //draw game elements on canvas
 function drawElements() {
@@ -158,19 +179,17 @@ function drawElements() {
 
 
 function updateBoard() {
-
 	//clear board
 	ctx.clearRect(0,0,canvas.width,canvas.height);
 	drawElements();
 }
 
 // game state object where your player is, where your enemies are
-
 function Player(x, y, w, h, fill) {
 
 	//player attributes
-	this.x = x || 900;
-	this.y = y || 350;
+	this.x = x || 500;
+	this.y = y || 300; //350
 	this.w = w || 75;
 	this.h = h || 75;
 	this.fill = fill || "red";
@@ -178,25 +197,48 @@ function Player(x, y, w, h, fill) {
 	//draw player method
 	this.update = function() {
 		ctx.fillStyle = this.fill;
-		ctx.fillRect(this.x, this.y, this.w, this.h); 
+		ctx.fillRect(this.x, this.y, this.w, this.h);
+		ctx.fillStyle = '#000';
+		ctx.font = "bold 8pt Sans-Serif";
+        ctx.fillText('X: '+(this.x+(this.w/2))+' Y: '+(this.y+(this.h/2)), (this.x+(this.w/2)), (this.y+(this.h/2))); 
+
 	}
 }
 
 function Enemy(x, y, r, fill) {
 
 	//enemy attributes
-	this.x = x || 1400;
-	this.y = y || 200;
-	this.r = r || 75;
+	this.x = 650; // x || 1400;
+	this.y = 380; // y || 200;
+	this.r = r || 60;
 	this.fill = fill || "blue"; 
 
 	//draw enemy method
 	this.update = function() {
+
 		ctx.fillStyle = this.fill;
 		ctx.beginPath();
 		ctx.arc(this.x, this.y, this.r, 0, Math.PI*2, false);
 		ctx.closePath();
 		ctx.fill();
+
+		//center coordinates of enemy object
+		ctx.fillStyle = '#000';
+		ctx.font = "bold 8pt Sans-Serif";
+        ctx.fillText('X: '+this.x+' Y: '+this.y, this.x-40, this.y+20); 
+
+        //draw line from center of enemy to center of player
+        ctx.beginPath();
+        ctx.strokeStyle = '#000';
+        ctx.moveTo(this.x, this.y);
+        ctx.lineTo(536, 336); //hypotinus ??? why can't I spell -_-
+        ctx.lineTo(536, 336+(this.y-336)); //height
+        ctx.lineTo(536+(this.x-536), 336+(this.y-336)); //width
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.closePath();
+
+
 	}
 }
 
