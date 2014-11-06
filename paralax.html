@@ -75,6 +75,7 @@ function drawElements() {
 		//draw element on canvas
 		getGameElementsPos();
 		gameElements[c].update();
+		gameBoard();
 	}
 }
 
@@ -85,7 +86,25 @@ function updateBoard() {
 	drawElements();
 }
 
+function gameBoard() {
 
+	var gameX = -500;
+	var gameY = -500;
+
+		//draw bounding box for reference
+
+		ctx.beginPath();
+		ctx.strokeStyle = '#F00';
+		ctx.moveTo(100, 100);
+		ctx.lineTo(1600, 100);
+		ctx.lineTo(1600, 600); 
+		ctx.lineTo(100, 600); 
+		ctx.lineTo(100, 100); 
+		ctx.lineWidth = 2;
+		ctx.stroke();
+		ctx.closePath();
+
+}
 // ###############################
 //  Get player position with Mouse
 // ###############################
@@ -152,6 +171,7 @@ function keyPosition() {
 				}
 
 			updateBoard();
+			collsionDetect();
 			}
 		}
 	});
@@ -168,32 +188,44 @@ function getGameElementsPos() {
  			//need to get center of box, html5 canvas draws from top left
  			playerX = (gameElements[f].x + (gameElements[f].w/2));
  			playerY = (gameElements[f].y + (gameElements[f].h/2));
- 			//console.log('Player Position is X: '+playerX+' and Y: '+playerY);
-
+ 			playerH = gameElements[f].h;
+ 			playerW = gameElements[f].w;
  		} 
  		//get enemy cordinates
  		else if (gameElements[f] instanceof Enemy === true){
  			enemyX = gameElements[f].x;
  			enemyY = gameElements[f].y;
- 			//console.log('Enemy Position is X: '+enemyX+' and Y: '+enemyY);
+ 			enemyR = gameElements[f].r;
 
  		distX = playerX - enemyX;
  		distY = playerY - enemyY;
 
-
- 		console.log(distX);
- 		console.log(distY);
  		hypotenuse = Math.floor(Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2)));
-
- 		console.log("Hypotenuse:");
- 		console.log(hypotenuse);
 
  		} 
  	}
 }
 
+//get bounding boxes for enemy and player
 
-// game state object where your player is, where your enemies are
+//collision behavior
+function collsionDetect(){
+
+	//get bounding box for max board height & length
+	// var maxBoardHeight = 170;
+	// var maxBoardWidth = 1800;
+
+
+	// // logic if player x or y is outside of game board
+	// if (enemyX <= 0 || enemyX >= maxBoardHeight) {
+
+	// 	alert('You are outside the game board!');
+
+	// }
+}
+
+
+// constructor objects -- game elements 
 function Player(x, y, w, h, fill) {
 
 	//player attributes
