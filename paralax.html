@@ -27,9 +27,7 @@ Oops, your browser does not support Html5 canvas. Dang.
 		//mousePosition();
 
 		//Change this function name, it don't make no sense
-		keyPosition();
-
-		getGameElementsPos();		
+		keyPosition();		
 
 		});
 
@@ -70,6 +68,24 @@ function getElements() {
 	}
 }
 
+//draw game elements on canvas
+function drawElements() {
+	// itterate through the array of objects
+	for (var c =0; c < gameElements.length; c++) {
+		//draw element on canvas
+		getGameElementsPos();
+		gameElements[c].update();
+	}
+}
+
+
+function updateBoard() {
+	//clear board
+	ctx.clearRect(0,0,canvas.width,canvas.height);
+	drawElements();
+}
+
+
 // ###############################
 //  Get player position with Mouse
 // ###############################
@@ -105,7 +121,7 @@ function keyPosition() {
 	// event listener for keys
 	$(window).keypress(function(evt) {
 		
-		getGameElementsPos();
+		//getGameElementsPos();
 		//log key movements
 		for (var e = 0; e < gameElements.length; e++){
 
@@ -134,7 +150,7 @@ function keyPosition() {
 					gameElements[e].x-=10;
 					$('#status').html("You moved right by 10 pixels");
 				}
-			
+
 			updateBoard();
 			}
 		}
@@ -164,6 +180,7 @@ function getGameElementsPos() {
  		distX = playerX - enemyX;
  		distY = playerY - enemyY;
 
+
  		console.log(distX);
  		console.log(distY);
  		hypotenuse = Math.floor(Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2)));
@@ -171,28 +188,10 @@ function getGameElementsPos() {
  		console.log("Hypotenuse:");
  		console.log(hypotenuse);
 
- 		
-
- 		//console.log('Total distance away from the player is X: '+distX+' Y:'+distY);
  		} 
  	}
 }
 
-//draw game elements on canvas
-function drawElements() {
-	// itterate through the array of objects
-	for (var c =0; c < gameElements.length; c++) {
-		//draw element on canvas
-		gameElements[c].update();
-	}
-}
-
-
-function updateBoard() {
-	//clear board
-	ctx.clearRect(0,0,canvas.width,canvas.height);
-	drawElements();
-}
 
 // game state object where your player is, where your enemies are
 function Player(x, y, w, h, fill) {
@@ -208,9 +207,16 @@ function Player(x, y, w, h, fill) {
 	this.update = function() {
 		ctx.fillStyle = this.fill;
 		ctx.fillRect(this.x, this.y, this.w, this.h);
+
+		//player center coordinates
 		ctx.fillStyle = '#000';
 		ctx.font = "bold 8pt Sans-Serif";
         ctx.fillText('X: '+(this.x+(this.w/2))+' Y: '+(this.y+(this.h/2)), (this.x+(this.w/2)), (this.y+(this.h/2))); 
+
+        //player center distance from enemy center
+ 		ctx.fillStyle = '#000';
+		ctx.font = "bold 20pt Sans-Serif";
+        ctx.fillText('You are '+window.hypotenuse+' px from the enemy.', 50, 50); 
 
 	}
 }
