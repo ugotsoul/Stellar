@@ -88,10 +88,7 @@ function updateBoard() {
 
 function gameBoard() {
 
-	var gameX = -500;
-	var gameY = -500;
-
-		//draw bounding box for reference
+		//draw 1600 L x 500 W bounding box for reference
 
 		ctx.beginPath();
 		ctx.strokeStyle = '#F00';
@@ -283,6 +280,20 @@ function Enemy(x, y, r, fill) {
         ctx.lineTo(525, 325+(this.y-325)); //height
         ctx.lineTo(525+(this.x-525), 325+(this.y-325)); //width
         ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.closePath();
+
+        //draw collision box for reference
+
+       	ctx.beginPath();
+        ctx.strokeStyle = '#000';
+        ctx.moveTo(this.x, this.y-this.r);
+        ctx.lineTo(this.x+this.r, this.y-this.r);
+        ctx.lineTo(this.x+this.r, this.y+this.r);
+        ctx.lineTo(this.x-this.r, this.y+this.r);
+        ctx.lineTo(this.x-this.r, this.y-this.r);
+        ctx.lineTo(this.x, this.y-this.r);
+        ctx.lineWidth = 2;
         ctx.stroke();
         ctx.closePath();
 
