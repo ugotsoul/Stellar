@@ -27,7 +27,9 @@ Oops, your browser does not support Html5 canvas. Dang.
 		//mousePosition();
 
 		//Change this function name, it don't make no sense
-		keyPosition();		
+		keyPosition();
+
+		getGameElementsPos();		
 
 		});
 
@@ -132,7 +134,8 @@ function keyPosition() {
 					gameElements[e].x-=10;
 					$('#status').html("You moved right by 10 pixels");
 				}
-				updateBoard();
+			
+			updateBoard();
 			}
 		}
 	});
@@ -141,29 +144,36 @@ function keyPosition() {
 
 function getGameElementsPos() {
  	//get player cordinates
+
  	for (var f = 0; f < gameElements.length; f++){ 
 
  		//get player cordinates
  		if (gameElements[f] instanceof Player === true){
- 			playerX = gameElements[f].x;
- 			playerY = gameElements[f].y;
- 			console.log('Player Position is X: '+playerX+' and Y: '+playerY);
+ 			//need to get center of box, html5 canvas draws from top left
+ 			playerX = (gameElements[f].x + (gameElements[f].w/2));
+ 			playerY = (gameElements[f].y + (gameElements[f].h/2));
+ 			//console.log('Player Position is X: '+playerX+' and Y: '+playerY);
 
  		} 
  		//get enemy cordinates
  		else if (gameElements[f] instanceof Enemy === true){
  			enemyX = gameElements[f].x;
  			enemyY = gameElements[f].y;
- 			console.log('Enemy Position is X: '+enemyX+' and Y: '+enemyY);
+ 			//console.log('Enemy Position is X: '+enemyX+' and Y: '+enemyY);
 
  		distX = playerX - enemyX;
  		distY = playerY - enemyY;
 
- 		console.log('Total distance away from the player is X: '+distX+' Y:'+distY);
+ 		console.log(distX);
+ 		console.log(distY);
+ 		hypotenuse = Math.floor(Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2)));
 
- 		//draw a line
+ 		console.log("Hypotenuse:");
+ 		console.log(hypotenuse);
 
+ 		
 
+ 		//console.log('Total distance away from the player is X: '+distX+' Y:'+distY);
  		} 
  	}
 }
@@ -190,8 +200,8 @@ function Player(x, y, w, h, fill) {
 	//player attributes
 	this.x = x || 500;
 	this.y = y || 300; //350
-	this.w = w || 75;
-	this.h = h || 75;
+	this.w = w || 50;
+	this.h = h || 50;
 	this.fill = fill || "red";
 
 	//draw player method
@@ -208,8 +218,8 @@ function Player(x, y, w, h, fill) {
 function Enemy(x, y, r, fill) {
 
 	//enemy attributes
-	this.x = 650; // x || 1400;
-	this.y = 380; // y || 200;
+	this.x = x || 650; // x || 1400;
+	this.y = y || 380; // y || 200;
 	this.r = r || 60;
 	this.fill = fill || "blue"; 
 
@@ -231,9 +241,9 @@ function Enemy(x, y, r, fill) {
         ctx.beginPath();
         ctx.strokeStyle = '#000';
         ctx.moveTo(this.x, this.y);
-        ctx.lineTo(536, 336); //hypotinus ??? why can't I spell -_-
-        ctx.lineTo(536, 336+(this.y-336)); //height
-        ctx.lineTo(536+(this.x-536), 336+(this.y-336)); //width
+        ctx.lineTo(525, 325); // hype
+        ctx.lineTo(525, 325+(this.y-325)); //height
+        ctx.lineTo(525+(this.x-525), 325+(this.y-325)); //width
         ctx.lineWidth = 1;
         ctx.stroke();
         ctx.closePath();
