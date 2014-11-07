@@ -1,330 +1,306 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-	<meta charset="UTF-8">
-	<title>Test Game</title>
-	<link rel="stylesheet" href="style.css">
-	<script src="jquery.min.js"></script>
+    <meta charset="UTF-8">
+    <title>Test Game</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="jquery.min.js"></script>
 </head>
+
 <body>
-	
-<canvas id="canvas" height="700" width="1800">
-Oops, your browser does not support Html5 canvas. Dang.
-</canvas>
-
-<div id="status">
-	This is a game about stars and stuff.
-</div>
-
-<script>
-
-	$(document).ready( function(){
-		
-		getElements();
-
-		drawElements();
-
-		//mousePosition();
-
-		//Change this function name, it don't make no sense
-		keyPosition();		
-
-
-		});
-
-var canvas = document.getElementById("canvas");
-var	ctx = canvas.getContext('2d');
-
-//test world boundries
-var gameBoardSize = {
-	x: 100,
-	y: 100,
-	h: 500,
-	w: 1500
-}
-
-// ###############################
-//  Constructer Objects
-// ###############################
-
-// nums of Player & Enemy Objects on board
-p = 1;
-e = 1;
-
-//creates an array of length player + enemy objects
-var gameElements = new Array();
-
-
-//get random integer
-function getRandomInteger(min, max) {
-	return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-//add game objects
-function getElements() {
-	//add p# of p to game element array
-	for (var a = 0; a < (p); a++) {
-		gameElements.push(new Player());
-	}
-
-	//add e# of enemy to game element array
-	for (var b = 0; b < (e); b++) {
-
-		// instanciate enemies in random places on the board
-		var rx = getRandomInteger(75, 1700);
-		var ry = getRandomInteger(75, 600);
-		gameElements.push(new Enemy(rx, ry));
-	}
-}
-
-//draw game elements on canvas
-function drawElements() {
-	// itterate through the array of objects
-	for (var c =0; c < gameElements.length; c++) {
-		//draw element on canvas
-		getGameElementsPos();
-		gameElements[c].update();
-		gameBoard();
-	}
-}
-
-
-function updateBoard() {
-	//clear board
-	ctx.clearRect(0,0,canvas.width,canvas.height);
-	drawElements();
-}
-
-function gameBoard() {
-
-		//draw 1600 L x 500 W red game board bounding box for reference
-		ctx.beginPath();
-		ctx.strokeStyle = '#F00';
-		ctx.moveTo(100, 100);
-		ctx.lineTo(1600, 100);
-		ctx.lineTo(1600, 600); 
-		ctx.lineTo(100, 600); 
-		ctx.lineTo(100, 100); 
-		ctx.lineWidth = 2;
-		ctx.stroke();
-		ctx.closePath();
-
-}
-// ###############################
-//  Get player position with Mouse
-// ###############################
-
-// function mousePosition() {
-
-// 	//mouseEvent listener
-// 	$("#canvas").click(function (evt) {
-	
-// 	//store mouse clicks
-// 	for (var d = 0; d < gameElements.length; d++) {
-// 		if (gameElements[a] instanceof Player === true) {
-// 			gameElements[a].x = evt.clientX - 40;
-// 			gameElements[a].y = evt.clientY - 40;
-
-// 			updateBoard();
-
-// 			console.log(gameElements[a].x);
-// 			console.log(gameElements[a].y);
-// 		}
-// 	}
-
-
-// 	});
-// }
-
-// #################################
-//  Get player position with Keypad
-// #################################
-
-function keyPosition() {
-
-	// event listener for keys
-	$(window).keypress(function(evt) {
-		
-		$('#status').html('WEEEeeeee!');
-
-		//log key movements
-		for (var e = 0; e < gameElements.length; e++){
-
-			if (gameElements[e] instanceof Enemy === true) {
-
-			//check if you crossed the game board boundries
-			function move() {
-			}
-
-				if (evt.keyCode === 40) {
-					// + y
-					if (!collsionDetect(gameElements[e])) { 
-					gameElements[e].y-=10; 
-					//$('#status').html("You moved down by 10 pixels");
-					}
-				}
-
-				else if (evt.keyCode === 38) {
-					// - y
-					gameElements[e].y+=10;
-					collsionDetect(gameElements[e]);
-					//$('#status').html("You moved up by 10 pixels");
-					}
-
-				else if (evt.keyCode === 37) {
-					// + x
-					gameElements[e].x+=10;
-					collsionDetect(gameElements[e]); 
-					//$('#status').html("You moved left by 10 pixels");
-					}
-
-				else if (evt.keyCode === 39) {
-					// - x
-					gameElements[e].x-=10;
-					collsionDetect(gameElements[e]);
-					//$('#status').html("You moved right by 10 pixels");
-				}
-
-			//redraw board
-			updateBoard();
-			
-			}
-		}
-	});
-}
-
-
-function getGameElementsPos() {
- 	//get player cordinates
-
- 	for (var f = 0; f < gameElements.length; f++){ 
-
- 		//get player cordinates
- 		if (gameElements[f] instanceof Player === true){
- 			//need to get center of box, html5 canvas draws from top left
- 			playerX = (gameElements[f].x + (gameElements[f].w/2));
- 			playerY = (gameElements[f].y + (gameElements[f].h/2));
- 			playerH = gameElements[f].h;
- 			playerW = gameElements[f].w;
- 		} 
- 		//get enemy cordinates
- 		else if (gameElements[f] instanceof Enemy === true){
- 			enemyX = gameElements[f].x;
- 			enemyY = gameElements[f].y;
- 			enemyR = gameElements[f].r;
-
- 		distX = playerX - enemyX;
- 		distY = playerY - enemyY;
-
- 		hypotenuse = Math.floor(Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2)));
-
- 		} 
- 	}
-}
-
-//collision detection with bounding boxes
-function collsionDetect(element){
-	//logic: check if enemy/element hit player using
-
-	if ((element.r + Math.floor((gameElements[0].w * Math.sqrt(2))/2)) > window.hypotenuse ||
-		window.hypotenuse < (element.r + Math.floor(gameElements[0].w/2))){
-		//check if top of enemy hits top of player
-		$('#status').html("You were hit, OW!");
-		return(true);
-	}
-	
-	//left check working
-	else if (((element.x - element.r) <= gameBoardSize.x) || ((element.x + element.r) >= (gameBoardSize.x + gameBoardSize.w))) {
-		$('#status').html("You can't move there!");
-		return(true);
-	}
-	else {
-		return(false);
-	}
-}
-
-
-// constructor objects -- game elements 
-function Player(x, y, w, h, fill) {
-
-	//player attributes
-	this.x = x || 500;
-	this.y = y || 300; //350
-	this.w = w || 50;
-	this.h = h || 50;
-	this.fill = fill || "red";
-
-
-	//draw player method
-	this.update = function() {
-		ctx.fillStyle = this.fill;
-		ctx.fillRect(this.x, this.y, this.w, this.h);
-
-		//player center coordinates
-		ctx.fillStyle = '#000';
-		ctx.font = "bold 8pt Sans-Serif";
-        ctx.fillText('X: '+(this.x+(this.w/2))+' Y: '+(this.y+(this.h/2)), (this.x+(this.w/2)), (this.y+(this.h/2))); 
-
-        //player center distance from enemy center
-        //change this to a div
- 		ctx.fillStyle = '#000';
-		ctx.font = "bold 20pt Sans-Serif";
-        ctx.fillText('You are '+window.hypotenuse+' px from the enemy.', 50, 50); 
-
-	}
-}
-
-function Enemy(x, y, r, fill) {
-
-	//enemy attributes
-	this.x = x || 650; // x || 1400;
-	this.y = y || 380; // y || 200;
-	this.r = r || 60;
-	this.fill = fill || "blue"; 
-
-	//draw enemy method
-	this.update = function() {
-
-		ctx.fillStyle = this.fill;
-		ctx.beginPath();
-		ctx.arc(this.x, this.y, this.r, 0, Math.PI*2, false);
-		ctx.closePath();
-		ctx.fill();
-
-		//center coordinates of enemy object
-		ctx.fillStyle = '#000';
-		ctx.font = "bold 8pt Sans-Serif";
-        ctx.fillText('X: '+this.x+' Y: '+this.y, this.x-40, this.y+20); 
-
-        //draw line from center of enemy to center of player
-        ctx.beginPath();
-        ctx.strokeStyle = '#000';
-        ctx.moveTo(this.x, this.y);
-        ctx.lineTo(525, 325); // hype
-        ctx.lineTo(525, 325+(this.y-325)); //height
-        ctx.lineTo(525+(this.x-525), 325+(this.y-325)); //width
-        ctx.lineWidth = 1;
-        ctx.stroke();
-        ctx.closePath();
-
-        //draw collision box for reference
-       	ctx.beginPath();
-        ctx.strokeStyle = '#000';
-        ctx.moveTo(this.x, this.y-this.r); //top line is (this.x, this.y-this.r) & (this.x, this.y+this.r)
-        ctx.lineTo(this.x+this.r, this.y-this.r);
-        ctx.lineTo(this.x+this.r, this.y+this.r);
-        ctx.lineTo(this.x-this.r, this.y+this.r);
-        ctx.lineTo(this.x-this.r, this.y-this.r);
-        ctx.lineTo(this.x, this.y-this.r);
-        ctx.lineWidth = 2;
-        ctx.stroke();
-        ctx.closePath();
-
-
-	}
-}
-
-
-</script>
+
+    <canvas id="canvas" height="700" width="1800">
+        Oops, your browser does not support Html5 canvas. Dang.
+    </canvas>
+
+    <div id="status">
+        This is a game about stars and stuff.
+    </div>
+
+    <script>
+    $(document).ready(function() {
+
+        getElements();
+
+        drawElements();
+
+        //Change this function name, it don't make no sense
+        keyPosition();
+
+    });
+
+    var canvas = document.getElementById("canvas");
+    var ctx = canvas.getContext('2d');
+
+    //test world boundries
+    function gameBoard(x, y, h, w) {
+        this.x = x || 100;
+        this.y = y || 100;
+        this.h = h || 500;
+        this.w = w || 1500;
+    }
+
+    //instanciate board object
+    board = gameBoard();
+
+    // ###############################
+    //  Constructer Objects
+    // ###############################
+
+    //global player object 
+    var player = new Player();
+
+    //# of enemies
+    e = 1;
+
+    //creates an array of length player + enemy objects
+    var gameElements = new Array();
+
+    //get random integer
+    function getRandomInteger(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    //add game objects
+    function getElements() {
+        //add player to game element array
+        gameElements.push(player);
+
+        //add e# of enemy to game element array
+        for (var b = 0; b < (e); b++) {
+
+            // instanciate enemies in random places on the board
+            var rx = getRandomInteger(75, 1700);
+            var ry = getRandomInteger(75, 600);
+            gameElements.push(new Enemy(rx, ry));
+        }
+    }
+
+    //draw game elements on canvas
+    function drawElements() {
+        for (var c = 0; c < gameElements.length; c++) {
+            //draw element on canvas
+            getGameElementsPos();
+            gameElements[c].update();
+        }
+    }
+
+    //clear & redraw board - needs a set interval function to manage frames per second
+    function updateBoard() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawElements();
+    }
+
+    // #################################
+    //  Get player position with Keypad
+    // #################################
+
+    function keyPosition() {
+
+        // event listener for keys
+        $(window).keypress(function(evt) {
+
+            $('#status').html('WEEEeeeee!');
+
+            //log key movements
+            for (var e = 0; e < gameElements.length; e++) {
+
+                if (gameElements[e] instanceof Enemy === true) {
+
+                	//set var to speed gain
+
+                    //check if you crossed the game board boundries
+
+                    switch (true) {
+                        case (evt.keyCode === 40):
+                            //enemy moves up, enemy -y
+                            gameElements[e].y -= player.speed;
+                            console.log('you move down');
+
+                            break;
+                        case (evt.keyCode === 38):
+                            //enemy moves down, enemy +y
+                            gameElements[e].y += player.speed;
+                            console.log('you move up');
+                            break;
+                        case (evt.keyCode === 37):
+                        	//enemy moves right, enemy +x
+                        	gameElements[e].x += player.speed;
+                        	console.log('you move left');
+                        	break;
+                        case (evt.keyCode === 39):
+                        	//enemy moves left, enemy -x
+                        	gameElements[e].x -= player.speed;
+                        	console.log('you move right');
+                        	break;
+                    }
+
+                    //redraw board
+                    updateBoard();
+                    collsionDetect(gameElements[e]);
+                }
+            }
+        });
+    }
+
+
+
+
+function checkMove(move) {
+
+        //check future move to see if player can move there
+
+
+
+        //identify move type
+        //up down left right
+    }
+
+
+    function getGameElementsPos() {
+        //get player cordinates
+
+        for (var f = 0; f < gameElements.length; f++) {
+
+            //get player cordinates
+            if (gameElements[f] instanceof Player === true) {
+                //need to get center of box, html5 canvas draws from top left
+                playerX = (gameElements[f].x + (gameElements[f].w / 2));
+                playerY = (gameElements[f].y + (gameElements[f].h / 2));
+                playerH = gameElements[f].h;
+                playerW = gameElements[f].w;
+            }
+            //get enemy cordinates
+            else if (gameElements[f] instanceof Enemy === true) {
+                enemyX = gameElements[f].x;
+                enemyY = gameElements[f].y;
+                enemyR = gameElements[f].r;
+
+                distX = playerX - enemyX;
+                distY = playerY - enemyY;
+
+                hypotenuse = Math.floor(Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2)));
+
+            }
+        }
+    }
+
+    //collision detection with bounding boxes
+    function collsionDetect(element) {
+
+        //logic: check if player hit enemy using ray-casting
+
+        if ((element.r + Math.floor((gameElements[0].w * Math.sqrt(2)) / 2)) > window.hypotenuse ||
+            window.hypotenuse < (element.r + Math.floor(gameElements[0].w / 2))) {
+            //check if top of enemy hits top of player
+            $('#status').html("You were hit, OW! You lost 10 health.");
+            //hurt the player
+            player.health -= 10;
+            console.log(player.health);
+            return (true);
+        }
+
+        //left & right checks working. next -top & down
+        //|| ((element.x + element.r) >= (gameBoardSize.x + gameBoardSize.w)) || ((element.y - element.r) <= (gameBoardSize.y)) || ((element.y + element.r) >= (gameBoardSize.y+gameBoardSize.h))
+        // else if ((element.x - element.r) <= gameBoard.x) {
+        //     $('#status').html("You can't move there!");
+        //     return (false);
+        // } 
+
+        else {
+            return (false);
+        }
+    }
+
+
+    // constructor objects -- game elements 
+    function Player(x, y, w, h, fill) {
+
+        //player attributes
+        this.x = x || 500;
+        this.y = y || 300; //350
+        this.w = w || 50;
+        this.h = h || 50;
+        this.fill = fill || "red";
+        this.health = 100;
+        this.speed = 10;
+
+
+        //draw player method
+        this.update = function() {
+            ctx.fillStyle = this.fill;
+            ctx.fillRect(this.x, this.y, this.w, this.h);
+
+            //player center coordinates
+            ctx.fillStyle = '#000';
+            ctx.font = "bold 8pt Sans-Serif";
+            ctx.fillText('X: ' + (this.x + (this.w / 2)) + ' Y: ' + (this.y + (this.h / 2)), (this.x + (this.w / 2)), (this.y + (this.h / 2)));
+
+            //player center distance from enemy center
+            //change this to a div
+            ctx.fillStyle = '#000';
+            ctx.font = "bold 20pt Sans-Serif";
+            ctx.fillText('You are ' + window.hypotenuse + ' px from the enemy.', 50, 50);
+
+        }
+    }
+
+    function Enemy(x, y, r, fill) {
+
+        //enemy attributes
+        this.x = x || 650; // x || 1400;
+        this.y = y || 380; // y || 200;
+        this.r = r || 60;
+        this.fill = fill || "blue";
+
+        //make an attribute that is the enemies attack strength
+        //make an attribute that is the enmeies health
+
+        //draw enemy method
+        this.update = function() {
+
+            ctx.fillStyle = this.fill;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, false);
+            ctx.closePath();
+            ctx.fill();
+
+            //center coordinates of enemy object
+            ctx.fillStyle = '#000';
+            ctx.font = "bold 8pt Sans-Serif";
+            ctx.fillText('X: ' + this.x + ' Y: ' + this.y, this.x - 40, this.y + 20);
+
+
+            //change these numbers to variables
+            //draw line from center of enemy to center of player
+            ctx.beginPath();
+            ctx.strokeStyle = '#000';
+            ctx.moveTo(this.x, this.y);
+            ctx.lineTo(525, 325); // hype
+            ctx.lineTo(525, 325 + (this.y - 325)); //height
+            ctx.lineTo(525 + (this.x - 525), 325 + (this.y - 325)); //width
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            ctx.closePath();
+
+            //draw collision box for reference
+            ctx.beginPath();
+            ctx.strokeStyle = '#000';
+            ctx.moveTo(this.x, this.y - this.r); //top line is (this.x, this.y-this.r) & (this.x, this.y+this.r)
+            ctx.lineTo(this.x + this.r, this.y - this.r);
+            ctx.lineTo(this.x + this.r, this.y + this.r);
+            ctx.lineTo(this.x - this.r, this.y + this.r);
+            ctx.lineTo(this.x - this.r, this.y - this.r);
+            ctx.lineTo(this.x, this.y - this.r);
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.closePath();
+
+
+        }
+    }
+    </script>
 </body>
+
 </html>
