@@ -88,7 +88,11 @@ function updateBoard() {
 
 function gameBoard() {
 
-		//draw 1600 L x 500 W bounding box for reference
+		//draw 1600 L x 500 W red game board bounding box for reference
+		this.x = 100;
+		this.y = 100;
+		this.h = 500;
+		this.w = 1500;
 
 		ctx.beginPath();
 		ctx.strokeStyle = '#F00';
@@ -137,7 +141,8 @@ function keyPosition() {
 	// event listener for keys
 	$(window).keypress(function(evt) {
 		
-		//getGameElementsPos();
+		$('#status').html('WEEEeeeee!');
+
 		//log key movements
 		for (var e = 0; e < gameElements.length; e++){
 
@@ -146,29 +151,35 @@ function keyPosition() {
 				if (evt.keyCode === 40) {
 					// + y
 					gameElements[e].y-=10; 
-					$('#status').html("You moved down by 10 pixels");
+
+					collsionDetect(gameElements[e]); 
+					//$('#status').html("You moved down by 10 pixels");
 					}
 
 				else if (evt.keyCode === 38) {
 					// - y
 					gameElements[e].y+=10;
-					$('#status').html("You moved up by 10 pixels");
+					collsionDetect(gameElements[e]);
+					//$('#status').html("You moved up by 10 pixels");
 					}
 
 				else if (evt.keyCode === 37) {
 					// + x
-					gameElements[e].x+=10; 
-					$('#status').html("You moved left by 10 pixels");
+					gameElements[e].x+=10;
+					collsionDetect(gameElements[e]); 
+					//$('#status').html("You moved left by 10 pixels");
 					}
 
 				else if (evt.keyCode === 39) {
 					// - x
 					gameElements[e].x-=10;
-					$('#status').html("You moved right by 10 pixels");
+					collsionDetect(gameElements[e]);
+					//$('#status').html("You moved right by 10 pixels");
 				}
 
+			//redraw board
 			updateBoard();
-			collsionDetect();
+			
 			}
 		}
 	});
@@ -203,22 +214,20 @@ function getGameElementsPos() {
  	}
 }
 
-//get bounding boxes for enemy and player
+//collision detection with bounding boxes
+function collsionDetect(element){
+	//logic: check if enemy/element hit player using
 
-//collision behavior
-function collsionDetect(){
-
-	//get bounding box for max board height & length
-	// var maxBoardHeight = 170;
-	// var maxBoardWidth = 1800;
-
-
-	// // logic if player x or y is outside of game board
-	// if (enemyX <= 0 || enemyX >= maxBoardHeight) {
-
-	// 	alert('You are outside the game board!');
-
-	// }
+	if ((element.r + Math.floor((gameElements[0].w * Math.sqrt(2))/2)) > window.hypotenuse ||
+		window.hypotenuse < (element.r + Math.floor(gameElements[0].w/2))){
+		//check if top of enemy hits top of player
+		$('#status').html("You were hit, OW!");
+		return(true);
+	}
+	
+	else {
+		return(false);
+	}
 }
 
 
@@ -231,6 +240,7 @@ function Player(x, y, w, h, fill) {
 	this.w = w || 50;
 	this.h = h || 50;
 	this.fill = fill || "red";
+	this.health = 100;
 
 	//draw player method
 	this.update = function() {
@@ -243,6 +253,7 @@ function Player(x, y, w, h, fill) {
         ctx.fillText('X: '+(this.x+(this.w/2))+' Y: '+(this.y+(this.h/2)), (this.x+(this.w/2)), (this.y+(this.h/2))); 
 
         //player center distance from enemy center
+        //change this to a div
  		ctx.fillStyle = '#000';
 		ctx.font = "bold 20pt Sans-Serif";
         ctx.fillText('You are '+window.hypotenuse+' px from the enemy.', 50, 50); 
@@ -284,10 +295,9 @@ function Enemy(x, y, r, fill) {
         ctx.closePath();
 
         //draw collision box for reference
-
        	ctx.beginPath();
         ctx.strokeStyle = '#000';
-        ctx.moveTo(this.x, this.y-this.r);
+        ctx.moveTo(this.x, this.y-this.r); //top line is (this.x, this.y-this.r) & (this.x, this.y+this.r)
         ctx.lineTo(this.x+this.r, this.y-this.r);
         ctx.lineTo(this.x+this.r, this.y+this.r);
         ctx.lineTo(this.x-this.r, this.y+this.r);
