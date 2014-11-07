@@ -29,10 +29,19 @@ Oops, your browser does not support Html5 canvas. Dang.
 		//Change this function name, it don't make no sense
 		keyPosition();		
 
+
 		});
 
 var canvas = document.getElementById("canvas");
 var	ctx = canvas.getContext('2d');
+
+//test world boundries
+var gameBoardSize = {
+	x: 100,
+	y: 100,
+	h: 500,
+	w: 1500
+}
 
 // ###############################
 //  Constructer Objects
@@ -89,11 +98,6 @@ function updateBoard() {
 function gameBoard() {
 
 		//draw 1600 L x 500 W red game board bounding box for reference
-		this.x = 100;
-		this.y = 100;
-		this.h = 500;
-		this.w = 1500;
-
 		ctx.beginPath();
 		ctx.strokeStyle = '#F00';
 		ctx.moveTo(100, 100);
@@ -148,13 +152,17 @@ function keyPosition() {
 
 			if (gameElements[e] instanceof Enemy === true) {
 
+			//check if you crossed the game board boundries
+			function move() {
+			}
+
 				if (evt.keyCode === 40) {
 					// + y
+					if (!collsionDetect(gameElements[e])) { 
 					gameElements[e].y-=10; 
-
-					collsionDetect(gameElements[e]); 
 					//$('#status').html("You moved down by 10 pixels");
 					}
+				}
 
 				else if (evt.keyCode === 38) {
 					// - y
@@ -225,6 +233,11 @@ function collsionDetect(element){
 		return(true);
 	}
 	
+	//left check working
+	else if (((element.x - element.r) <= gameBoardSize.x) || ((element.x + element.r) >= (gameBoardSize.x + gameBoardSize.w))) {
+		$('#status').html("You can't move there!");
+		return(true);
+	}
 	else {
 		return(false);
 	}
@@ -240,7 +253,7 @@ function Player(x, y, w, h, fill) {
 	this.w = w || 50;
 	this.h = h || 50;
 	this.fill = fill || "red";
-	this.health = 100;
+
 
 	//draw player method
 	this.update = function() {
