@@ -103,60 +103,117 @@
 
             $('#status').html('WEEEeeeee!');
 
+            //var to store type of event
+    		var moveType;
+    		var nextMove;
+
+
             //log key movements
             for (var e = 0; e < gameElements.length; e++) {
 
-                if (gameElements[e] instanceof Enemy === true) {
+                if (gameElements[e] instanceof Enemy) {
 
-                	//set var to speed gain
-
-                    //check if you crossed the game board boundries
+                    //detect collisions
+                    var collision = false;
+                    console.log('Was there a collision? ' +collision);
 
                     switch (true) {
-                        case (evt.keyCode === 40):
+                        case (evt.keyCode == 40): 
                             //enemy moves up, enemy -y
-                            gameElements[e].y -= player.speed;
+                            //gameElements[e].y -= player.speed;
                             console.log('you move down');
-
+                            moveType = 'down';
                             break;
-                        case (evt.keyCode === 38):
+                        case (evt.keyCode == 38):
                             //enemy moves down, enemy +y
-                            gameElements[e].y += player.speed;
+                            //gameElements[e].y += player.speed;
                             console.log('you move up');
+                            moveType = 'up';
                             break;
-                        case (evt.keyCode === 37):
+                        case (evt.keyCode == 37):
                         	//enemy moves right, enemy +x
-                        	gameElements[e].x += player.speed;
+                        	//gameElements[e].x += player.speed;
                         	console.log('you move left');
+                        	moveType = 'left';
                         	break;
-                        case (evt.keyCode === 39):
+                        case (evt.keyCode == 39):
                         	//enemy moves left, enemy -x
-                        	gameElements[e].x -= player.speed;
+                        	//gameElements[e].x -= player.speed;
                         	console.log('you move right');
+                        	moveType = 'right';
                         	break;
                     }
 
+                    //nextMove = checkMove(moveType,gameElements[e]);
+                    //console.log('AHHH '+ nextMove);
+
+                    collision = collsionDetect(gameElements[e]);
+                    //move the player if no collision
+                    movePlayer(moveType, collision, gameElements[e]);
                     //redraw board
                     updateBoard();
-                    collsionDetect(gameElements[e]);
                 }
             }
         });
     }
 
 
-
-
-function checkMove(move) {
+function movePlayer(moveType, collision, element) {
 
         //check future move to see if player can move there
 
+        switch(true) {
+    		case (collision == false):
+        switch(true) {
+        	case (moveType == 'up'):
+            element.y -= player.speed;
+        	break;
 
+        	case (moveType == 'down'):
+            element.y += player.speed;
+        	break;
 
-        //identify move type
-        //up down left right
+        	case (moveType == 'left'):
+            element.x -= player.speed;
+        	break;
+
+        	case (moveType == 'right'):
+            element.x += player.speed;
+        	break;
+        	}
+        break;
     }
+}
 
+
+// //check future move
+// function checkMove(moveType, element) {
+        
+//         var nextX;
+//         var nextY;
+
+//         switch(true) {
+//         	case (moveType == 'up'):
+//            	nextY = element.y - 10;
+//            	return(nextY);
+//         	break;
+
+//         	case (moveType == 'down'):
+//             nextY = element.y + 10;
+//             return(nextY);
+//         	break;
+
+//         	case (moveType == 'left'):
+//             nextX = element.x - 10
+//             return(nextX);
+//         	break;
+
+//         	case (moveType == 'right'):
+//             nextX = element.x + 10;
+//             return(nextX);
+//         	break;
+// 	}
+// }
 
     function getGameElementsPos() {
         //get player cordinates
@@ -187,13 +244,12 @@ function checkMove(move) {
     }
 
     //collision detection with bounding boxes
-    function collsionDetect(element) {
+    function collsionDetect(element, nextMove) {
 
         //logic: check if player hit enemy using ray-casting
 
         if ((element.r + Math.floor((gameElements[0].w * Math.sqrt(2)) / 2)) > window.hypotenuse ||
             window.hypotenuse < (element.r + Math.floor(gameElements[0].w / 2))) {
-            //check if top of enemy hits top of player
             $('#status').html("You were hit, OW! You lost 10 health.");
             //hurt the player
             player.health -= 10;
@@ -202,11 +258,10 @@ function checkMove(move) {
         }
 
         //left & right checks working. next -top & down
-        //|| ((element.x + element.r) >= (gameBoardSize.x + gameBoardSize.w)) || ((element.y - element.r) <= (gameBoardSize.y)) || ((element.y + element.r) >= (gameBoardSize.y+gameBoardSize.h))
-        // else if ((element.x - element.r) <= gameBoard.x) {
-        //     $('#status').html("You can't move there!");
-        //     return (false);
-        // } 
+        if (((element.x - element.r) <= gameBoard.x) || ((element.x + element.r) >= (gameBoard.x + gameBoard.w)) || ((element.y - element.r) <= (gameBoard.y)) || ((element.y + element.r) >= (gameBoard.y+gameBoard.h))) {
+            $('#status').html("You can't move there!");
+            return (true);
+        } 
 
         else {
             return (false);
@@ -277,9 +332,9 @@ function checkMove(move) {
             ctx.beginPath();
             ctx.strokeStyle = '#000';
             ctx.moveTo(this.x, this.y);
-            ctx.lineTo(525, 325); // hype
-            ctx.lineTo(525, 325 + (this.y - 325)); //height
-            ctx.lineTo(525 + (this.x - 525), 325 + (this.y - 325)); //width
+            ctx.lineTo((player.x+player.w/2), (player.y+player.h/2)); // hype
+            ctx.lineTo((player.x+player.w/2), (player.y+player.h/2) + (this.y - (player.y+player.h/2))); //height
+            ctx.lineTo((player.x+player.w/2) + (this.x - (player.x+player.w/2)), (player.y+player.h/2) + (this.y - (player.y+player.h/2))); //width
             ctx.lineWidth = 1;
             ctx.stroke();
             ctx.closePath();
