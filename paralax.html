@@ -99,14 +99,12 @@
     function keyPosition() {
 
         // event listener for keys
-        $(window).keypress(function(evt) {
+        $(window).keydown(function(evt) {
 
             $('#status').html('WEEEeeeee!');
 
             //var to store type of event
     		var moveType;
-    		var nextMove;
-
 
             //log key movements
             for (var e = 0; e < gameElements.length; e++) {
@@ -114,42 +112,62 @@
                 if (gameElements[e] instanceof Enemy) {
 
                     //detect collisions
-                    var collision = false;
-                    console.log('Was there a collision? ' +collision);
+                   	
+                   	//check enemy coordinates
+                   	console.log('Enemy X: '+gameElements[e].x);
+                   	console.log('Enemy Y: '+gameElements[e].y);
+
+		            var nextX = gameElements[e].x;
+		            var nextY = gameElements[e].y;
 
                     switch (true) {
                         case (evt.keyCode == 40): 
                             //enemy moves up, enemy -y
-                            //gameElements[e].y -= player.speed;
-                            console.log('you move down');
+                            nextY -= player.speed;
+                            console.log('nextY '+nextY);
+                            //console.log('you move down');
                             moveType = 'down';
                             break;
                         case (evt.keyCode == 38):
                             //enemy moves down, enemy +y
-                            //gameElements[e].y += player.speed;
-                            console.log('you move up');
+                            nextY += player.speed;
+                            console.log('nextY '+nextY);
+                            //console.log('you move up');
                             moveType = 'up';
                             break;
                         case (evt.keyCode == 37):
                         	//enemy moves right, enemy +x
-                        	//gameElements[e].x += player.speed;
-                        	console.log('you move left');
+                        	nextX += player.speed;
+                        	console.log('nextX '+nextX);
+                        	//console.log('you move left');
                         	moveType = 'left';
                         	break;
                         case (evt.keyCode == 39):
                         	//enemy moves left, enemy -x
-                        	//gameElements[e].x -= player.speed;
-                        	console.log('you move right');
+                        	nextX -= player.speed;
+                        	console.log('nextX '+nextX);
+                        	//console.log('you move right');
                         	moveType = 'right';
                         	break;
                     }
 
-                    //nextMove = checkMove(moveType,gameElements[e]);
-                    //console.log('AHHH '+ nextMove);
-
-                    collision = collsionDetect(gameElements[e]);
+                    //check ray length of next move
+                    //I'm getting the current move :/
+                   	console.log('Next Move X: '+nextX);
+		            console.log('Next Move Y: '+nextY);
+                    var collision = collsionDetect(nextX, nextY, gameElements[e]);
+                    console.log('Was there a collision? ' +collision);
                     //move the player if no collision
-                    movePlayer(moveType, collision, gameElements[e]);
+                    if (collision == false) {
+                    movePlayer(moveType, gameElements[e]);
+                    }
+
+                    else {
+                    	console.log('you cannot move there!');
+                    	moveType = '';
+                    	console.log(moveType); 
+                    }
+
                     //redraw board
                     updateBoard();
                 }
@@ -158,62 +176,32 @@
     }
 
 
-function movePlayer(moveType, collision, element) {
+function movePlayer(moveType, element) {
 
         //check future move to see if player can move there
-
-        switch(true) {
-    		case (collision == false):
         switch(true) {
         	case (moveType == 'up'):
+
+            element.y += player.speed;
+          	break;
+
+        	case (moveType == 'down'):
+        	
             element.y -= player.speed;
         	break;
 
-        	case (moveType == 'down'):
-            element.y += player.speed;
-        	break;
-
         	case (moveType == 'left'):
-            element.x -= player.speed;
+        	
+            element.x += player.speed;
         	break;
 
         	case (moveType == 'right'):
-            element.x += player.speed;
+            element.x -= player.speed;
         	break;
-        	}
-        break;
-    }
+        }
 }
 
-
-// //check future move
-// function checkMove(moveType, element) {
-        
-//         var nextX;
-//         var nextY;
-
-//         switch(true) {
-//         	case (moveType == 'up'):
-//            	nextY = element.y - 10;
-//            	return(nextY);
-//         	break;
-
-//         	case (moveType == 'down'):
-//             nextY = element.y + 10;
-//             return(nextY);
-//         	break;
-
-//         	case (moveType == 'left'):
-//             nextX = element.x - 10
-//             return(nextX);
-//         	break;
-
-//         	case (moveType == 'right'):
-//             nextX = element.x + 10;
-//             return(nextX);
-//         	break;
-// 	}
-// }
+//get the future hypotenuse
 
     function getGameElementsPos() {
         //get player cordinates
@@ -244,28 +232,27 @@ function movePlayer(moveType, collision, element) {
     }
 
     //collision detection with bounding boxes
-    function collsionDetect(element, nextMove) {
+    function collsionDetect(nextX, nextY, element) {
 
         //logic: check if player hit enemy using ray-casting
 
-        if ((element.r + Math.floor((gameElements[0].w * Math.sqrt(2)) / 2)) > window.hypotenuse ||
-            window.hypotenuse < (element.r + Math.floor(gameElements[0].w / 2))) {
-            $('#status').html("You were hit, OW! You lost 10 health.");
-            //hurt the player
-            player.health -= 10;
-            console.log(player.health);
-            return (true);
-        }
+        //get new hypotenuse
+        nextDistX = window.playerX - nextX;
+        nextDistY = window.playerY - nextY;
 
-        //left & right checks working. next -top & down
-        if (((element.x - element.r) <= gameBoard.x) || ((element.x + element.r) >= (gameBoard.x + gameBoard.w)) || ((element.y - element.r) <= (gameBoard.y)) || ((element.y + element.r) >= (gameBoard.y+gameBoard.h))) {
-            $('#status').html("You can't move there!");
-            return (true);
-        } 
+        //check values
+        console.log('Distance from X: '+nextDistX);
+        console.log('Distance from Y: '+nextDistY);
+        nextH = Math.floor(Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2)));
+        console.log('Hypotenuse: '+nextH);
+        console.log((element.r + Math.floor((player.w * Math.sqrt(2)) / 2)));
 
+        if ( (element.r + Math.floor((player.w * Math.sqrt(2)) / 2)) > nextH ) {
+            $('#status').html("You were hit, OW!");
+            return (true); }
         else {
             return (false);
-        }
+        	}
     }
 
 
@@ -278,7 +265,7 @@ function movePlayer(moveType, collision, element) {
         this.w = w || 50;
         this.h = h || 50;
         this.fill = fill || "red";
-        this.health = 100;
+        this.health = (this.w + this.h);
         this.speed = 10;
 
 
@@ -308,6 +295,7 @@ function movePlayer(moveType, collision, element) {
         this.y = y || 380; // y || 200;
         this.r = r || 60;
         this.fill = fill || "blue";
+        this.attack = 4;
 
         //make an attribute that is the enemies attack strength
         //make an attribute that is the enmeies health
