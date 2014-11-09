@@ -20,11 +20,7 @@
 
     <script>
     $(document).ready(function() {
-
-        getElements();
-
-        drawElements();
-
+    	run();
         //Change this function name, it don't make no sense
         keyPosition();
 
@@ -79,6 +75,7 @@
 
     //draw game elements on canvas
     function drawElements() {
+
         for (var c = 0; c < gameElements.length; c++) {
             //draw element on canvas
             getGameElementsPos();
@@ -90,6 +87,20 @@
     function updateBoard() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawElements();
+    }
+
+    function run() {
+    	//get elements
+    	getElements();
+    	
+    	//frames per second
+    	FPS = 50;
+    	intervalHandle = setInterval(
+    		function() {
+    			drawElements();
+    			updateBoard();
+    		}, 1000/FPS); 
+
     }
 
     // #################################
@@ -112,11 +123,7 @@
                 if (gameElements[e] instanceof Enemy) {
 
                     //detect collisions
-                   	
-                   	//check enemy coordinates
-                   	console.log('Enemy X: '+gameElements[e].x);
-                   	console.log('Enemy Y: '+gameElements[e].y);
-
+                   
 		            var nextX = gameElements[e].x;
 		            var nextY = gameElements[e].y;
 
@@ -124,52 +131,43 @@
                         case (evt.keyCode == 40): 
                             //enemy moves up, enemy -y
                             nextY -= player.speed;
-                            console.log('nextY '+nextY);
-                            //console.log('you move down');
+                            //console.log('nextY '+nextY);
+           	                //console.log('you move down');                      
                             moveType = 'down';
                             break;
                         case (evt.keyCode == 38):
                             //enemy moves down, enemy +y
                             nextY += player.speed;
-                            console.log('nextY '+nextY);
+                            //console.log('nextY '+nextY);
                             //console.log('you move up');
                             moveType = 'up';
                             break;
                         case (evt.keyCode == 37):
                         	//enemy moves right, enemy +x
                         	nextX += player.speed;
-                        	console.log('nextX '+nextX);
+                        	//console.log('nextX '+nextX);
                         	//console.log('you move left');
                         	moveType = 'left';
                         	break;
                         case (evt.keyCode == 39):
                         	//enemy moves left, enemy -x
                         	nextX -= player.speed;
-                        	console.log('nextX '+nextX);
+                        	//console.log('nextX '+nextX);
                         	//console.log('you move right');
                         	moveType = 'right';
                         	break;
                     }
 
                     //check ray length of next move
-                    //I'm getting the current move :/
-                   	console.log('Next Move X: '+nextX);
-		            console.log('Next Move Y: '+nextY);
                     var collision = collsionDetect(nextX, nextY, gameElements[e]);
-                    console.log('Was there a collision? ' +collision);
+                    
                     //move the player if no collision
-                    if (collision == false) {
+                    if (collision === false) {
                     movePlayer(moveType, gameElements[e]);
                     }
-
                     else {
-                    	console.log('you cannot move there!');
-                    	moveType = '';
-                    	console.log(moveType); 
+                    	attack(collision, gameElements[e]);
                     }
-
-                    //redraw board
-                    updateBoard();
                 }
             }
         });
@@ -181,12 +179,10 @@ function movePlayer(moveType, element) {
         //check future move to see if player can move there
         switch(true) {
         	case (moveType == 'up'):
-
             element.y += player.speed;
           	break;
 
-        	case (moveType == 'down'):
-        	
+        	case (moveType == 'down'):       	
             element.y -= player.speed;
         	break;
 
@@ -199,6 +195,8 @@ function movePlayer(moveType, element) {
             element.x -= player.speed;
         	break;
         }
+    // //redraw board
+    //                 updateBoard();
 }
 
 //get the future hypotenuse
@@ -237,24 +235,31 @@ function movePlayer(moveType, element) {
         //logic: check if player hit enemy using ray-casting
 
         //get new hypotenuse
-        nextDistX = window.playerX - nextX;
-        nextDistY = window.playerY - nextY;
-
-        //check values
-        console.log('Distance from X: '+nextDistX);
-        console.log('Distance from Y: '+nextDistY);
+        var nextDistX = window.playerX - nextX;
+        var nextDistY = window.playerY - nextY;
         nextH = Math.floor(Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2)));
-        console.log('Hypotenuse: '+nextH);
-        console.log((element.r + Math.floor((player.w * Math.sqrt(2)) / 2)));
 
-        if ( (element.r + Math.floor((player.w * Math.sqrt(2)) / 2)) > nextH ) {
-            $('#status').html("You were hit, OW!");
+        if ( nextH <= (element.r + Math.floor((player.w * Math.sqrt(2)) / 2))) {
             return (true); }
         else {
             return (false);
         	}
     }
 
+
+function attack(collision, element) {
+
+	if (collision == true){
+		$('#status').html("You were hit, OW! You lost some mass.");
+	    //restrict mass collection to player w/h?
+
+	    //hurt player
+	    player.w -= element.attack/2;
+	    player.h -= element.attack/2;
+	    element.r += element.attack/4;
+	}
+
+}
 
     // constructor objects -- game elements 
     function Player(x, y, w, h, fill) {
@@ -266,7 +271,11 @@ function movePlayer(moveType, element) {
         this.h = h || 50;
         this.fill = fill || "red";
         this.health = (this.w + this.h);
-        this.speed = 10;
+        
+        //velocity method here
+        //get increases in velocity
+        //change movement
+        this.speed = 1.3;
 
 
         //draw player method
@@ -296,12 +305,17 @@ function movePlayer(moveType, element) {
         this.r = r || 60;
         this.fill = fill || "blue";
         this.attack = 4;
+        this.velocity = 1;
 
         //make an attribute that is the enemies attack strength
         //make an attribute that is the enmeies health
 
         //draw enemy method
         this.update = function() {
+
+        	//move enemy
+        	this.x = this.x + this.velocity/window.FPS;
+        	this.y = this.y + this.velocity/window.FPS;
 
             ctx.fillStyle = this.fill;
             ctx.beginPath();
