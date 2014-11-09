@@ -1,5 +1,11 @@
 ==================================
-Javascript: Classes
+Custom Game Physics Engine
+==================================
+http://gamedevelopment.tutsplus.com/tutorials/how-to-create-a-custom-2d-physics-engine-the-basics-and-impulse-resolution--gamedev-Javascript
+
+
+==================================
+6331: Classes
 ==================================
 http://dean.edwards.name/weblog/2006/03/base/
 
@@ -35,7 +41,7 @@ https://www.inkling.com/read/javascript-definitive-guide-david-flanagan-6th/chap
 Basic Shite: HTML5 Canvas
 ==================================
 
-Html5 Tutorial: http://www.somethinghitme.com/2013/01/09/creating-a-canvas-platformer-tutorial-part-one/
+Html5 http: Tutorial://www.somethinghitme.com/2013/01/09/creating-a-canvas-platformer-tutorial-part-one/
 
 Better HTML5 Tutorial: 
 http://joshondesign.com/p/books/canvasdeepdive/chapter03.html#events

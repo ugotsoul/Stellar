@@ -1,0 +1,24 @@
+//how do I restrict player movement to within the game board?
+
+//how do I move the player incrimently slower than the enemy?
+
+//how do I do basic game physics?
+
+//how do I check if an object exists in the game space?
+
+
+
+//how do I locate enemies?
+//itterate through game array
+//check enemy1 x, enemy2 x
+//if collision
+
+		//logic: if element/enemy colided with an enemy.
+			//if enemy1.mass > enemy2.mass
+			//hurt enemy2
+			//add mass to enemy 1
+			//if enemy2.mass < enemy1.mass
+			//hurt enemy1
+			//add mass to enemy 2
+			//if enemy1.mass == enemy2.mass
+			//randomly hurt one of the objects
