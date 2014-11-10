@@ -34,7 +34,8 @@
         x: 0,
         y: 0,
         h: 700,
-        w: 1800
+        w: 1800,
+        gravity: .1,
     };
 
 
@@ -91,7 +92,7 @@
     }
 
     function run() {
-    	//get elements
+    	//get game objects
     	getElements();
     	
     	//frames per second
@@ -183,20 +184,27 @@ function movePlayer(moveType, element) {
         	case (moveType == 'up'):
 
         	//need to change this to physics behavior of player and enemy along vectors
-
-            element.y += player.velocity;
+        	player.angle = 270;
+        	player.velocity += .1;
+            //element.y += player.velocity;
           	break;
 
-        	case (moveType == 'down'):       	
-            element.y -= player.velocity;
+        	case (moveType == 'down'): 
+        	player.angle = 90;
+        	player.velocity += .1;      	
+            //element.y -= player.velocity;
         	break;
 
-        	case (moveType == 'left'):      	
-            element.x += player.velocity;
+        	case (moveType == 'left'):
+        	player.angle = 180;
+        	player.velocity += .1;      	
+            //element.x += player.velocity;
         	break;
 
         	case (moveType == 'right'):
-            element.x -= player.velocity;
+        	player.angle = 360;
+        	player.velocity += .1;
+            //element.x -= player.velocity;
         	break;
         }
 }
@@ -291,16 +299,50 @@ function attack(collision, element) {
         this.fill = fill || "red";
         this.mass = (this.w + this.h);
         
-        //velocity attribute here
-        this.velocity = 1.3;
+        //physics attributes here
+        this.velocity = 1;
+        this.friction = .08;
+        this.angle = 0; 
+        this.radians = 0;
+        this.dx = 0;
+        this.dy = 0;
 
-        this.update = function() {}
 
-        this.interact = function() {}
+        this.update = function() {
+       		//calculate angle of movement along a vector
+		    this.radians = this.angle * Math.PI/180;
+		    this.dx = Math.cos(this.radians) * (this.velocity*this.friction);
+		    this.dy = Math.sin(this.radians) * (this.velocity*this.friction);
+		    //move player along vector
+        	this.x += this.dx;
+        	this.y += this.dy;
+        	//decrease velocity
 
+        }
 
-        //draw player method -- change name to draw
+        //check if enemy hits game boundries
+        this.interact = function () {
+        	if ( (this.x+this.w) >= gameBoard.w || (this.x) <= gameBoard.x ) {
+        		this.angle=180 - this.angle;
+        		this.update();
+        	}
+
+        	else if ( (this.y) <= gameBoard.y || (this.y+this.h) >= gameBoard.h) {
+        		this.angle= 360 - this.angle;
+        		this.update();	
+        	}
+
+        	else {
+        		this.update();
+        	}
+        }
+
+        //draw player method
         this.draw = function() {
+
+        	//check game board restricts, adjust angle of vector accordingly
+        	this.interact();
+
             ctx.fillStyle = this.fill;
             ctx.fillRect(this.x, this.y, this.w, this.h);
 
@@ -328,7 +370,7 @@ function attack(collision, element) {
         this.attack = 4;
 
         //enemy physics
-        this.velocity = .3;
+        this.velocity = .1;
         this.radians = 0;
         this.dx = 0;
         this.dy = 0;
@@ -340,22 +382,15 @@ function attack(collision, element) {
         this.interact = function () {
         	if ( (this.x+this.r) >= gameBoard.w || (this.x-this.r) <= gameBoard.x ) {
         		this.angle=180 - this.angle;
-        		console.log('old angle is'+this.angle);
-        		console.log('bumped into the left or right wall');
-        		console.log('new angle is'+this.angle);	
         		this.update();
         	}
 
         	else if ( (this.y-this.r ) <= gameBoard.y || (this.y+this.r) >= gameBoard.h) {
         		this.angle= 360 - this.angle;
-        		console.log('old angle is'+this.angle);
-        		console.log('bumped into the top or bottom wall');
-        		console.log('new angle is'+this.angle);
         		this.update();	
         	}
 
         	else {
-        		console.log('no collision');
         		this.update();
         	}
 
@@ -364,7 +399,7 @@ function attack(collision, element) {
         //update enemy position
         this.update = function() {
 
-		   	//calculate movement along a vector
+		   	//calculate angle of movement along a vector
 		    this.radians = this.angle * Math.PI/180;
 		    this.dx = Math.cos(this.radians) * this.velocity;
 		    this.dy = Math.sin(this.radians) * this.velocity;
@@ -374,6 +409,7 @@ function attack(collision, element) {
         //draw enemy method
         this.draw = function() {
 
+        	//check game board restricts, adjust angle of vector accordingly
         	this.interact();
 
         	//move enemy on its own
