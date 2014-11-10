@@ -30,15 +30,13 @@
     var ctx = canvas.getContext('2d');
 
     //test world boundries
-    function gameBoard(x, y, h, w) {
-        this.x = x || 100;
-        this.y = y || 100;
-        this.h = h || 500;
-        this.w = w || 1500;
-    }
+   	var gameBoard = {
+        x: 0,
+        y: 0,
+        h: 700,
+        w: 1800
+    };
 
-    //instanciate board object
-    board = gameBoard();
 
     // ###############################
     //  Constructer Objects
@@ -48,7 +46,7 @@
     var player = new Player();
 
     //# of enemies
-    e = 2;
+    e = 1;
 
     //creates an array of length player + enemy objects
     var gameElements = new Array();
@@ -66,10 +64,13 @@
         //add e# of enemy to game element array
         for (var b = 0; b < (e); b++) {
 
+    	   	var rX;
+        	var rY;
+
             // instanciate enemies in random places on the board
-            var rx = getRandomInteger(75, 1700);
-            var ry = getRandomInteger(75, 600);
-            gameElements.push(new Enemy(rx, ry));
+            rX = getRandomInteger(75, 1700);
+            rY = getRandomInteger(75, 600);
+            gameElements.push(new Enemy(rX, rY));
         }
     }
 
@@ -130,28 +131,28 @@
                     switch (true) {
                         case (evt.keyCode == 40): 
                             //enemy moves up, enemy -y
-                            nextY -= player.speed;
+                            nextY -= player.velocity;
                             //console.log('nextY '+nextY);
            	                //console.log('you move down');                      
                             moveType = 'down';
                             break;
                         case (evt.keyCode == 38):
                             //enemy moves down, enemy +y
-                            nextY += player.speed;
+                            nextY += player.velocity;
                             //console.log('nextY '+nextY);
                             //console.log('you move up');
                             moveType = 'up';
                             break;
                         case (evt.keyCode == 37):
                         	//enemy moves right, enemy +x
-                        	nextX += player.speed;
+                        	nextX += player.velocity;
                         	//console.log('nextX '+nextX);
                         	//console.log('you move left');
                         	moveType = 'left';
                         	break;
                         case (evt.keyCode == 39):
                         	//enemy moves left, enemy -x
-                        	nextX -= player.speed;
+                        	nextX -= player.velocity;
                         	//console.log('nextX '+nextX);
                         	//console.log('you move right');
                         	moveType = 'right';
@@ -174,25 +175,28 @@
     }
 
 
+//only moving the enemy, need to incremently move the player
 function movePlayer(moveType, element) {
 
         //check future move to see if player can move there
         switch(true) {
         	case (moveType == 'up'):
-            element.y += player.speed;
+
+        	//need to change this to physics behavior of player and enemy along vectors
+
+            element.y += player.velocity;
           	break;
 
         	case (moveType == 'down'):       	
-            element.y -= player.speed;
+            element.y -= player.velocity;
         	break;
 
-        	case (moveType == 'left'):
-        	
-            element.x += player.speed;
+        	case (moveType == 'left'):      	
+            element.x += player.velocity;
         	break;
 
         	case (moveType == 'right'):
-            element.x -= player.speed;
+            element.x -= player.velocity;
         	break;
         }
 }
@@ -259,13 +263,19 @@ function attack(collision, element) {
 			//randomly hurt one of the objects
 
 	    //if element collided with player
-	    //if mass player (wxh) == zero, end game
+	    //if mass player (wxh) == zero, stop game run, begin end game state
 	    //else, hurt player
 
 	    //hurt player
-	    player.w -= element.attack/2;
-	    player.h -= element.attack/2;
-	    element.r += element.attack/4;
+	    //as the players mass decreases, the enemies attack strength increases
+	    //to do this accurately, I need the direction of player movement
+	    //and the player needs to 'bounce' away from the enemy
+	    player.w -= element.attack/player.mass;
+	    player.h -= element.attack/player.mass;
+	    player.x += element.attack/2;
+	    player.y -= element.attack/2;
+	    //add mass to the element
+	    element.r += element.attack/player.mass;
 	}
 
 }
@@ -281,13 +291,12 @@ function attack(collision, element) {
         this.fill = fill || "red";
         this.mass = (this.w + this.h);
         
-
-        //velocity method here
-        //get increases in velocity
-        //change movement
-        this.speed = 1.3;
+        //velocity attribute here
+        this.velocity = 1.3;
 
         this.update = function() {}
+
+        this.interact = function() {}
 
 
         //draw player method -- change name to draw
@@ -317,13 +326,59 @@ function attack(collision, element) {
         this.r = r || 60;
         this.fill = fill || "blue";
         this.attack = 4;
-        this.velocity = 1;
 
-        //make an attribute that is the enemies attack strength
-        //make an attribute that is the enmeies health
+        //enemy physics
+        this.velocity = .3;
+        this.radians = 0;
+        this.dx = 0;
+        this.dy = 0;
+
+        //get random angle of movement along the vector
+        this.angle = getRandomInteger(0, 360);
+
+        //check if enemy hits game boundries
+        this.interact = function () {
+        	if ( (this.x+this.r) >= gameBoard.w || (this.x-this.r) <= gameBoard.x ) {
+        		this.angle=180 - this.angle;
+        		console.log('old angle is'+this.angle);
+        		console.log('bumped into the left or right wall');
+        		console.log('new angle is'+this.angle);	
+        		this.update();
+        	}
+
+        	else if ( (this.y-this.r ) <= gameBoard.y || (this.y+this.r) >= gameBoard.h) {
+        		this.angle= 360 - this.angle;
+        		console.log('old angle is'+this.angle);
+        		console.log('bumped into the top or bottom wall');
+        		console.log('new angle is'+this.angle);
+        		this.update();	
+        	}
+
+        	else {
+        		console.log('no collision');
+        		this.update();
+        	}
+
+        }
+
+        //update enemy position
+        this.update = function() {
+
+		   	//calculate movement along a vector
+		    this.radians = this.angle * Math.PI/180;
+		    this.dx = Math.cos(this.radians) * this.velocity;
+		    this.dy = Math.sin(this.radians) * this.velocity;
+
+        }
 
         //draw enemy method
         this.draw = function() {
+
+        	this.interact();
+
+        	//move enemy on its own
+        	this.x += this.dx;
+        	this.y += this.dy;
 
         	//enemy size & style
             ctx.fillStyle = this.fill;
@@ -331,6 +386,11 @@ function attack(collision, element) {
             ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, false);
             ctx.closePath();
             ctx.fill();
+
+            //###############################################
+            // Below code is to draw coordinates & check math
+            //###############################################
+
 
             //center coordinates of enemy object
             ctx.fillStyle = '#000';
@@ -366,15 +426,6 @@ function attack(collision, element) {
 
         }
 
-
-        //update enemy position
-        this.update = function() {
-
-        	//move enemy on its own
-        	this.x = this.x + this.velocity/window.FPS;
-        	this.y = this.y + this.velocity/window.FPS;
-
-        }
     }
     </script>
 </body>

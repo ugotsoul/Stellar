@@ -1,11 +1,17 @@
+READ: https://www.safaribooksonline.com/library/view/html5-canvas-2nd/9781449335847/ch05s01.html
+
+//how do I do basic game physics (position, velocity)?
+
 //how do I restrict player movement to within the game board?
 
 //how do I move the player incrimently slower than the enemy?
 
-//how do I do basic game physics?
-
 //how do I check if an object exists in the game space?
+//does the above matter, if I have an enemy interaction, where an enemy can another enemy, dependent on their size?
 
+//collision behavior: if I hit the enemy, the should be some sort of bounce back factor - I move back, the enemy moves back.
+
+//enemy pos - how can I restrict enemy to within game board bounds? (bouncing an enemy in the board?)
 
 
 //how do I locate enemies?
@@ -22,3 +28,10 @@
 			//add mass to enemy 2
 			//if enemy1.mass == enemy2.mass
 			//randomly hurt one of the objects
+
+   	var gameBoard = {
+        x: 0,
+        y: 0,
+        h: 700,
+        w: 1800
+    };
