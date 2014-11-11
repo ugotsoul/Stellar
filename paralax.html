@@ -20,23 +20,17 @@
 
     <script>
     $(document).ready(function() {
+    	//run game
     	run();
-        //Change this function name, it don't make no sense
-        keyPosition();
 
+    	//get arrow key type
+    	keyPosition();
+    	
     });
 
+    //draw the canvas
     var canvas = document.getElementById("canvas");
     var ctx = canvas.getContext('2d');
-
-    //test world boundries
-   	var gameBoard = {
-        x: 0,
-        y: 0,
-        h: 700,
-        w: 1800,
-        gravity: .1,
-    };
 
 
     // ###############################
@@ -75,6 +69,22 @@
         }
     }
 
+    //##############################
+    // Game constructor
+    //##############################
+    
+    //game world boundries - swap out h & w when you decided on a world size
+   	var Game = {
+        x: 0,
+        y: 0,
+        h: 700,
+        w: 1800,
+        //gravity needed? should this be dependent on type of object?
+        gravity: .1,
+    };
+
+    Game.proto
+
     //draw game elements on canvas
     function drawElements() {
         for (var c = 0; c < gameElements.length; c++) {
@@ -91,6 +101,7 @@
         drawElements();
     }
 
+    //runs the game (gets elements, draws game elements, updates game elements) @ 50 FPS
     function run() {
     	//get game objects
     	getElements();
@@ -109,102 +120,88 @@
     //  Get player position with Keypad
     // #################################
 
-    function keyPosition() {
+    // #################################################################################################
+    //  Note: you need to update (or nest data structures in) the array when you have more than 1 enemy! 
+    // #################################################################################################    
+
+    //track player movements
+	var moveType;
+
+    //movement handler for player
+	function keyPosition() {
 
         // event listener for keys
         $(window).keydown(function(evt) {
 
             $('#status').html('WEEEeeeee!');
 
-            //var to store type of event
-    		var moveType;
-
-            //log key movements
+            //log key movements in moveArr
             for (var e = 0; e < gameElements.length; e++) {
 
                 if (gameElements[e] instanceof Enemy) {
 
-                    //detect collisions
-                   	var collision;
+                	//get player keypress
+                    //detect collisions between player and all enemies on the board
 		            var nextX = gameElements[e].x;
 		            var nextY = gameElements[e].y;
 
                     switch (true) {
                         case (evt.keyCode == 40): 
                             //enemy moves up, enemy -y
-                            nextY -= player.velocity;
-                            //console.log('nextY '+nextY);
-           	                //console.log('you move down');                      
+                            nextY -= player.velocity;               
                             moveType = 'down';
                             break;
                         case (evt.keyCode == 38):
                             //enemy moves down, enemy +y
                             nextY += player.velocity;
-                            //console.log('nextY '+nextY);
-                            //console.log('you move up');
                             moveType = 'up';
                             break;
                         case (evt.keyCode == 37):
                         	//enemy moves right, enemy +x
                         	nextX += player.velocity;
-                        	//console.log('nextX '+nextX);
-                        	//console.log('you move left');
                         	moveType = 'left';
                         	break;
                         case (evt.keyCode == 39):
                         	//enemy moves left, enemy -x
                         	nextX -= player.velocity;
-                        	//console.log('nextX '+nextX);
-                        	//console.log('you move right');
                         	moveType = 'right';
                         	break;
-                    }
+                    	}
 
-                    //check ray length of next move
-                    collision = collsionDetect(nextX, nextY, gameElements[e]);
-                    
-                    //move the player if no collision
-                    if (collision === false) {
-                    movePlayer(moveType, gameElements[e]);
-                    }
-                    else {
-                    	attack(collision, gameElements[e]);
-                    }
-                }
-            }
-        });
-    }
+                    console.log(moveType);
+				  	console.log('you moved!');
+				  	movePlayer(moveType); 
+                    }                 
+            	}
+        	});
+    	};
 
 
-//only moving the enemy, need to incremently move the player
-function movePlayer(moveType, element) {
+function movePlayer(moveType) {
 
-        //check future move to see if player can move there
+		console.log('Moving in this direction '+moveType);
+
+        //cap the player at a max velocity
         switch(true) {
         	case (moveType == 'up'):
-
-        	//need to change this to physics behavior of player and enemy along vectors
+        	//angles are too ridged - need to gradually moveType the player along an angle      	
         	player.angle = 270;
         	player.velocity += .1;
-            //element.y += player.velocity;
           	break;
 
         	case (moveType == 'down'): 
         	player.angle = 90;
-        	player.velocity += .1;      	
-            //element.y -= player.velocity;
+        	player.velocity += .1;      	    
         	break;
 
         	case (moveType == 'left'):
         	player.angle = 180;
-        	player.velocity += .1;      	
-            //element.x += player.velocity;
+        	player.velocity += .1;      	      
         	break;
 
         	case (moveType == 'right'):
         	player.angle = 360;
         	player.velocity += .1;
-            //element.x -= player.velocity;
         	break;
         }
 }
@@ -237,56 +234,7 @@ function movePlayer(moveType, element) {
         }
     }
 
-    //collision detection with bounding boxes
-    function collsionDetect(nextX, nextY, element) {
 
-        //logic: check if player hit enemy using ray-casting
-
-        //get new hypotenuse
-        var nextDistX = window.playerX - nextX;
-        var nextDistY = window.playerY - nextY;
-        nextH = Math.floor(Math.sqrt(Math.pow(nextDistX, 2) + Math.pow(nextDistY, 2)));
-
-        if ( nextH <= (element.r + Math.floor((player.w * Math.sqrt(2)) / 2))) {
-            return (true); }
-        else {
-            return (false);
-        	}
-
-    }
-
-
-function attack(collision, element) {
-
-	if (collision == true){
-		$('#status').html("You were hit, OW! You lost some mass.");
-		//logic: if element/enemy colided with an enemy.
-			//if enemy1.mass > enemy2.mass
-			//hurt enemy2
-			//add mass to enemy 1
-			//if enemy2.mass < enemy1.mass
-			//hurt enemy1
-			//add mass to enemy 2
-			//if enemy1.mass == enemy2.mass
-			//randomly hurt one of the objects
-
-	    //if element collided with player
-	    //if mass player (wxh) == zero, stop game run, begin end game state
-	    //else, hurt player
-
-	    //hurt player
-	    //as the players mass decreases, the enemies attack strength increases
-	    //to do this accurately, I need the direction of player movement
-	    //and the player needs to 'bounce' away from the enemy
-	    player.w -= element.attack/player.mass;
-	    player.h -= element.attack/player.mass;
-	    player.x += element.attack/2;
-	    player.y -= element.attack/2;
-	    //add mass to the element
-	    element.r += element.attack/player.mass;
-	}
-
-}
 
     // constructor objects -- game elements 
     function Player(x, y, w, h, fill) {
@@ -297,11 +245,12 @@ function attack(collision, element) {
         this.w = w || 50;
         this.h = h || 50;
         this.fill = fill || "red";
-        this.mass = (this.w + this.h);
+        this.mass = this.w + this.h;
         
         //physics attributes here
         this.velocity = 1;
-        this.friction = .08;
+        this.friction = .03;
+        //this angle is too accurate, how do I realistically decrease its accuracy?
         this.angle = 0; 
         this.radians = 0;
         this.dx = 0;
@@ -316,19 +265,22 @@ function attack(collision, element) {
 		    //move player along vector
         	this.x += this.dx;
         	this.y += this.dy;
-        	//decrease velocity
-
         }
 
         //check if enemy hits game boundries
         this.interact = function () {
-        	if ( (this.x+this.w) >= gameBoard.w || (this.x) <= gameBoard.x ) {
+
+        	if ( (this.x+this.w) >= Game.w || (this.x) <= Game.x ) {
         		this.angle=180 - this.angle;
+        		//decrease velocity on impact
+        		this.velocity -= (this.velocity*this.friction);
         		this.update();
         	}
 
-        	else if ( (this.y) <= gameBoard.y || (this.y+this.h) >= gameBoard.h) {
+        	else if ( (this.y) <= Game.y || (this.y+this.h) >= Game.h) {
         		this.angle= 360 - this.angle;
+        		//decrease velocity on impact
+        		this.velocity -= (this.velocity*this.friction);
         		this.update();	
         	}
 
@@ -354,8 +306,10 @@ function attack(collision, element) {
             //player center distance from enemy center
             //change this to a div
             ctx.fillStyle = '#000';
-            ctx.font = "bold 20pt Sans-Serif";
-            ctx.fillText('You are ' + window.hypotenuse + ' px from the enemy.', 50, 50);
+            ctx.font = "bold 12pt Sans-Serif";
+            ctx.fillText('Your velocity is '+ this.velocity , 50, 50);
+            ctx.fillText('You are ' + window.hypotenuse + ' px from the enemy.', 50, 75);
+            ctx.fillText('You mass is ' + player.mass + '.', 50, 100);
 
         }
     }
@@ -367,7 +321,7 @@ function attack(collision, element) {
         this.y = y || 380; // y || 200;
         this.r = r || 60;
         this.fill = fill || "blue";
-        this.attack = 4;
+        this.attack = 5;
 
         //enemy physics
         this.velocity = .1;
@@ -380,25 +334,48 @@ function attack(collision, element) {
 
         //check if enemy hits game boundries
         this.interact = function () {
-        	if ( (this.x+this.r) >= gameBoard.w || (this.x-this.r) <= gameBoard.x ) {
+        	
+        	if ( (this.x+this.r) >= Game.w || (this.x-this.r) <= Game.x ) {
         		this.angle=180 - this.angle;
         		this.update();
         	}
 
-        	else if ( (this.y-this.r ) <= gameBoard.y || (this.y+this.r) >= gameBoard.h) {
+        	else if ( (this.y-this.r ) <= Game.y || (this.y+this.r) >= Game.h) {
         		this.angle= 360 - this.angle;
         		this.update();	
         	}
 
-        	else {
+		    else if ( window.hypotenuse <= (this.r + Math.floor((player.w * Math.sqrt(2)) / 2))) {
+                    console.log('I was hit! OW!');
+					
+					//hurt player
+				    //as the players mass decreases, the enemies attack strength increases
+				    //to do this accurately, I need the direction of player movement
+				    //and the player needs to gradually 'bounce' away from the enemy
+				    //similar to the angle of insidence equation
+				    player.mass -= this.attack;
+				    player.w -= this.attack/2;
+				    player.h -= this.attack/2;
+				    player.x += this.attack;
+				    player.y -= this.attack;
+				    //add mass to the enemy
+				    this.r += this.attack/player.mass;
+				    //slow the player down
+				    player.velocity -= .5;
+
+				    //switch the angle of the player away from enemy
+				    player.angle = -this.angle;
+
+				    $('#status').html("You were hit, OW! You lost " + enemy.attack + " health points.");
+				    this.update();	
+				}
+			else {
         		this.update();
         	}
-
         }
 
         //update enemy position
         this.update = function() {
-
 		   	//calculate angle of movement along a vector
 		    this.radians = this.angle * Math.PI/180;
 		    this.dx = Math.cos(this.radians) * this.velocity;
