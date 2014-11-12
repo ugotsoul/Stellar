@@ -35,3 +35,11 @@ READ: https://www.safaribooksonline.com/library/view/html5-canvas-2nd/9781449335
         h: 700,
         w: 1800
     };
+
+
+  To do this right, you need to rotate the coordinate system to align the the line going through the centers of both balls, then you can transfer the speed along that line while preserving the speeds perpendicular to it, then rotate the result back to the original coordinate system - quite a bit of triggonometry is needed.
+
+
+  newVelX =
+ (firstBall.speed.x * (firstBall.mass – secondBall.mass) + (2 * secondBall.mass * secondBall.speed.x))
+ / (firstBall.mass + secondBall.mass);
