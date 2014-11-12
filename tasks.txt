@@ -43,3 +43,46 @@ READ: https://www.safaribooksonline.com/library/view/html5-canvas-2nd/9781449335
   newVelX =
  (firstBall.speed.x * (firstBall.mass – secondBall.mass) + (2 * secondBall.mass * secondBall.speed.x))
  / (firstBall.mass + secondBall.mass);
+
+
+
+    //     	//make the player lose velocity
+    //     	if (this.vX >= this.maxV) {
+    //     		this.vX -= this.speed;
+    //     	}
+
+    //     	else if (this.vX <= this.maxV) {
+				// this.vX += this.speed;
+    //     	}
+        	
+    //     	if (this.vY >= this.maxV) { 
+    //     		this.vY -= this.speed;
+    //     	}
+
+    //     	else if (this.vY <= this.maxV) {
+    //     		this.vY += this.speed;
+    //     	}
+
+
+    
+            //        console.log('I was hit! OW!');
+					
+					// //hurt player
+				 //    player.mass -= this.attack;
+				 //    player.w -= this.attack/2;
+				 //    player.h -= this.attack/2;
+				 //    player.x += this.attack;
+				 //    player.y -= this.attack;
+				 //    //add mass to the enemy
+				  //  this.r += this.attack/player.mass;
+
+				    //slow the player down
+				//    player.velocity -= .5;
+				//	this.velocity += .1;
+
+				    //##########################################################################
+				    ////switch the angle of player - below code is wrong -HOW DO I DU THISSSSS
+				    //##########################################################################
+				//    player.angle -= this.angle;
+
+			//	    $('#status').html("You were hit, OW! You lost " + this.attack + " health points.");		

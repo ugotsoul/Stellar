@@ -1,11 +1,13 @@
 canvas {
 	border: 1px solid #000;
-
 }
-
 
 #status {
 	font-family: sans-serif;
 	font-size: 50pt;
 	text-align: center;
+}
+
+#bg-canvas {
+	z-index: -1;
 }

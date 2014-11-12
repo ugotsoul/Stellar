@@ -1,172 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <title>Test game</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="jquery.min.js"></script>
-</head>
-
-<body>
-
-    <canvas id="canvas" height="700" width="1800">
-        Oops, your browser does not support Html5 canvas. Dang.
-    </canvas>
-
-    <div id="status">
-        This is a game about stars and stuff.
-    </div>
-
-    <script>
-    $(document).ready(function() {
-    	
-    	//run game
-    	game.run();
-
-    	//get arrow key type
-    	keyPosition();
-    	
-    });
-
-    //draw the canvas
-    var canvas = document.getElementById("canvas");
-    var ctx = canvas.getContext('2d');
-
-
-    // ###############################
-    //  Constructer Objects
-    // ###############################
-
-    //global player object 
-    var player = new Player();
-
-    //# of enemies
-    e = 1;
-
-    //creates an array of length player + enemy objects
-    var gameElements = new Array();
-
-    //get random integer
-    function getRandomInteger(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
-    //add game objects
-    function getElements() {
-        //add player to game element array
-        gameElements.push(player);
-
-        //add e# of enemy to game element array
-        for (var b = 0; b < (e); b++) {
-
-    	   	var rX;
-        	var rY;
-
-            // instanciate enemies in random places on the board
-            rX = getRandomInteger(75, 1700);
-            rY = getRandomInteger(75, 600);
-            gameElements.push(new Enemy(rX, rY));
-        }
-    }
-
-    //##############################
-    // Game constructor
-    //##############################
-    
-    //game world boundries - swap out h & w when you decided on a world size
-   	var Game =  function (x, y, h, w) {
-        this.x = x || 0;
-        this.y =  y || 0;
-        this.h =  h || 700;
-        this.w =  w || 1800;
-    };
-
-    Game.prototype.draw = function() {
-    	//clear and then draw canvas & game elements     	
-    	ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-	    for (var c = 0; c < gameElements.length; c++) {
-	        //draw element on canvas
-	        getGameElementsPos();
-	        gameElements[c].draw();
-    	}
-    };
-
-    Game.prototype.update = function (dt) {
-    //update positions of game elements
-        for (var d = 0; d < gameElements.length; d++) {
-   		    gameElements[d].update(dt);
-        }
-    }
-
-    //runs the game (gets elements, draws game elements, updates game elements) @ 50 FPS
-    Game.prototype.run = function () {
-    	//get game objects
-    	getElements();
-    	
-    	//frames per second
-    	FPS = 50;
-    	this.step = function() {
-    			Game.prototype.update(1/FPS);
-    			Game.prototype.draw();
-    		}
-    	this.intervalHandle = setInterval(this.step, 1000/FPS); 
-    }
-
-    Game.prototype.end = function () {
-    		
-    		//stop game.
-    		//clear interval.
-
-    		//if (player.mass <= 10)
-    		clearInterval(this.intervalHandle);
-    		ctx.clearRect(0, 0, canvas.width, canvas.height);
-    		ctx.fillStyle = '#000';
-            ctx.font = "bold 80pt Sans-Serif";
-            ctx.fillText('YOU DIED!', this.w/3, this.h/2);
-    }
-
-    //instanciate new game object
-    var game = new Game();
-
-    // #################################
-    //  GAME STUFF: POSITION & KEYPRESS
-    // #################################
- 
-    function getGameElementsPos() {
-        //get player cordinates
-
-        for (var f = 0; f < gameElements.length; f++) {
-
-            //get player cordinates
-            if (gameElements[f] instanceof Player) {
-                //need to get center of box, html5 canvas draws from top left
-                playerX = (gameElements[f].x + (gameElements[f].w / 2));
-                playerY = (gameElements[f].y + (gameElements[f].h / 2));
-                playerH = gameElements[f].h;
-                playerW = gameElements[f].w;
-            }
-            //get enemy cordinates
-            else if (gameElements[f] instanceof Enemy) {
-                enemyX = gameElements[f].x;
-                enemyY = gameElements[f].y;
-                enemyR = gameElements[f].r;
-
-                distX = playerX - enemyX;
-                distY = playerY - enemyY;
-
-                hypotenuse = Math.floor(Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2)));
-
-            }
-        }
-    }
-
-    // #################################################################################################
-    //  Note: you need to update (or nest data structures in) the array when you have more than 1 enemy! 
-    // #################################################################################################    
-
-    //track player movements
+  //track player movements
 	var moveType;
 
     //movement handler for player
@@ -207,102 +39,95 @@
     	};
 
 
-function movePlayer(moveType) {
 
-		console.log('Moving in this direction '+moveType);
+function Player.prototype.move = function (moveType) {
+
+            console.log('Moving in this direction '+moveType);
 
         //cap the player at a max velocity
         switch(moveType) {
-        	case 'up':   	
-        	player.vY -= player.speed;
-          	break;
+            case 'up':      
+            player.vY -= player.speed;
+            break;
 
-        	case 'down': 
-        	player.vY += player.speed;      	    
-        	break;
+            case 'down': 
+            player.vY += player.speed;              
+            break;
 
-        	case 'left':
-        	player.vX -= player.speed;   	      
-        	break;
+            case 'left':
+            player.vX -= player.speed;            
+            break;
 
-        	case 'right':
-        	player.vX += player.speed;
-        	break;
+            case 'right':
+            player.vX += player.speed;
+            break;
         }
+    }
+
+
+function GameObject(x, y, r, fill) {
+
+    this.x = x;
+    this.y = y;
+    this.r = r;
+    this.fill = fill;
+
+    //physics attributes here
+    this.speed = 10;
+    //pixels per second
+    this.vX = 1;
+    this.vY = 1;
+    //this is the incriment of vX & vY divided by the timestep (x pixels per 1/FPS)
+    this.dx = 0;
+    this.dy = 0;
+
 }
 
+GameObject.prototype.update = function(dt) {
 
-    // constructor objects -- game elements 
-    function Player(x, y, r, fill) {
+            //calculate angle of movement along a vector
+            this.dx = (this.vX*dt);
+            this.dy = (this.vY*dt);
+            //move player along vector
+            this.x += this.dx;
+            this.y += this.dy;
 
-        //player attributes
-        this.x = x || 500;
-        this.y = y || 350; //350
-        this.r = r || 20;
-        this.fill = fill || "red";
-        this.mass = (Math.PI * this.r * 2);
-        
-        //physics attributes here
-        //divide all below by FPS
-        this.speed = 10;
-        //pixels per second
-        this.vX = 1;
-        this.vY = 1;
-        this.drag = .01;
-
-        //this is the incriment of vX & vY divided by the timestep (x pixels per 1/FPS)
-        this.dx = 0;
-        this.dy = 0;
-
-        this.maxV = 0;
-
-        this.update = function(dt) {
-
-       		//calculate angle of movement along a vector
-		    this.dx = (this.vX*dt);
-		    this.dy = (this.vY*dt);
-		    //move player along vector
-        	this.x += this.dx;
-        	this.y += this.dy;
-
-			//check game board restricts, adjust angle of vector accordingly
-        	this.interact(dt);
+            //check game board restricts, adjust angle of vector accordingly
+            this.interact(dt);
         }
 
+
+
+GameObject.prototype.displacementVector = function (element) {
+            //get the distance between centers of player and enemy object
+            var distance = new Array();
+
+            //eX & eY are for the elements X, Y
+            distance[0] = this.x - element.x;
+            distance[1] = this.y - element.y;
+
+            return distance;
+        }
+
+GameObject.prototype.displacement = function(enemy) {
+            //vector subtraction yields the hypotenuse of the triangle law
+
+            //get distance array object
+            var distance = this.displacementVector(enemy);
+
+            //get the hypotenuse 
+            var moveLength = Math.sqrt(distance[0]*distance[0] + distance[1]*distance[1]);
+            
+            return moveLength;
+        }
 
         //########################################
         // AABB check - overlapping bounding boxes
         //########################################
 
-        this.displacementVector = function (enemy) {
-        	//get the distance between centers of player and enemy object
-        	var distance = new Array();
 
-        	//eX & eY are for the elements X, Y
-        	distance[0] = this.x - enemy.x;
-        	distance[1] = this.y - enemy.y;
-
-        	return distance;
-        }
-
-        this.displacement = function(enemy) {
-        	//vector subtraction yields the hypotenuse of the triangle law
-
-        	//get distance array object
-        	var distance = this.displacementVector(enemy);
-
-        	//vector.length function
-
-        	//get the hypotenuse 
-        	var moveLength = Math.sqrt(distance[0]*distance[0] + distance[1]*distance[1]);
-        	
-        	return moveLength;
-        }
 
         this.collisionDetect = function (enemy) {
-        	//this doesn't calculate the future move, or the current vX + current x
-        	//ISSUE: on slow motion, will enter the enemy's area
-
         	//get the length of the distance from center of player to enemy
         	return this.displacement(enemy) <= (this.r+enemy.r);
         }
@@ -359,18 +184,23 @@ function movePlayer(moveType) {
         //check if player hits game boundries
         this.interact = function (dt) {
 
-        	if ( (this.x+this.r >= game.w) || (this.x-this.r <= game.x ) )  {
+        	if ((this.x+this.r) >= game.w ) {
         		this.vX = -this.vX;
-        		//decrease velocity on impact
-        		this.vX -= this.drag * this.vX;		
-        	}
-
-        	if ( (this.y-this.r  <= game.y) || (this.y+this.r >= game.h) ) {
+        		this.x = game.w - this.r;
+        		} 
+        	else if ((this.x-this.r) <= game.x) {
+        		this.vX = -this.vX;
+        		this.x = this.r; 
+        		} 
+        	else if ((this.y-this.r) <= game.y) {
+        		this.vY = -this.vY;	
+        		this.y = this.r; 
+        		}
+        	else if (this.y+this.r >= game.h) {
         		this.vY = -this.vY;
-        		//decrease velocity on impact
-        		this.vY -= this.drag * this.vY;	
-        	}	
-    		
+        		this.y = game.h - this.r;
+        		}
+
     		for (var i = 0; i < gameElements.length; i++) {
     			var element = gameElements[i];
     			if (element instanceof Enemy) { 
@@ -406,20 +236,13 @@ function movePlayer(moveType) {
             //change this to a div
             ctx.fillStyle = '#000';
             ctx.font = "bold 12pt Sans-Serif";
-            ctx.fillText('Your velocity is '+ (this.vX + this.vY) , 50, 50);
+            ctx.fillText('Your X velocity is '+ Math.abs(this.vX), 50, 25);
+            ctx.fillText('Your Y velocity is '+ Math.abs(this.vY), 50, 50);
             ctx.fillText('You are ' +  this.displacement(gameElements[1])  + ' px from the enemy.', 50, 75);
             ctx.fillText('You mass is ' + player.mass + '.', 50, 100);
 
         }
     }
-
-
-   Player.prototype.dead = function() {
-	   	//death state
-	   	if (this.mass <= 10) {
-	   		Game.prototype.end();
-	   	}
-   }	
 
 
     function Enemy(x, y, r, fill) {
@@ -431,12 +254,14 @@ function movePlayer(moveType) {
         this.fill = fill || "blue";
         this.mass = (Math.PI * this.r * 2);
         this.attack = 5;
+        this.drag = .01;
 
         //enemy physics
         this.dx = 0;
         this.dy = 0;
         this.vX = 1;
         this.vY = 1;
+        this.maxV = 20;
 
 
         //get length of vector from center of enemy to center of player
@@ -444,17 +269,23 @@ function movePlayer(moveType) {
         //check if enemy hits game boundries
         this.interact = function (dt) {
         	
-        	if ( (this.x+this.r) >= game.w || (this.x-this.r) <= game.x ) {
+        	if ((this.x+this.r) >= game.w ) {
         		this.vX = -this.vX;
-        		
-        	}
-
-        	if ( (this.y-this.r ) <= game.y || (this.y+this.r) >= game.h) {
+        		this.x = game.w - this.r; 
+        		}
+        	else if ((this.x-this.r) <= game.x) {
+        		this.vX = -this.vX;
+        		this.x = this.r; 
+        		} 
+        	else if ((this.y-this.r) <= game.y) {
         		this.vY = -this.vY;	
-        	}
+        		this.y = this.r; 
+        		}
+        	else if (this.y+this.r >= game.h) {
+        		this.vY = -this.vY;
+        		this.y = game.h - this.r;
+        		}
 
-
-		    //else if ( window.hypotenuse <= (this.r + Math.floor((player.w * Math.sqrt(2)) / 2))) {
             //        console.log('I was hit! OW!');
 					
 					// //hurt player
@@ -475,13 +306,12 @@ function movePlayer(moveType) {
 				    //##########################################################################
 				//    player.angle -= this.angle;
 
-			//	    $('#status').html("You were hit, OW! You lost " + this.attack + " health points.");
-			//	    this.update();	
-		
-        }
+			//	    $('#status').html("You were hit, OW! You lost " + this.attack + " health points.");		
+        	}
 
         //update enemy position
         this.update = function(dt) {
+		   	
 		   	//calculate angle of movement along a vector
 		    this.dx = (this.vX*dt);
 		    this.dy = (this.vY*dt);
@@ -538,7 +368,3 @@ function movePlayer(moveType) {
         }
 
     }
-    </script>
-</body>
-
-</html>
