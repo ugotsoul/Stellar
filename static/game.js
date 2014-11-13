@@ -40,7 +40,7 @@
             // instanciate enemies in random places on the board with random radiuses
             var rX = getRandomInteger(75, 1700);
             var rY = getRandomInteger(75, 600);
-            var rR = getRandomInteger(7, 10);
+            var rR = getRandomInteger(10, 20);
 
             var tempEnemy = new Enemy(rX, rY, rR);
 
@@ -154,18 +154,25 @@
     	if (player.death == true) {
     		ctx.clearRect(0, 0, canvas.width, canvas.height);
     		ctx.fillStyle = '#000';
+    		ctx.textAlign = "center";
             ctx.font = "bold 80pt Sans-Serif";
             //you need to clear the canvas for this instance of the Game object -- game -- not the Game object. 
-            ctx.fillText('YOU DIED!', game.w/2, game.h/2);
+            ctx.fillText('YOU DIED!', game.w/2, game.h/3);
+          	ctx.font = "bold 20pt Sans-Serif";
+            ctx.fillText('Hit space or Enter to Play Again!', game.w/2, game.h/2);
         }
 
         if (gameElements.length == 1) {
         	// you win!
         	ctx.clearRect(0, 0, canvas.width, canvas.height);
     		ctx.fillStyle = '#000';
+    		ctx.textAlign = "center";
             ctx.font = "bold 80pt Sans-Serif";
             //you need to clear the canvas for this instance of the Game object -- game -- not the Game object. 
-            ctx.fillText('YOU WIN! YAY!', game.w/2, game.h/2);
+            ctx.fillText('YOU WIN! YAY!', game.w/2, game.h/3);
+            ctx.font = "bold 20pt Sans-Serif";
+           	ctx.fillText('Hit space or Enter to Play Again!', game.w/2, game.h/2);
+
         }
     }
 
@@ -179,10 +186,16 @@
 
             $(window).keydown(function(evt) {
 
+            //#############################################################################
+            // The keypress is always listening!!! This restarts the game in any state
+            //#############################################################################
+
             	if (evt.keyCode == 13 || evt.keyCode == 32) {
             		console.log('starting game');
             		Game.prototype.run();
             	}
+
+
             });	
     }
 
@@ -553,12 +566,12 @@ this.attack = function(element) {
 		    	console.log('enemy is gaining mass');
 		   		var timer1 = setInterval( function() { 
 		   		self.r += .1;
-		   		}, 50);
+		   		}, 100);
 
 		   		setTimeout( function() {
 		   			//console.log('clearing interval');
 		   			clearInterval(timer1);
-		   			}, 1000);			
+		   			}, 2500);			
 			}
 
 		//eat enemies smaller than yourself
@@ -567,12 +580,12 @@ this.attack = function(element) {
 			console.log('player is gaining mass');
 	   		var timer2 = setInterval( function() { 
 	   		self.r -= .1;
-	   		}, 50);
+	   		}, 100);
 
 	   		setTimeout( function() {
 	   			//console.log('clearing interval');
 	   			clearInterval(timer2);
-	   			}, 1000);
+	   			}, 2500);
 		}
 
 		if (self.r < 10) {
