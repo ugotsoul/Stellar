@@ -2,9 +2,6 @@
     	
     	//run game
     	game.run();
-
-    	//get arrow key type
-    	keyPosition();
     	
     });
 
@@ -21,9 +18,9 @@
     var player = new Player();
 
     //# of enemies
-    e = 1;
+    e = 2;
 
-    //creates an array of length player + enemy objects
+    //creates an array for game objects
     var gameElements = new Array();
 
     //get random integer
@@ -31,22 +28,34 @@
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    //add game objects
+    //add game objects to an array
     function getElements() {
         //add player to game element array
         gameElements.push(player);
+        var numOfEnemies = 0;
 
-        //add e# of enemy to game element array
-        for (var b = 0; b < (e); b++) {
+            //check if element has those coordinates already
+            for (var n= 0; n < gameElements.length; n++) {
 
-    	   	var rX;
-        	var rY;
+            // instanciate enemies in random places on the board with random radiuses
+            var rX = getRandomInteger(75, 1700);
+            var rY = getRandomInteger(75, 600);
+            var rR = getRandomInteger(5, 50);
 
-            // instanciate enemies in random places on the board
-            rX = getRandomInteger(75, 1700);
-            rY = getRandomInteger(75, 600);
-            gameElements.push(new Enemy(rX, rY));
-        }
+            var tempEnemy = new Enemy(rX, rY, rR);
+
+            console.log('collisionn checking');
+            //do a collision test
+            var collision = tempEnemy.collisionDetect(gameElements[n]);
+
+	            if (!collision && numOfEnemies < e) {
+	            numOfEnemies++
+	            //add enemy to the array
+	            gameElements.push(tempEnemy);
+	        	}
+
+        	}
+        
     }
 
     //##############################
@@ -59,15 +68,26 @@
         this.y =  y || 0;
         this.h =  h || 700;
         this.w =  w || 1800;
+        this.intervalHandle = null;
+
     };
 
     Game.prototype.draw = function() {
+    	if (player.death == true) {
+    		console.log("Players is dead, stop drawing");
+    		return;
+    	}
     	//clear and then draw canvas & game elements     	
     	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 	    for (var c = 0; c < gameElements.length; c++) {
-	        //draw element on canvas
-	        getGameElementsPos();
+
+	    	//check if element is dead or not
+	    	if (gameElements[c].death) {
+	    		gameElements.splice(c, 1);
+	    	}
+
+	        //draw enemy element on canvas
 	        gameElements[c].draw();
     	}
     };
@@ -81,16 +101,41 @@
 
     //runs the game (gets elements, draws game elements, updates game elements) @ 50 FPS
     Game.prototype.run = function () {
+    	//get arrow key types
+    	keyPosition();
+
     	//get game objects
     	getElements();
     	
     	//frames per second
     	FPS = 50;
+
+    	//####### Below code is for debugging #########
     	this.step = function() {
     			Game.prototype.update(1/FPS);
     			Game.prototype.draw();
     		}
-    	this.intervalHandle = setInterval(this.step, 1000/FPS); 
+    	//#############################################
+
+    	 game.intervalHandle = setInterval( function(){
+	    		if (player.death == true) {
+	    			clearInterval(game.intervalHandle);
+	    			Game.prototype.end();
+	    		}
+	    		else
+	    		{
+
+	    			Game.prototype.update(1/FPS);
+	    	 		Game.prototype.draw();
+    	 		}		
+
+    	//####### Below code is for debugging ######################
+    	// This incriments the game by 1 time step to check for bugs
+    	//		game.step();
+    	//##########################################################
+    		},
+
+    	 		1000/FPS); 
     }
 
     Game.prototype.end = function () {
@@ -98,48 +143,26 @@
     		//stop game.
     		//clear interval.
 
-    		//if (player.mass <= 10)
-    		clearInterval(this.intervalHandle);
+    	if (player.death == true) {
     		ctx.clearRect(0, 0, canvas.width, canvas.height);
     		ctx.fillStyle = '#000';
             ctx.font = "bold 80pt Sans-Serif";
-            ctx.fillText('YOU DIED!', this.w/3, this.h/2);
+            //you need to clear the canvas for this instance of the Game object -- game -- not the Game object. 
+            ctx.fillText('YOU DIED!', game.w/3, game.h/2);
+        }
     }
+
+    //#######################Below Code is PlaceHolder Function For Parallax ##################################
+    //For parallax effect,make a pretty game background 5000x5000 and put it in gamebackground object
+    //################################################################################################
+	function gameBackground (image){} 
 
     //instanciate new game object
     var game = new Game();
 
-    // #################################
-    //  GAME STUFF: POSITION & KEYPRESS
-    // #################################
- 
-    function getGameElementsPos() {
-        //get player cordinates
-
-        for (var f = 0; f < gameElements.length; f++) {
-
-            //get player cordinates
-            if (gameElements[f] instanceof Player) {
-                //need to get center of box, html5 canvas draws from top left
-                playerX = (gameElements[f].x + (gameElements[f].w / 2));
-                playerY = (gameElements[f].y + (gameElements[f].h / 2));
-                playerH = gameElements[f].h;
-                playerW = gameElements[f].w;
-            }
-            //get enemy cordinates
-            else if (gameElements[f] instanceof Enemy) {
-                enemyX = gameElements[f].x;
-                enemyY = gameElements[f].y;
-                enemyR = gameElements[f].r;
-
-                distX = playerX - enemyX;
-                distY = playerY - enemyY;
-
-                hypotenuse = Math.floor(Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2)));
-
-            }
-        }
-    }
+// #########################################
+//  GAME STUFF: PLAYER MOVEMENT BY KEYPRESS
+// #########################################
 
   //track player movements
 	var moveType;
@@ -182,7 +205,6 @@
     	};
 
 
-
 function movePlayer(moveType) {
 
 		console.log('Moving in this direction '+moveType);
@@ -207,6 +229,10 @@ function movePlayer(moveType) {
         }
 }
 
+//##############################################
+// Game Object Constructor Functions
+//##############################################
+
 
     // constructor objects -- game elements 
     function Player(x, y, r, fill) {
@@ -216,8 +242,9 @@ function movePlayer(moveType) {
         this.y = y || 350; //350
         this.r = r || 20;
         this.fill = fill || "red";
+        this.death = false;
         this.mass = (Math.PI * this.r * 2);
-        
+
         //physics attributes here
         //divide all below by FPS
         this.speed = 10;
@@ -232,6 +259,8 @@ function movePlayer(moveType) {
         //restrict the speed of player movement
         this.maxV = 75;
 
+        this.drag = .005;
+
         this.update = function(dt) {
 
        		//calculate angle of movement along a vector
@@ -240,6 +269,10 @@ function movePlayer(moveType) {
 		    //move player along vector
         	this.x += this.dx;
         	this.y += this.dy;
+
+        	//decriment speed the vectors of X & Y
+        	this.vX -= this.vX*this.drag;
+        	this.vY -= this.vY*this.drag;
 
 			//check game board restricts, adjust angle of vector accordingly
         	this.interact(dt);
@@ -279,6 +312,8 @@ function movePlayer(moveType) {
         }
 
         this.reboundDirection = function(enemy, dt) {
+
+
 
         	//######################################################################################
         	//HTML5 Canvas guide - Multiple Collisions w/ the equation for conservation of momentum
@@ -322,8 +357,6 @@ function movePlayer(moveType) {
         	this.y = (this.y += this.vY * dt);
         	enemy.x = (enemy.x += enemy.vX * dt);
         	enemy.y = (enemy.y += enemy.vY * dt);
-
-        	console.log('Rebounded!');   
         }
 
 
@@ -350,12 +383,11 @@ function movePlayer(moveType) {
     		for (var i = 0; i < gameElements.length; i++) {
     			var element = gameElements[i];
     			if (element instanceof Enemy) { 
-    				console.log('checking enemy');
+
 		    		if (this.collisionDetect(element)) {
 		    			//clearInterval(game.intervalHandle);
 		    			//clear interval. see where the collision is.
-		    			console.log('Colliding');
-		    			//rebound direction will return a velocity vector
+		    			console.log('Rebounding');
 		    			this.reboundDirection(element, dt);
 		    			element.attack(player);
 	    			} 
@@ -386,7 +418,7 @@ function movePlayer(moveType) {
             ctx.fillText('Your X velocity is '+ Math.abs(this.vX), 50, 25);
             ctx.fillText('Your Y velocity is '+ Math.abs(this.vY), 50, 50);
             ctx.fillText('You are ' +  this.displacement(gameElements[1])  + ' px from the enemy.', 50, 75);
-            ctx.fillText('You mass is ' + (this.mass) + '.', 50, 100);
+            ctx.fillText('You mass is ' + (this.r) + '.', 50, 100);
 
         }
     }
@@ -399,16 +431,16 @@ function movePlayer(moveType) {
         this.y = y || 380; // y || 200;
         this.r = r || 60;
         this.fill = fill || "blue";
-        this.mass = (Math.PI * this.r * 2);
         this.strength = 5;
-        this.drag = this.maxV * .1;
+        this.death = false;
+        
 
         //enemy physics
         this.dx = 0;
         this.dy = 0;
-        this.vX = 1;
-        this.vY = 1;
-        this.maxV = 20;
+        this.vX = 30;
+        this.vY = 30;
+        this.drag = .005;
 
 
         //get length of vector from center of enemy to center of player
@@ -436,30 +468,87 @@ function movePlayer(moveType) {
         		}
         	}
 
+this.displacementVector = function (element) {
+	//get the distance between centers of player and element object
+	var distance = new Array();
 
-        //attack the player
+	//eX & eY are for the elements X, Y
+	distance[0] = this.x - element.x;
+	distance[1] = this.y - element.y;
 
-        this.attack = function(element) {
+	return distance;
+}
+
+this.displacement = function(element) {
+	//vector subtraction yields the hypotenuse of the triangle law
+
+	//get distance array object
+	var distance = this.displacementVector(element);
+
+	//get the hypotenuse 
+	var moveLength = Math.sqrt(distance[0]*distance[0] + distance[1]*distance[1]);
+	
+	return moveLength;
+}
+
+this.collisionDetect = function (element) {
+        	//get the length of the distance from center of player to element
+        	return this.displacement(element) <= (this.r+element.r);
+        }
+
+//attack the player
+this.attack = function(element) {
 		    
-		    //check if bigger or smaller
+		    //define a maximum for the enemy mass (4 times the player now)
+		    //the element can be the player or another enemy object
+		    var maxMass = element.r * 5;
 
-		    //if bigger, subtract
-		    if (this.r > element.r) {
+		    //get the current this object to manipulate the instance
+		    var self = this;
 
-		   	//decriment player mass
-		    element.r -= element.r/this.strength;
+		    
+		if (self.r > element.r && self.r < maxMass && self.r > 5) {
+		    
+		    //#####################################################################################################################
+		    //Below code only alters current object - What if I want to alter all the enemy objects size in relation to the player?
+		    //#####################################################################################################################
 
-		    //push object away from collision
-		    //check what magnitude these vectors are (x, y)
-		    //element.vX += element.r;
+		    //recursive gaining mass function
+		    	console.log('enemy is gaining mass');
+		   		var timer1 = setInterval( function() { 
+		   		self.r += .1;
+		   		}, 100);
 
-		   	//add mass to the enemy
-		   	this.r += this.strength;
+		   		setTimeout( function() {
+		   			//console.log('clearing interval');
+		   			clearInterval(timer1);
+		   			}, 2000);			
+			}
 
-		    //slow the player down
-		   	element.vX -= element.speed;
+		//eat enemies smaller than yourself
+		else if (self.r < element.r && self.r > 5) {
 
-		   }
+			console.log('player is gaining mass');
+	   		var timer2 = setInterval( function() { 
+	   		self.r -= .1;
+	   		}, 100);
+
+	   		setTimeout( function() {
+	   			//console.log('clearing interval');
+	   			clearInterval(timer2);
+	   			}, 2000);
+		}
+
+		else if (self.r < 5) {
+			self.death = true;
+			console.log('enemy died');
+		}
+
+		if (player.r < 10) {
+			//if player radius/mass lower than 20 pixels, death!
+			player.death = true;
+			}
+
 
         }
 
@@ -473,6 +562,11 @@ function movePlayer(moveType) {
 		    //move enemy along vector
         	this.x += this.dx;
         	this.y += this.dy;
+
+        	//decriment speed the vectors of X & Y
+        	this.vX -= this.vX*this.drag;
+        	this.vY -= this.vY*this.drag;
+
 			//check game board restricts, adjust angle of vector accordingly
         	this.interact(dt);
 
@@ -484,6 +578,10 @@ function movePlayer(moveType) {
         	//enemy size & style
             ctx.fillStyle = this.fill;
             ctx.beginPath();
+
+            //#########################################################
+            // Below code results in an exception when enemy radius = 0
+            //#########################################################
             ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, false);
             ctx.closePath();
             ctx.fill();
