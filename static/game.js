@@ -1,7 +1,7 @@
     $(document).ready(function() {
     	
     	//run game
-    	game.run();
+    	game.start();
     	
     });
 
@@ -40,11 +40,10 @@
             // instanciate enemies in random places on the board with random radiuses
             var rX = getRandomInteger(75, 1700);
             var rY = getRandomInteger(75, 600);
-            var rR = getRandomInteger(5, 50);
+            var rR = getRandomInteger(7, 10);
 
             var tempEnemy = new Enemy(rX, rY, rR);
 
-            console.log('collisionn checking');
             //do a collision test
             var collision = tempEnemy.collisionDetect(gameElements[n]);
 
@@ -82,20 +81,32 @@
 
 	    for (var c = 0; c < gameElements.length; c++) {
 
-	    	//check if element is dead or not
-	    	if (gameElements[c].death) {
-	    		gameElements.splice(c, 1);
-	    	}
-
 	        //draw enemy element on canvas
 	        gameElements[c].draw();
     	}
     };
 
+
+    var playerKills = 0;
+
     Game.prototype.update = function (dt) {
     //update positions of game elements
         for (var d = 0; d < gameElements.length; d++) {
-   		    gameElements[d].update(dt);
+
+        	//check if element is dead or not
+	    	if (gameElements[d].death == true) {
+	    		//if dead, remove enemy from array
+	    		gameElements.splice(d, 1);
+	    		playerKills++
+	    	}
+
+	    	else if (gameElements[d].length == 1) {
+	    		return;
+	    	}
+
+	    	else {
+   		    	gameElements[d].update(dt);
+   			}
         }
     }
 
@@ -118,13 +129,12 @@
     	//#############################################
 
     	 game.intervalHandle = setInterval( function(){
-	    		if (player.death == true) {
+	    		if (player.death == true || gameElements.length == 1 ) {
 	    			clearInterval(game.intervalHandle);
 	    			Game.prototype.end();
 	    		}
 	    		else
 	    		{
-
 	    			Game.prototype.update(1/FPS);
 	    	 		Game.prototype.draw();
     	 		}		
@@ -139,17 +149,41 @@
     }
 
     Game.prototype.end = function () {
-    		
     		//stop game.
     		//clear interval.
-
     	if (player.death == true) {
     		ctx.clearRect(0, 0, canvas.width, canvas.height);
     		ctx.fillStyle = '#000';
             ctx.font = "bold 80pt Sans-Serif";
             //you need to clear the canvas for this instance of the Game object -- game -- not the Game object. 
-            ctx.fillText('YOU DIED!', game.w/3, game.h/2);
+            ctx.fillText('YOU DIED!', game.w/2, game.h/2);
         }
+
+        if (gameElements.length == 1) {
+        	// you win!
+        	ctx.clearRect(0, 0, canvas.width, canvas.height);
+    		ctx.fillStyle = '#000';
+            ctx.font = "bold 80pt Sans-Serif";
+            //you need to clear the canvas for this instance of the Game object -- game -- not the Game object. 
+            ctx.fillText('YOU WIN! YAY!', game.w/2, game.h/2);
+        }
+    }
+
+
+    Game.prototype.start = function() {
+        	ctx.fillStyle = '#000';
+            ctx.font = "bold 50pt Sans-Serif";
+            ctx.textAlign = "center";
+            //you need to clear the canvas for this instance of the Game object -- game -- not the Game object. 
+            ctx.fillText('Star Game: Hit Enter or Space to Start!', game.w/2, game.h/2);
+
+            $(window).keydown(function(evt) {
+
+            	if (evt.keyCode == 13 || evt.keyCode == 32) {
+            		console.log('starting game');
+            		Game.prototype.run();
+            	}
+            });	
     }
 
     //#######################Below Code is PlaceHolder Function For Parallax ##################################
@@ -181,6 +215,7 @@
                 if (gameElements[e] instanceof Enemy) {
 
                   switch(true) {
+
                         case (evt.keyCode == 40): 
                             //player moves up, player -y   
                             moveType = 'down';
@@ -259,7 +294,7 @@ function movePlayer(moveType) {
         //restrict the speed of player movement
         this.maxV = 75;
 
-        this.drag = .005;
+        this.drag = .03;
 
         this.update = function(dt) {
 
@@ -312,7 +347,6 @@ function movePlayer(moveType) {
         }
 
         this.reboundDirection = function(enemy, dt) {
-
 
 
         	//######################################################################################
@@ -380,6 +414,7 @@ function movePlayer(moveType) {
         		this.y = game.h - this.r;
         		}
 
+        	//check how long the array is
     		for (var i = 0; i < gameElements.length; i++) {
     			var element = gameElements[i];
     			if (element instanceof Enemy) { 
@@ -415,6 +450,7 @@ function movePlayer(moveType) {
             //change this to a div
             ctx.fillStyle = '#000';
             ctx.font = "bold 12pt Sans-Serif";
+            ctx.textAlign = "start";
             ctx.fillText('Your X velocity is '+ Math.abs(this.vX), 50, 25);
             ctx.fillText('Your Y velocity is '+ Math.abs(this.vY), 50, 50);
             ctx.fillText('You are ' +  this.displacement(gameElements[1])  + ' px from the enemy.', 50, 75);
@@ -507,7 +543,7 @@ this.attack = function(element) {
 		    var self = this;
 
 		    
-		if (self.r > element.r && self.r < maxMass && self.r > 5) {
+		if (self.r > element.r) {
 		    
 		    //#####################################################################################################################
 		    //Below code only alters current object - What if I want to alter all the enemy objects size in relation to the player?
@@ -517,29 +553,29 @@ this.attack = function(element) {
 		    	console.log('enemy is gaining mass');
 		   		var timer1 = setInterval( function() { 
 		   		self.r += .1;
-		   		}, 100);
+		   		}, 50);
 
 		   		setTimeout( function() {
 		   			//console.log('clearing interval');
 		   			clearInterval(timer1);
-		   			}, 2000);			
+		   			}, 1000);			
 			}
 
 		//eat enemies smaller than yourself
-		else if (self.r < element.r && self.r > 5) {
+		else if (self.r < element.r) {
 
 			console.log('player is gaining mass');
 	   		var timer2 = setInterval( function() { 
 	   		self.r -= .1;
-	   		}, 100);
+	   		}, 50);
 
 	   		setTimeout( function() {
 	   			//console.log('clearing interval');
 	   			clearInterval(timer2);
-	   			}, 2000);
+	   			}, 1000);
 		}
 
-		else if (self.r < 5) {
+		if (self.r < 10) {
 			self.death = true;
 			console.log('enemy died');
 		}
@@ -548,7 +584,6 @@ this.attack = function(element) {
 			//if player radius/mass lower than 20 pixels, death!
 			player.death = true;
 			}
-
 
         }
 
