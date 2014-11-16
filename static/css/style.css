@@ -48,7 +48,7 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
     to {background-position:-10000px 5000px;}
 }
 
-@keyframes move-clouds-back {
+/*@keyframes move-clouds-back {
     from {background-position:0 0;}
     to {background-position:10000px 0;}
 }
@@ -63,7 +63,7 @@ This stylesheet and the associated (x)html may be modified in any way to fit you
 @-ms-keyframes move-clouds-back {
     from {background-position: 0;}
     to {background-position:10000px 0;}
-}
+}*/
 
 .stars, .twinkling, .clouds {
   position: absolute;

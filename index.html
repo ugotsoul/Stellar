@@ -9,13 +9,11 @@
     <script src="static/js/three.min.js"></script>
 </head>
 
-<body>
+<body onload="game.start();">
 
     <div id="canvas-wrap">
         <div class="stars"></div>
         <div class="twinkling"></div>
-        <!-- Nebula Effect, leave this out for now. Slowing down game considerably -->
-<!--         <div class="clouds"></div> -->
         <canvas id="canvas" height="700" width="1800">
             Oops, your browser does not support Html5 canvas. Dang.
         </canvas>
@@ -25,7 +23,13 @@
 
     <div id="status"></div>
 
-    <script src="static/js/game.js"></script>
+    <script src="static/js/utils.js"></script>
+    <script src="static/js/gameObjects.js"></script>
+    <script src="static/js/player.js"></script>
+    <script src="static/js/enemy.js"></script>
+    <script src="static/js/keypress.js"></script>    
+    <script src="static/js/board.js"></script>
+    
 
 
 </body>

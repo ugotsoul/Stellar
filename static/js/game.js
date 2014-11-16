@@ -1,8 +1,6 @@
 $(document).ready(function() {
-
     //run game
     game.start();
-
 });
 
 //draw the canvas
@@ -16,13 +14,19 @@ var ctx = canvas.getContext('2d');
 //global player object 
 var player = new Player();
 
+//##########################################
+// Save the Player State Somehow... in a DB?
+//##########################################
+
 //# of enemies
-e = 3;
+NUM_OF_ENEMIES = 6;
 
 //creates an array for game objects
 var gameElements = new Array();
 
-//get random integer
+//################################
+// Get random integer - Inclusive!
+//################################
 function getRandomInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -31,20 +35,20 @@ function getRandomInteger(min, max) {
 function getElements() {
     //add player to game element array
     gameElements.push(player);
-    var numOfEnemies = 0;
+    var enemiesAdded = 0;
 
     //primary key of enemy
     var rID = 1;
 
     //check if element has those coordinates already
-    while (numOfEnemies < e) {
+    while (enemiesAdded < NUM_OF_ENEMIES) {
 
         var n = 0;
 
         // instanciate enemies in random places on the board with random radiuses
         var rX = getRandomInteger(75, 1700);
         var rY = getRandomInteger(75, 600);
-        var rR = getRandomInteger(10, 20);
+        var rR = getRandomInteger(10, 30);
 
         var tempEnemy = new Enemy(rX, rY, rR, rID);
 
@@ -52,7 +56,7 @@ function getElements() {
         var collision = tempEnemy.collisionDetect(gameElements[n]);
 
         if (!collision) {
-            numOfEnemies++
+            enemiesAdded++
             //add enemy to the array
             gameElements.push(tempEnemy);
             //incriment unique id
@@ -102,7 +106,8 @@ Game.prototype.update = function(dt) {
             //if dead, remove enemy from array
             gameElements.splice(d, 1);
             playerKills++
-        } else if (gameElements[d].length == 1) {
+        }
+        else if (gameElements[d].length == 1) {
             return;
         } else {
             gameElements[d].update(dt);
@@ -121,12 +126,18 @@ Game.prototype.run = function() {
     //frames per second
     FPS = 50;
 
-    //####### Below code is for debugging #########
+    //Below code is buggy: need to redefine timer? 
+    //Game.prototype.pause();
+
+    //####### Below code is for debugging ######################
+    // This incriments the game by 1 time step to check for bugs
+    //      game.step();
+    //##########################################################
     this.step = function() {
             Game.prototype.update(1 / FPS);
             Game.prototype.draw();
         }
-        //#############################################
+    //#############################################
 
     game.intervalHandle = setInterval(function() {
             if (player.death == true || gameElements.length == 1) {
@@ -136,20 +147,32 @@ Game.prototype.run = function() {
                 Game.prototype.update(1 / FPS);
                 Game.prototype.draw();
             }
-
-            //####### Below code is for debugging ######################
-            // This incriments the game by 1 time step to check for bugs
-            //      game.step();
-            //##########################################################
         },
-
-        1000 / FPS);
+    1000 / FPS);
 }
 
 Game.prototype.end = function() {
+
+$(window).keydown(function(evt) {
+
+    if (evt.keyCode == 13 || evt.keyCode == 32) {
+            console.log('Restarting game');
+            $(window).off('keydown');
+        //#############################################################################
+        // For Testing: reset player.r to 20 & player kills on game restart
+        //#############################################################################
+            player.death = false;
+            player.r = 20;
+            playerKills = 0;
+            gameElements = [];
+            game.run();
+        }
+    });
+
 // 2 end states - you win or you lose.
     if (player.death == true) {
         $('#status').empty();
+        $('#status').off('html');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = '#FFF';
         ctx.textAlign = "center";
@@ -160,9 +183,10 @@ Game.prototype.end = function() {
         ctx.fillText('Hit space or Enter to Play Again!', game.w / 2, game.h / 2);
     }
 
-    if (gameElements.length == 1 || playerKills == e) {
+    if (gameElements.length == 1) {
         // you win!
         $('#status').empty();
+        $('#status').off('html');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = '#FFF';
         ctx.textAlign = "center";
@@ -171,11 +195,8 @@ Game.prototype.end = function() {
         ctx.fillText('YOU WIN! YAY!', game.w / 2, game.h / 2.5);
         ctx.font = "bold 20pt Sans-Serif";
         ctx.fillText('Hit space or Enter to Play Again!', game.w / 2, game.h / 2);
-        gameElements = [];
-
-    }
+        }    
 }
-
 
 Game.prototype.start = function() {
     ctx.fillStyle = '#FFF';
@@ -186,26 +207,58 @@ Game.prototype.start = function() {
 
     $(window).keydown(function(evt) {
 
-        //#############################################################################
-        // The keypress is always listening!!! This restarts the game in any state
-        //#############################################################################
-
         if (evt.keyCode == 13 || evt.keyCode == 32) {
             console.log('starting game');
             $(window).off('keydown');
             Game.prototype.run();
-
         }
     });
 }
+
+//instanciate new game object
+var game = new Game();
+
+//####################################################
+// THIS CODE DOESN'T WERK ARGGGGGGGGGGGGGGGGGGGGGGGGG
+//####################################################
+
+// Game.prototype.pause = function() {
+//     //pause the game with esc key
+//     $(window).keydown(function(evt) {
+//         if (evt.keyCode == 80) {
+//         console.log('trying to pause game');
+//         pauseGame();
+//         }
+//     });
+
+//     var paused = false;
+//     var timer = game.intervalHandle;
+
+//     function pauseGame () {
+
+//     if (!paused) {
+//     //clear interval
+//     timer = clearInterval(timer);
+//     paused = true;
+//     console.log('game paused');
+//     }
+//     else if (paused) {
+//     timer = game.intervalHandle;
+//     paused = false;
+//     console.log('game trying to start');
+//     console.log(game.intervalHandle);
+//     }
+
+//     }
+// }
+
 
 //#######################Below Code is PlaceHolder Function For Parallax ##################################
 //For parallax effect,make a pretty game background 5000x5000 and put it in gamebackground object
 //################################################################################################
 function gameBackground(image) {}
 
-//instanciate new game object
-var game = new Game();
+
 
 // #########################################
 //  GAME STUFF: PLAYER MOVEMENT BY KEYPRESS
@@ -250,7 +303,7 @@ function keyPosition() {
             }
         }
     });
-};
+}
 
 
 function movePlayer(moveType) {
@@ -291,7 +344,6 @@ function Player(x, y, r, fill) {
     this.mass = (Math.PI * this.r * 2);
 
     //physics attributes here
-    //divide all below by FPS
     this.speed = 10;
 
     //pixels per second
@@ -397,9 +449,14 @@ function Player(x, y, r, fill) {
         var vRotationEx = speedEnemy * Math.cos(directionEnemy - collisionAngle);
         var vRotationEy = speedEnemy * Math.sin(directionEnemy - collisionAngle);
 
-        //update velocities of player and enemy - note the y velocity remains constant
-        var finalVx1 = ((this.r - enemy.r) * vRotationPx + (2 * enemy.r) * vRotationEx) / (this.r + enemy.r);
-        var finalVx2 = ((this.r * 2) * vRotationPx + (enemy.r - this.r) * vRotationEx) / (this.r + enemy.r);
+        // //update velocities of player and enemy - note the y velocity remains constant
+        // var finalVx1 = ((this.r - enemy.r) * vRotationPx + (2 * enemy.r) * vRotationEx) / (this.r + enemy.r);
+        // var finalVx2 = ((this.r * 2) * vRotationPx + (enemy.r - this.r) * vRotationEx) / (this.r + enemy.r);
+
+        //partially inelastic collision response
+        var coefficientOfRestitution = .8; 
+        var finalVx1 = (this.r * vRotationPx +  enemy.r * vRotationEx + coefficientOfRestitution*enemy.r*(vRotationEx- vRotationPx))/ (this.r + enemy.r);
+        var finalVx2 = (this.r * vRotationPx +  enemy.r * vRotationEx + coefficientOfRestitution*this.r*(vRotationPx- vRotationEx))/ (this.r + enemy.r);
 
         var finalVy1 = vRotationPy;
         var finalVy2 = vRotationEy;
@@ -459,6 +516,8 @@ function Player(x, y, r, fill) {
 
         //player size & style
         //ctx.fillStyle = this.fill;
+
+        if (this.r > 0) {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, false);
         ctx.closePath();
@@ -496,15 +555,16 @@ function Player(x, y, r, fill) {
         ctx.fillText('Your mass is ' + Math.floor(this.r) + '.', 50, 125);
 
     }
+    }
 }
 
 
 function Enemy(x, y, r, id, fill) {
 
     //enemy attributes
-    this.x = x || 650; // x || 1400;
-    this.y = y || 380; // y || 200;
-    this.r = r || 60;
+    this.x = x; 
+    this.y = y; 
+    this.r = r;
     this.fill = fill || "blue";
     this.strength = 5;
     this.death = false;
@@ -519,6 +579,7 @@ function Enemy(x, y, r, id, fill) {
     this.vY = getRandomInteger(-50, 50);
     this.drag = .0001;
     this.maxV = 75;
+    this.minV = 10;
 
     //Animation attributes - glowing orb
     this.stop = Math.random() * .2 + .4;
@@ -562,6 +623,7 @@ function Enemy(x, y, r, id, fill) {
         //displacement vector (x,y) array
         var displacement = this.displacementVector(element);
         var collisionAngle = Math.atan2(displacement[0], displacement[1]);
+        
         //velocity vectors
         var speedThis = Math.sqrt(this.vX * this.vX + this.vY * this.vY);
         var speedElement = Math.sqrt(element.vX * element.vX + element.vY * element.vY);
@@ -569,21 +631,27 @@ function Enemy(x, y, r, id, fill) {
         //angles at current velocities
         var directionThis = Math.atan2(this.vX, this.vY);
         var directionElement = Math.atan2(element.vX, element.vY);
-        //rotate vectors counter clockwise - make the angle of collision flat
+
+        //rotate vectors counter clockwise - make the angle of collision flat - unit vectors
         var vRotationTx = speedThis * Math.cos(directionThis - collisionAngle);
         var vRotationTy = speedThis * Math.sin(directionThis - collisionAngle);
         var vRotationEx = speedElement * Math.cos(directionElement - collisionAngle);
         var vRotationEy = speedElement * Math.sin(directionElement - collisionAngle);
 
+        //elastic collision response
         //update velocities of this game object and other game object (element) - note the y velocity remains constant
-        var finalVx1 = ((this.r - element.r) * vRotationTx + (2 * element.r) * vRotationEx) / (this.r + element.r);
-        var finalVx2 = ((this.r * 2) * vRotationTx + (element.r - this.r) * vRotationEx) / (this.r + element.r);
+        // var finalVx1 = ((this.r - element.r) * vRotationTx + (2 * element.r * vRotationEx) / (this.r + element.r);
+        // var finalVx2 = ((this.r * 2) * vRotationTx + (element.r - this.r) * vRotationEx) / (this.r + element.r);
+
+        //partially inelastic collision response
+        var coefficientOfRestitution = .8; 
+        var finalVx1 = (this.r * vRotationTx +  element.r * vRotationEx + coefficientOfRestitution*element.r*(vRotationEx- vRotationTx))/ (this.r + element.r);
+        var finalVx2 = (this.r * vRotationTx +  element.r * vRotationEx + coefficientOfRestitution*this.r*(vRotationTx- vRotationEx))/ (this.r + element.r);
 
         var finalVy1 = vRotationTy;
         var finalVy2 = vRotationEy;
 
         //rotate the angles back again so the collision angle is preserved
-
         this.vX = Math.cos(collisionAngle) * finalVx1 + Math.cos(collisionAngle + Math.PI / 2) * finalVy1;
         this.vY = Math.sin(collisionAngle) * finalVx1 + Math.sin(collisionAngle + Math.PI / 2) * finalVy1;
 
@@ -591,7 +659,6 @@ function Enemy(x, y, r, id, fill) {
         element.vY = Math.sin(collisionAngle) * finalVx2 + Math.sin(collisionAngle + Math.PI / 2) * finalVy2;
 
         //update objects position @ x,y
-
         this.x = (this.x += this.vX * dt);
         this.y = (this.y += this.vY * dt);
         element.x = (element.x += element.vX * dt);
@@ -638,6 +705,7 @@ function Enemy(x, y, r, id, fill) {
 
         //define the maximum enemy mass allowed before player loses
         var maxMass = element.r * 7;
+        var tick = 100;
 
         //get the current this object to manipulate the instance
         var self = this;
@@ -648,7 +716,7 @@ function Enemy(x, y, r, id, fill) {
             return;
         }
 
-        if (player.r <= 10) {
+        if (player.r <= 10 || self.r >= maxMass) {
             //if player radius/mass lower than 20 pixels, death!
             player.death = true;
             return;
@@ -665,12 +733,12 @@ function Enemy(x, y, r, id, fill) {
             var timer1 = setInterval(function() {
                 self.r += .1;
                 element.r -= .1;
-            }, 75);
+            }, tick);
 
             setTimeout(function() {
                 //console.log('clearing interval');
                 clearInterval(timer1);
-            }, 750);
+            }, tick*10);
         }
 
         //eat enemies smaller than yourself
@@ -680,44 +748,40 @@ function Enemy(x, y, r, id, fill) {
             var timer3 = setInterval(function() {
                 self.r -= .1;
                 element.r += .1;
-            }, 75);
+            }, tick);
 
             setTimeout(function() {
                 //console.log('clearing interval');
                 clearInterval(timer3);
-            }, 750);
+            }, tick*10);
         }
 
-        //##########################################################################
-        // This doesn't work - WHY - its in collision detection loop?
-        //##########################################################################
+        else if (self.r == element.r) {
+            //randomly choose which one will be eaten
+            var killArr = new Array();
+            killArr.push(self.r);
+            killArr.push(element.r);
 
-        // else if (self.r == element.r) {
-        //     //randomly choose which one will be eaten
-        //     var killArr = new Array();
-        //     killArr.push(self.r);
-        //     killArr.push(element.r);
+            var i = Math.floor(Math.random()*killArr.length);
 
-        //     var i = Math.floor(Math.random()*killArr.length);
-
-        //     //kill one of the game objects
-        //     var timer2 = setInterval(function() {
-        //         if (i == 0) {
-        //             $('#status').html('Random Attack: enemy1 is gaining mass');
-        //             self.r -= .05;
-        //             killArr[1] += .05;
-        //         }
-        //         else {
-        //             $('#status').html('Random Attack: enemy2 is gaining mass');
-        //             self.r += .05;
-        //             killArr[0] -= .05;
-        //         }
-        //     }, 75);
-        //     setTimeout(function() {
-        //         //console.log('clearing interval');
-        //         clearInterval(timer2);
-        //     }, 750);
-        // }
+            //kill one of the game objects
+            var timer2 = setInterval(function() {
+                if (i == 0) {
+                    $('#status').html('Random Attack: enemy1 is gaining mass');
+                    self.r -= .05;
+                    killArr[1] += .05;
+                }
+                else {
+                    $('#status').html('Random Attack: enemy2 is gaining mass');
+                    self.r += .05;
+                    killArr[0] -= .05;
+                }
+            }, tick);
+            setTimeout(function() {
+                //console.log('clearing interval');
+                clearInterval(timer2);
+            }, tick*10);
+        }
 
     }
 
@@ -735,14 +799,16 @@ function Enemy(x, y, r, id, fill) {
         //limit speed of vectors
         if (this.vX > this.maxV) {
             this.vX = this.maxV;
-        } else if (this.vY > this.maxV) {
-            this.vY = this.maxV;
-        } else if (this.vX < -this.maxV) {
+        }
+        else if (this.vX < -this.maxV) {
             this.vX = -this.maxV;
-        } else if (this.vY < -this.maxV) {
+        } 
+        else if (this.vY > this.maxV) {
+            this.vY = this.maxV;
+        }  else if (this.vY < -this.maxV) {
             this.vY = -this.maxV;
         }
-    
+
         //decriment speed the vectors of X & Y
         this.vX -= this.vX * this.drag;
         this.vY -= this.vY * this.drag;
@@ -755,6 +821,7 @@ function Enemy(x, y, r, id, fill) {
     //draw enemy method
     this.draw = function() {
 
+        if (this.r > 0) {
         //enemy size & style
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, false);
@@ -780,6 +847,7 @@ function Enemy(x, y, r, id, fill) {
         ctx.fillStyle = '#FFF';
         ctx.font = "bold 8pt Sans-Serif";
         ctx.fillText('X: ' + Math.floor(this.x) + ' Y: ' + Math.floor(this.y), this.x - 20, this.y + 20);
+        }
     }
 
 }
