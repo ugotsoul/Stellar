@@ -3,25 +3,18 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Test game</title>
+    <title>Star Game</title>
     <link rel="stylesheet" href="static/css/style.css">
     <script src="static/js/jquery.min.js"></script>
     <script src="static/js/three.min.js"></script>
 </head>
 
 <body onload="game.start();">
-
-    <div id="canvas-wrap">
         <div class="stars"></div>
         <div class="twinkling"></div>
-        <canvas id="canvas" height="700" width="1800">
-            Oops, your browser does not support Html5 canvas. Dang.
-        </canvas>
-
-
-    </div>
-
-    <div id="status"></div>
+    <canvas id="canvas">
+        Oops, your browser does not support Html5 canvas. Dang.
+    </canvas>
 
     <script src="static/js/utils.js"></script>
     <script src="static/js/gameObjects.js"></script>

@@ -1,12 +1,11 @@
 function Player(x, y, r) {
     GameObject.apply(this, arguments);
     //player attributes
-    this.x = x || 500;
-    this.y = y || 300;
+    this.x = x;
+    this.y = y;
     this.r = r || 20;
-    this.fill = 'red';
     this.id = 0;
-    this.drag = .005;
+    this.drag = .001;
     this.speed = 10;
 }
 
@@ -52,24 +51,5 @@ Player.prototype.draw = function() {
         g.addColorStop(1.0, 'rgba(255,239,0,0)');
         ctx.fillStyle = g;
         ctx.fill();
-
-        //###############################################
-        // Below code is to draw coordinates & check math
-        //###############################################
-
-        //center coordinates of enemy object
-        ctx.fillStyle = '#FFF';
-        ctx.font = "bold 8pt Sans-Serif";
-        ctx.fillText('X: ' + Math.floor(this.x) + ' Y: ' + Math.floor(this.y), this.x - this.r - 10, this.y + this.r + 10);
-
-        //player center distance from enemy center
-        //change this to a div
-        ctx.fillStyle = '#FFF';
-        ctx.font = "bold 12pt Sans-Serif";
-        ctx.textAlign = "start";
-        ctx.fillText('Kill Count: ' + playerKills, 50, 25);
-        ctx.fillText('Your X velocity is ' + Math.floor(this.vX), 50, 50);
-        ctx.fillText('Your Y velocity is ' + Math.floor(this.vY), 50, 75);
-        ctx.fillText('Your mass is ' + Math.floor(this.r) + '.', 50, 100);
    		}
     }

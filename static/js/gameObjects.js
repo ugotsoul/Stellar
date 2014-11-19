@@ -136,7 +136,7 @@ GameObject.prototype.reboundDirection = function(element, dt) {
 
 GameObject.prototype.interact = function (dt) {
 
-    	if ((this.x+this.r) >= game.w ) {
+    	if ((this.x+this.r) >= game.w) {
     		this.vX = -this.vX;
     		this.x = game.w - this.r;
     		} 

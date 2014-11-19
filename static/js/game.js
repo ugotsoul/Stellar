@@ -253,13 +253,6 @@ var game = new Game();
 // }
 
 
-//#######################Below Code is PlaceHolder Function For Parallax ##################################
-//For parallax effect,make a pretty game background 5000x5000 and put it in gamebackground object
-//################################################################################################
-function gameBackground(image) {}
-
-
-
 // #########################################
 //  GAME STUFF: PLAYER MOVEMENT BY KEYPRESS
 // #########################################

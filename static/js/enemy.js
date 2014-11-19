@@ -4,10 +4,8 @@ function Enemy(x, y, r, id) {
     this.x = x; 
     this.y = y; 
     this.r = r;
-    this.fill = "blue";
     this.strength = 5;
     this.id = id;
-
     this.drag = .00001;
 
     //assign random directions/speeds to each enemy
@@ -20,19 +18,20 @@ Enemy.prototype = Object.create(GameObject.prototype);
 Enemy.prototype.attack = function (element) {
 
         //define the maximum enemy mass allowed before player loses
-        var maxMass = element.r * 7;
+        var maxMass = player.r * 7;
+        var minMass = 10;
         var tick = 100;
 
         //get the current this object to manipulate the instance
         var self = this;
 
-        if (self.r <= 6) {
+        if (self.r <= minMass) {
             self.death = true;
             console.log('enemy died');
             return;
         }
 
-        if (player.r <= 10 || self.r >= maxMass) {
+        if (player.r <= minMass || self.r >= maxMass) {
             //if player radius/mass lower than 20 pixels, death!
             player.death = true;
             return;
@@ -104,7 +103,7 @@ Enemy.prototype.attack = function (element) {
 Enemy.prototype.draw = function() {
 
         if (this.r > 0) {
-        //enemy size & style
+
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, false);
         ctx.closePath();
@@ -121,13 +120,5 @@ Enemy.prototype.draw = function() {
         ctx.fillStyle = g;
         ctx.fill();
 
-        //###############################################
-        // Below code is to draw coordinates & check math
-        //###############################################
-
-        //center coordinates of enemy object
-        ctx.fillStyle = '#FFF';
-        ctx.font = "bold 8pt Sans-Serif";
-        ctx.fillText('X: ' + Math.floor(this.x) + ' Y: ' + Math.floor(this.y), this.x - this.r, this.y + this.r + 10);
         }
     }

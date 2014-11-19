@@ -30,6 +30,6 @@ function keyPosition() {
                     moveType = 'right';
                     break;
             }
-        player.move(moveType);
+    player.move(moveType);
     });
 }

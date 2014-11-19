@@ -2,12 +2,18 @@
 //  Game Objects & Containers
 // ###############################
 
-//draw the canvas
+//draw the game canvas
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext('2d');
 
 //global player object 
-var player = new Player(500, 300, 20, 'red');
+var player = new Player(windowW/2, windowH/2);
+
+//define region of the canvas
+ctx.canvas.x= 0;
+ctx.canvas.y= 0;
+ctx.canvas.width = windowW;
+ctx.canvas.height = windowH;
 
 //# of enemies
 NUM_OF_ENEMIES = 6;
@@ -51,24 +57,26 @@ function getElements() {
 }
 
 //##############################
-// Game constructor
+// Game Constructor Functions
 //##############################
 
 //game world boundries - swap out h & w when you decided on a world size
-var Game = function(x, y, h, w) {
-    this.x = x || 0;
-    this.y = y || 0;
-    this.h = h || 700;
-    this.w = w || 1800;
+var Game = function() {
+    this.x = 0;
+    this.y = 0;
+    this.w = 3000;
+    this.h = 3000;
     this.intervalHandle = null;
 
 };
+
 
 Game.prototype.draw = function() {
     if (player.death == true) {
         console.log("Players is dead, stop drawing");
         return;
     }
+
     //clear and then draw canvas & game elements        
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -77,6 +85,9 @@ Game.prototype.draw = function() {
         //draw enemy element on canvas
         gameElements[c].draw();
     }
+
+    game.score();
+
 };
 
 //Score Card - How many Enemies has the player killed?
@@ -109,9 +120,6 @@ Game.prototype.run = function() {
 
     //frames per second
     FPS = 50;
-
-    //Below code is buggy: need to redefine timer? 
-    //Game.prototype.pause();
 
     //####### Below code is for debugging ######################
     // This incriments the game by 1 time step to check for bugs
@@ -161,10 +169,10 @@ $(window).keydown(function(evt) {
         ctx.fillStyle = '#FFF';
         ctx.textAlign = "center";
         ctx.font = "bold 80pt Sans-Serif";
-        //you need to clear the canvas for this instance of the Game object -- game -- not the Game object. 
-        ctx.fillText('YOU DIED!', game.w / 2, game.h / 3);
+        //you need to clear the canvas for this instance of the Game object -- game -- not the Game object/class. 
+        ctx.fillText('YOU DIED!', windowW/2, windowH/2);
         ctx.font = "bold 20pt Sans-Serif";
-        ctx.fillText('Hit space or Enter to Play Again!', game.w / 2, game.h / 2);
+        ctx.fillText('Hit space or Enter to Play Again!', windowW/2, windowH/2+50);
     }
 
     if (gameElements.length == 1) {
@@ -175,10 +183,10 @@ $(window).keydown(function(evt) {
         ctx.fillStyle = '#FFF';
         ctx.textAlign = "center";
         ctx.font = "bold 80pt Sans-Serif";
-        //you need to clear the canvas for this instance of the Game object -- game -- not the Game object. 
-        ctx.fillText('YOU WIN! YAY!', game.w / 2, game.h / 2.5);
+        //you need to clear the canvas for this instance of the Game object -- game -- not the Game object/class. 
+        ctx.fillText('YOU WIN! YAY!', windowW/2, windowH/2);
         ctx.font = "bold 20pt Sans-Serif";
-        ctx.fillText('Hit space or Enter to Play Again!', game.w / 2, game.h / 2);
+        ctx.fillText('Hit space or Enter to Play Again!', windowW/2, windowH/2+50);
         }    
 }
 
@@ -187,7 +195,7 @@ Game.prototype.start = function() {
     ctx.font = "bold 50pt Sans-Serif";
     ctx.textAlign = "center";
     //you need to clear the canvas for this instance of the Game object -- game -- not the Game object. 
-    ctx.fillText('Star Game: Hit Enter or Space to Start!', game.w / 2, game.h / 2);
+    ctx.fillText('Star Game: Hit Enter or Space to Start!', windowW/2, windowH/2);
 
     $(window).keydown(function(evt) {
 
@@ -201,3 +209,19 @@ Game.prototype.start = function() {
 
 //instanciate new game object
 var game = new Game();
+
+
+//##################################################################
+// Below code is for the scoreboard - Change to follow player
+//##################################################################
+Game.prototype.score = function() {
+
+//offfset scoreboard according to game width height
+ctx.fillStyle = '#FFF';
+ctx.font = "bold 30pt Sans-Serif";
+ctx.textAlign = "start";
+ctx.fillText('Kill Count: ' + playerKills, this.x+50, this.y+50);
+ctx.fillText('Your X velocity is ' + Math.floor(player.vX), this.x+50, this.y+100);
+ctx.fillText('Your Y velocity is ' + Math.floor(player.vY), this.x+50, this.y+150);
+ctx.fillText('Your mass is ' + Math.floor(player.r) + '.', this.x+50, this.y+200);
+}
