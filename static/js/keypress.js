@@ -32,10 +32,6 @@ function keyPosition() {
             }
     //player.move(moveType);
 
-    //for loop  on game objects 
-
-    //moveThings(moveType);
-
     game.camera(moveType);
 
 

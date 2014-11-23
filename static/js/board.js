@@ -39,9 +39,13 @@ function getElements() {
 
         var n = 0;
 
-        // instanciate enemies in random places on the board with random radiuses
-        var rX = 400; //getRandomInteger(75, game.w-75);
-        var rY = 200; //getRandomInteger(75, game.h-75);
+        //set max enemy radius - will be born no more than 2 times player radius
+        var maxR = player.r*2;
+
+        // instanciate enemies in random places on the board 
+        // note: bounds are restricted to account for max radius
+        var rX = getRandomInteger(maxR, game.w-maxR);
+        var rY = getRandomInteger(maxR, game.h-maxR);
         var rR = 30; //getRandomInteger(10, 30);
 
         var tempEnemy = new Enemy(rX, rY, rR, rID);
@@ -326,7 +330,6 @@ Game.prototype.camera =  function(moveType) {
             break;
         }
 
-        //translate the game canvas objects
 }
 
 function moveThings(nextX, nextY) {

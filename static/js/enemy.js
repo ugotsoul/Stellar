@@ -9,8 +9,8 @@ function Enemy(x, y, r, id) {
     this.drag = .00001;
 
     //assign random directions/speeds to each enemy
-    this.vX = 1; //getRandomInteger(-50, 50);
-    this.vY = 1; //getRandomInteger(-50, 50);
+    this.vX = getRandomInteger(-50, 50);
+    this.vY = getRandomInteger(-50, 50);
 }
 
 Enemy.prototype = Object.create(GameObject.prototype);
