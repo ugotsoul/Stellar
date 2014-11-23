@@ -30,6 +30,33 @@ function keyPosition() {
                     moveType = 'right';
                     break;
             }
-    player.move(moveType);
+    //player.move(moveType);
+
+    //for loop  on game objects 
+
+    //moveThings(moveType);
+
+    game.camera(moveType);
+
+
     });
 }
+
+
+// function moveThings(moveType) {
+
+//     for (var i = 0; i < gameElements.length; i++) {
+
+//         if (gameElements[i] instanceof Enemy) { 
+
+//             console.log('trying to move elements');
+//             gameElements[i].playerMovement(moveType);
+
+
+//             }
+
+//         }
+
+    //translate game board
+
+//}

@@ -11,6 +11,9 @@ function GameObject(x, y, r) {
     this.fill = null;
     this.death = false;
 
+    this.viewX = this.x;
+    this.viewY = this.y;
+
     //physics attributes here
     //pixels per second
     this.vX = 1;
@@ -143,6 +146,9 @@ GameObject.prototype.interact = function (dt) {
     	else if ((this.x-this.r) <= game.x) {
     		this.vX = -this.vX;
     		this.x = this.r; 
+            //this.viewX = this.x;
+            console.log(this.x);
+            console.log('left wall collision');
     		} 
     	else if ((this.y-this.r) <= game.y) {
     		this.vY = -this.vY;	
@@ -170,4 +176,26 @@ GameObject.prototype.interact = function (dt) {
 
 
 
-    
+// GameObject.prototype.playerMovement =  function(moveType) {
+        
+//         switch(moveType) {
+//             case 'up':
+//             viewY -= 1;       
+//             game.y -=1
+//             break;
+
+//             case 'down':
+//             viewY += 1;      
+//             break;
+
+//             case 'left':
+//             viewX -= 1;
+//             break;
+
+//             case 'right':
+//             viewX += 1;      
+//             break;
+//         }
+
+// }
+

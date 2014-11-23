@@ -9,8 +9,8 @@ function Enemy(x, y, r, id) {
     this.drag = .00001;
 
     //assign random directions/speeds to each enemy
-    this.vX = getRandomInteger(-50, 50);
-    this.vY = getRandomInteger(-50, 50);
+    this.vX = 1; //getRandomInteger(-50, 50);
+    this.vY = 1; //getRandomInteger(-50, 50);
 }
 
 Enemy.prototype = Object.create(GameObject.prototype);
@@ -38,37 +38,16 @@ Enemy.prototype.attack = function (element) {
         }
 
         if (self.r > element.r) {
-
-            //#####################################################################################################################
-            //Below code only alters current object - What if I want to alter all the enemy objects size in relation to the player?
-            //#####################################################################################################################
-
-            //slowly gain mass
-            console.log('enemy is gaining mass');
-            var timer1 = setInterval(function() {
+                console.log('enemy is gaining mass');
                 self.r += .1;
                 element.r -= .1;
-            }, tick);
-
-            setTimeout(function() {
-                //console.log('clearing interval');
-                clearInterval(timer1);
-            }, tick*10);
         }
 
         //eat enemies smaller than yourself
         else if (self.r < element.r) {
-
             console.log('player is gaining mass');
-            var timer3 = setInterval(function() {
-                self.r -= .1;
-                element.r += .1;
-            }, tick);
-
-            setTimeout(function() {
-                //console.log('clearing interval');
-                clearInterval(timer3);
-            }, tick*10);
+            self.r -= .1;
+            element.r += .1;
         }
 
         else if (self.r == element.r) {
@@ -80,32 +59,28 @@ Enemy.prototype.attack = function (element) {
             var i = Math.floor(Math.random()*killArr.length);
 
             //kill one of the game objects
-            var timer2 = setInterval(function() {
-                if (i == 0) {
-                    $('#status').html('Random Attack: enemy1 is gaining mass');
-                    self.r -= .05;
-                    killArr[1] += .05;
-                }
-                else {
-                    $('#status').html('Random Attack: enemy2 is gaining mass');
-                    self.r += .05;
-                    killArr[0] -= .05;
-                }
-            }, tick);
-            setTimeout(function() {
-                //console.log('clearing interval');
-                clearInterval(timer2);
-            }, tick*10);
+            if (i == 0) {
+                $('#status').html('Random Attack: enemy1 is gaining mass');
+                self.r -= .05;
+                killArr[1] += .05;
+            }
+            else {
+                $('#status').html('Random Attack: enemy2 is gaining mass');
+                self.r += .05;
+                killArr[0] -= .05;
+            }
         }
-
     }
 
-Enemy.prototype.draw = function() {
+Enemy.prototype.draw = function(nextX, nextY) {
+
+    var drawX = this.x - nextX;
+    var drawY = this.y - nextY;
 
         if (this.r > 0) {
 
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, false);
+        ctx.arc(drawX, drawY, this.r, 0, Math.PI * 2, false);
         ctx.closePath();
 
         //##################################
@@ -113,12 +88,18 @@ Enemy.prototype.draw = function() {
         //##################################
         var new_opacity = getRandomNum(.5, .6);
 
-        g = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.r * .95);
+        g = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, this.r * .95);
         g.addColorStop(0.0, 'rgba(60,255,255,' + new_opacity + ')');
         g.addColorStop(.75, 'rgba(0,60,255,' + (new_opacity * .7) + ')');
         g.addColorStop(1.0, 'rgba(0,60,255,0)');
         ctx.fillStyle = g;
         ctx.fill();
 
+        //center coordinates of player object
+        ctx.fillStyle = '#0f0';
+        ctx.fillRect(this.x-this.r-nextX-5, this.y-nextY-10,75,15);
+        ctx.fillStyle = '#000';
+        ctx.font = "bold 8pt Sans-Serif";
+        ctx.fillText('X: ' + Math.floor(this.x) + ' Y: ' + Math.floor(this.y), this.x-nextX, this.y-nextY);
         }
     }

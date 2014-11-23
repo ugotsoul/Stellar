@@ -7,16 +7,20 @@ var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext('2d');
 
 //global player object 
-var player = new Player(windowW/2, windowH/2);
+var player = new Player(350, 350);
 
 //define region of the canvas
 ctx.canvas.x= 0;
 ctx.canvas.y= 0;
-ctx.canvas.width = windowW;
-ctx.canvas.height = windowH;
+ctx.canvas.width = 700;
+ctx.canvas.height = 700;
+
+//define player coordinates in the middle of the canvas
+var offsetX = canvas.width/2;
+var offsetY = canvas.height/2;
 
 //# of enemies
-NUM_OF_ENEMIES = 6;
+NUM_OF_ENEMIES = 1;
 
 //creates an array for game objects
 var gameElements = new Array();
@@ -36,9 +40,9 @@ function getElements() {
         var n = 0;
 
         // instanciate enemies in random places on the board with random radiuses
-        var rX = getRandomInteger(75, 1700);
-        var rY = getRandomInteger(75, 600);
-        var rR = getRandomInteger(10, 30);
+        var rX = 400; //getRandomInteger(75, game.w-75);
+        var rY = 200; //getRandomInteger(75, game.h-75);
+        var rR = 30; //getRandomInteger(10, 30);
 
         var tempEnemy = new Enemy(rX, rY, rR, rID);
 
@@ -64,36 +68,36 @@ function getElements() {
 var Game = function() {
     this.x = 0;
     this.y = 0;
-    this.w = 3000;
-    this.h = 3000;
+    this.w = 1400;
+    this.h = 1400;
     this.intervalHandle = null;
 
 };
 
-
 Game.prototype.draw = function() {
+       
     if (player.death == true) {
         console.log("Players is dead, stop drawing");
         return;
     }
-
     //clear and then draw canvas & game elements        
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     for (var c = 0; c < gameElements.length; c++) {
 
         //draw enemy element on canvas
-        gameElements[c].draw();
+        gameElements[c].draw(nextX, nextY);
     }
 
-    game.score();
-
+    // game.score();
+    background.draw();
 };
 
 //Score Card - How many Enemies has the player killed?
 var playerKills = 0;
 
 Game.prototype.update = function(dt) {
+
     //update positions of game elements
     for (var d = 0; d < gameElements.length; d++) {
         //check if element is dead or not
@@ -112,6 +116,7 @@ Game.prototype.update = function(dt) {
 
 //runs the game (gets elements, draws game elements, updates game elements) @ 50 FPS
 Game.prototype.run = function() {
+
     //get arrow key types
     keyPosition();
 
@@ -158,6 +163,7 @@ $(window).keydown(function(evt) {
             playerKills = 0;
             gameElements = [];
             game.run();
+
         }
     });
 
@@ -195,7 +201,9 @@ Game.prototype.start = function() {
     ctx.font = "bold 50pt Sans-Serif";
     ctx.textAlign = "center";
     //you need to clear the canvas for this instance of the Game object -- game -- not the Game object. 
-    ctx.fillText('Star Game: Hit Enter or Space to Start!', windowW/2, windowH/2);
+    ctx.fillText('Stellar', canvas.width/2, canvas.height/2);
+    ctx.font = "20pt Sans-Serif";
+    ctx.fillText('Hit enter or space to start', canvas.width/2, (canvas.height/2)+30);
 
     $(window).keydown(function(evt) {
 
@@ -211,17 +219,119 @@ Game.prototype.start = function() {
 var game = new Game();
 
 
+
 //##################################################################
 // Below code is for the scoreboard - Change to follow player
 //##################################################################
-Game.prototype.score = function() {
+// Game.prototype.score = function() {
 
-//offfset scoreboard according to game width height
-ctx.fillStyle = '#FFF';
-ctx.font = "bold 30pt Sans-Serif";
-ctx.textAlign = "start";
-ctx.fillText('Kill Count: ' + playerKills, this.x+50, this.y+50);
-ctx.fillText('Your X velocity is ' + Math.floor(player.vX), this.x+50, this.y+100);
-ctx.fillText('Your Y velocity is ' + Math.floor(player.vY), this.x+50, this.y+150);
-ctx.fillText('Your mass is ' + Math.floor(player.r) + '.', this.x+50, this.y+200);
+// //offfset scoreboard according to game width height
+// ctx.fillStyle = '#FFF';
+// ctx.font = "bold 30pt Sans-Serif";
+// ctx.textAlign = "start";
+// ctx.fillText('Kill Count: ' + playerKills, canvas.x+50, canvas.y+50);
+// ctx.fillText('Your X velocity is ' + Math.floor(player.vX), canvas.x+50, canvas.y+100);
+// ctx.fillText('Your Y velocity is ' + Math.floor(player.vY), canvas.x+50, canvas.y+150);
+// ctx.fillText('Your mass is ' + Math.floor(player.r) + '.', canvas.x+50, canvas.y+200);
+
+// }
+
+
+//##################################################################
+// View port
+//##################################################################
+
+var bg = function() {
+
+    this.x = 0;
+    this.y = 0;
+    this.w = 1400;
+    this.h = 1400;
+
+    var self = this;
+
+    // self.draw = function() 
+    
+    // var STARS_IMG = new Image();
+    // STARS_IMG.onload = function (){ctx.drawImage(STARS_IMG, drawX, drawY, self.w, self.h);}
+    // STARS_IMG.src = "static/bg/stars3.png"; }
+
+    //gameboard reference object
+    self.draw = function() {
+
+    var drawX = this.x-nextX;
+    var drawY = this.y-nextY;
+
+    if (drawX >= (offsetX - player.r) / 2) {
+            drawX -= 5;
+            ctx.strokeStyle='#0f0';
+            ctx.lineWidth = 5;
+            ctx.strokeRect(drawX, drawY, self.w, self.h);
+    }
+
+    else {
+        //console.log('bg drawing like regular');
+        ctx.strokeStyle='#0f0';
+        ctx.lineWidth = 5;
+        ctx.strokeRect(drawX, self.y, self.w, self.h);
+    }
+
+     
+    }
+}
+
+//make a new background object
+var background = new bg();
+
+//TEST code below
+var nextX = 0;
+var nextY = 0;
+
+Game.prototype.camera =  function(moveType) {
+
+        switch(moveType) {
+            case 'up':
+            nextY -=1;
+            player.y -= 2;
+            break;
+
+            case 'down':
+            nextY += 1;
+            player.y += 2;      
+            break;
+
+            case 'left':
+            nextX -= 1;
+            player.x -= 2;
+            break;
+
+            case 'right':
+            nextX += 1;
+            player.x += 2;
+            break;
+        }
+
+        //translate the game canvas objects
+        //console.log(player.viewX);
+        //moveThings(nextX, nextY);
+        //console.log(gameElements[1].x);
+}
+
+function moveThings(nx, ny) {
+
+//#############################################
+// Translate DRAW functions, not game position
+//#############################################
+
+    // for (var i = 0; i < gameElements.length; i++) {
+    //         //translate game elements coordinates to new draw coordinates in view plane
+    //     }
+
+    // player.x += nx;
+    // player.y += ny;
+   // console.log(player.x, player.y);
+
+    //check for collisions
+
+
 }

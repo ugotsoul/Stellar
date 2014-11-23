@@ -1,8 +1,8 @@
 #canvas {
 	position: absolute;
 	z-index: 10;
-	width: 100%;
-	height: 100%;
+	width: 1000;
+	height: 1000;
   background: transparent;
 }
 
@@ -21,14 +21,14 @@
 }
 
 html, body {
-width: 100%;
-height: 100%;
+/*width: 100%;
+height: 100%;*/
 margin: 0;
 background: #000;
 overflow: hidden;
 }
 
-#status {
+/*#status {
 	position: relative;
 	top: 100px;
 	font-family: sans-serif;
@@ -38,12 +38,12 @@ overflow: hidden;
 }
 
 #canvas-wrap {
-	width: 1500px;
-	height: 600px;
+	width: 1000px;
+	height: 1000px;
 	margin: 0 auto;
 	position: relative;
 	top: 100px;
-}
+}*/
 
 /* ============================================================================================== 
 This copyright notice must be kept untouched in the stylesheet at all times.
