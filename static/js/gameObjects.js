@@ -139,9 +139,15 @@ GameObject.prototype.reboundDirection = function(element, dt) {
 
 GameObject.prototype.interact = function (dt) {
 
-    	if ((this.x+this.r) >= game.w) {
+    //#####################################
+    //Multiply Game Bounds by ratio scalar
+    //#####################################
+
+    	if ((this.x+this.r) >= game.w/2) {
     		this.vX = -this.vX;
-    		this.x = game.w - this.r;
+    		this.x = game.w/2 - this.r;
+            console.log(this.r);
+            console.log('right wall collision');
     		} 
     	else if ((this.x-this.r) <= game.x) {
     		this.vX = -this.vX;
@@ -153,10 +159,15 @@ GameObject.prototype.interact = function (dt) {
     	else if ((this.y-this.r) <= game.y) {
     		this.vY = -this.vY;	
     		this.y = this.r; 
+            console.log(this.y);
+            console.log('top wall collision');
+
     		}
-    	else if (this.y+this.r >= game.h) {
+    	else if (this.y+this.r >= game.h/2) {
     		this.vY = -this.vY;
-    		this.y = game.h - this.r;
+    		this.y = game.h/2 - this.r;
+            console.log(this.y);
+            console.log('bottom wall collision');
     		}
 
 		for (var i = 0; i < gameElements.length; i++) {

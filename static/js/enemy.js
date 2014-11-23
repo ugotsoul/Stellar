@@ -95,11 +95,12 @@ Enemy.prototype.draw = function(nextX, nextY) {
         ctx.fillStyle = g;
         ctx.fill();
 
-        //center coordinates of player object
+        //center coordinates of enemy object
         ctx.fillStyle = '#0f0';
         ctx.fillRect(this.x-this.r-nextX-5, this.y-nextY-10,75,15);
         ctx.fillStyle = '#000';
         ctx.font = "bold 8pt Sans-Serif";
+        ctx.textAlign = 'center';
         ctx.fillText('X: ' + Math.floor(this.x) + ' Y: ' + Math.floor(this.y), this.x-nextX, this.y-nextY);
         }
     }

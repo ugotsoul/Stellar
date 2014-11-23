@@ -245,8 +245,8 @@ var bg = function() {
 
     this.x = 0;
     this.y = 0;
-    this.w = 1400;
-    this.h = 1400;
+    this.w = 700;
+    this.h = 700;
 
     var self = this;
 
@@ -262,20 +262,16 @@ var bg = function() {
     var drawX = this.x-nextX;
     var drawY = this.y-nextY;
 
-    if (drawX >= (offsetX - player.r) / 2) {
-            drawX -= 5;
-            ctx.strokeStyle='#0f0';
-            ctx.lineWidth = 5;
-            ctx.strokeRect(drawX, drawY, self.w, self.h);
-    }
+    //check gameboard coordinates
+        ctx.fillStyle = '#0f0';
+        ctx.font = "bold 20pt Sans-Serif";
+        ctx.textAlign = 'left';
+        ctx.fillText('BG offset coordinates', 5, 25);
+        ctx.fillText('X: ' +drawX+ ' Y: ' + drawY, 5, 50);
 
-    else {
-        //console.log('bg drawing like regular');
         ctx.strokeStyle='#0f0';
         ctx.lineWidth = 5;
-        ctx.strokeRect(drawX, self.y, self.w, self.h);
-    }
-
+        ctx.strokeRect(drawX, drawY, self.w, self.h);
      
     }
 }
@@ -288,6 +284,25 @@ var nextX = 0;
 var nextY = 0;
 
 Game.prototype.camera =  function(moveType) {
+
+    //###################################################################
+    //Restrict Draw Behavior with offset (150 px TEMP offset)
+    //###################################################################
+    if (nextX < -150) {
+        nextX = -150;
+    }
+
+    if (nextX > 150) {
+        nextX = 150;
+    }
+
+    if (nextY < -150) {
+       nextY = -150;
+    }
+
+    if (nextY > 150) {
+       nextY = 150;
+    }
 
         switch(moveType) {
             case 'up':
@@ -312,12 +327,9 @@ Game.prototype.camera =  function(moveType) {
         }
 
         //translate the game canvas objects
-        //console.log(player.viewX);
-        //moveThings(nextX, nextY);
-        //console.log(gameElements[1].x);
 }
 
-function moveThings(nx, ny) {
+function moveThings(nextX, nextY) {
 
 //#############################################
 // Translate DRAW functions, not game position
@@ -330,8 +342,6 @@ function moveThings(nx, ny) {
     // player.x += nx;
     // player.y += ny;
    // console.log(player.x, player.y);
-
-    //check for collisions
 
 
 }

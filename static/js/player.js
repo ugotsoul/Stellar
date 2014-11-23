@@ -60,6 +60,7 @@ Player.prototype.draw = function() {
         //center coordinates of player object
         ctx.fillStyle = '#000';
         ctx.font = "bold 8pt Sans-Serif";
+        ctx.textAlign = 'center';
         ctx.fillText('X: ' + Math.floor(this.x) + ' Y: ' + Math.floor(this.y), this.x-nextX, this.y-nextY);
      
     }
