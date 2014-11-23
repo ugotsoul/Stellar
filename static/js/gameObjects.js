@@ -143,9 +143,9 @@ GameObject.prototype.interact = function (dt) {
     //Multiply Game Bounds by ratio scalar
     //#####################################
 
-    	if ((this.x+this.r) >= game.w/2) {
+    	if ((this.x+this.r) >= game.w) {
     		this.vX = -this.vX;
-    		this.x = game.w/2 - this.r;
+    		this.x = game.w - this.r;
             console.log(this.r);
             console.log('right wall collision');
     		} 
@@ -163,9 +163,9 @@ GameObject.prototype.interact = function (dt) {
             console.log('top wall collision');
 
     		}
-    	else if (this.y+this.r >= game.h/2) {
+    	else if (this.y+this.r >= game.h) {
     		this.vY = -this.vY;
-    		this.y = game.h/2 - this.r;
+    		this.y = game.h - this.r;
             console.log(this.y);
             console.log('bottom wall collision');
     		}

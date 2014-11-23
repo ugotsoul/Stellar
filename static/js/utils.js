@@ -12,11 +12,6 @@ function getRandomNum(min, max) {
     return Math.random() * (max - min + 1) + min;
 }
 
-
-//viewport settings RENAME!!!!!!!!!!!
-var nextX = 0;
-var nextY = 0;
-
 //########################################################################
 // ISSUE: Window Resize is not scaled properly - test and change in week 4
 //########################################################################

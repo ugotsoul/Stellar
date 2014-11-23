@@ -3,7 +3,7 @@ function Player(x, y, r) {
     //player attributes
     this.x = x;
     this.y = y;
-    this.r = r || 50;
+    this.r = r || 100;
     this.id = 0;
     this.drag = .001;
     this.speed = 10;
@@ -35,13 +35,16 @@ Player.prototype.move = function (moveType) {
 
 Player.prototype.draw = function() {
 
-        if (this.r > 0) {
+    var drawX = this.x/2 - nextX;
+    var drawY = this.y/2 - nextY;
+    var drawR = this.r/2;
 
+        if (this.r > 0) {
 
 //check if player is in the game world bounds
 
         ctx.beginPath();
-        ctx.arc(this.x-nextX, this.y-nextY, this.r, 0, Math.PI * 2, false);
+        ctx.arc(drawX, drawY, drawR, 0, Math.PI * 2, false);
         ctx.closePath();
 
         //##################################
@@ -49,7 +52,7 @@ Player.prototype.draw = function() {
         //##################################
 
         var new_opacity = getRandomNum(.7, .8);
-        g = ctx.createRadialGradient(this.x-nextX, this.y-nextY, 0, this.x-nextX, this.y-nextY, this.r);
+        g = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, drawR);
         g.addColorStop(0.0, 'rgba(255,255,255,' + new_opacity + ')');
         g.addColorStop(.85, 'rgba(255,239,0,' + (new_opacity * .70) + ')');
         g.addColorStop(1.0, 'rgba(255,239,0,0)');
@@ -61,6 +64,7 @@ Player.prototype.draw = function() {
         ctx.fillStyle = '#000';
         ctx.font = "bold 8pt Sans-Serif";
         ctx.textAlign = 'center';
-        ctx.fillText('X: ' + Math.floor(this.x) + ' Y: ' + Math.floor(this.y), this.x-nextX, this.y-nextY);
+        ctx.fillText('Game World', drawX, drawY-10);
+        ctx.fillText('X: ' + Math.floor(this.x) + ' Y: ' + Math.floor(this.y), drawX, drawY);
      
     }

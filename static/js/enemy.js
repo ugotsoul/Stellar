@@ -73,14 +73,15 @@ Enemy.prototype.attack = function (element) {
     }
 
 Enemy.prototype.draw = function(nextX, nextY) {
-
-    var drawX = this.x - nextX;
-    var drawY = this.y - nextY;
+   
+    var drawX = this.x/2 - nextX;
+    var drawY = this.y/2 - nextY;
+    var drawR = this.r/2;
 
         if (this.r > 0) {
 
         ctx.beginPath();
-        ctx.arc(drawX, drawY, this.r, 0, Math.PI * 2, false);
+        ctx.arc(drawX, drawY, drawR, 0, Math.PI * 2, false);
         ctx.closePath();
 
         //##################################
@@ -88,7 +89,7 @@ Enemy.prototype.draw = function(nextX, nextY) {
         //##################################
         var new_opacity = getRandomNum(.5, .6);
 
-        g = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, this.r * .95);
+        g = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, drawR * .95);
         g.addColorStop(0.0, 'rgba(60,255,255,' + new_opacity + ')');
         g.addColorStop(.75, 'rgba(0,60,255,' + (new_opacity * .7) + ')');
         g.addColorStop(1.0, 'rgba(0,60,255,0)');
@@ -97,10 +98,10 @@ Enemy.prototype.draw = function(nextX, nextY) {
 
         //center coordinates of enemy object
         ctx.fillStyle = '#0f0';
-        ctx.fillRect(this.x-this.r-nextX-5, this.y-nextY-10,75,15);
+        ctx.fillRect(drawX, drawY,75,15);
         ctx.fillStyle = '#000';
         ctx.font = "bold 8pt Sans-Serif";
-        ctx.textAlign = 'center';
-        ctx.fillText('X: ' + Math.floor(this.x) + ' Y: ' + Math.floor(this.y), this.x-nextX, this.y-nextY);
+        ctx.textAlign = 'left';
+        ctx.fillText('X: ' + Math.floor(this.x) + ' Y: ' + Math.floor(this.y), drawX, drawY+10);
         }
     }

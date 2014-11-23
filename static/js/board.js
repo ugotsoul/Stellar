@@ -7,7 +7,7 @@ var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext('2d');
 
 //global player object 
-var player = new Player(350, 350);
+var player = new Player(700, 700);
 
 //define region of the canvas
 ctx.canvas.x= 0;
@@ -270,8 +270,8 @@ var bg = function() {
         ctx.fillStyle = '#0f0';
         ctx.font = "bold 20pt Sans-Serif";
         ctx.textAlign = 'left';
-        ctx.fillText('BG offset coordinates', 5, 25);
-        ctx.fillText('X: ' +drawX+ ' Y: ' + drawY, 5, 50);
+        ctx.fillText('nextX coordinates', 5, 25);
+        ctx.fillText(nextX, 5, 50);
 
         ctx.strokeStyle='#0f0';
         ctx.lineWidth = 5;
@@ -283,50 +283,52 @@ var bg = function() {
 //make a new background object
 var background = new bg();
 
-//TEST code below
-var nextX = 0;
+//Have game camera follow player by geting player translated coordinates 
+var nextX = player.x/2 - offsetX;
 var nextY = 0;
 
 Game.prototype.camera =  function(moveType) {
 
-    //###################################################################
+    //#########################################################
     //Restrict Draw Behavior with offset (150 px TEMP offset)
-    //###################################################################
-    if (nextX < -150) {
-        nextX = -150;
-    }
+    //#########################################################
 
-    if (nextX > 150) {
-        nextX = 150;
-    }
+    // if (nextX < -(canvas.width+player.r)) {
+    //     nextX = -(canvas.width+player.r);
+    // }
 
-    if (nextY < -150) {
-       nextY = -150;
-    }
+    // if (nextX > 150) {
+    //     nextX = 150;
+    // }
 
-    if (nextY > 150) {
-       nextY = 150;
-    }
+    // if (nextY < -150) {
+    //    nextY = -150;
+    // }
+
+    // if (nextY > 150) {
+    //    nextY = 150;
+    //}
 
         switch(moveType) {
             case 'up':
-            nextY -=1;
-            player.y -= 2;
+            player.vY -= 1;
+            //nextY = player.vY/2;
             break;
 
             case 'down':
-            nextY += 1;
-            player.y += 2;      
+            player.vY += 1;
+            //nextY = player.vY/2;
             break;
 
             case 'left':
-            nextX -= 1;
-            player.x -= 2;
+            player.vX -= 1;
+
+            //console.log(nextX);
             break;
 
             case 'right':
-            nextX += 1;
-            player.x += 2;
+            player.vX += 1;
+            //nextX = player.vX/2;
             break;
         }
 
