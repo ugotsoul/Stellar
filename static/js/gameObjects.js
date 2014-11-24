@@ -114,7 +114,7 @@ GameObject.prototype.reboundDirection = function(element, dt) {
         	var vRotationEy = speedElement * Math.sin(directionElement - collisionAngle);
 
             //partially inelastic collision response
-            var coefficientOfRestitution = .4; 
+            var coefficientOfRestitution = .7; 
             var finalVx1 = (this.r * vRotationTx +  element.r * vRotationEx + coefficientOfRestitution*element.r*(vRotationEx- vRotationTx))/ (this.r + element.r);
             var finalVx2 = (this.r * vRotationTx +  element.r * vRotationEx + coefficientOfRestitution*this.r*(vRotationTx- vRotationEx))/ (this.r + element.r);
            	var finalVy1 = vRotationTy;
@@ -139,10 +139,6 @@ GameObject.prototype.reboundDirection = function(element, dt) {
 
 GameObject.prototype.interact = function (dt) {
 
-    //#####################################
-    //Multiply Game Bounds by ratio scalar
-    //#####################################
-
     	if ((this.x+this.r) >= game.w) {
     		this.vX = -this.vX;
     		this.x = game.w - this.r;
@@ -152,7 +148,6 @@ GameObject.prototype.interact = function (dt) {
     	else if ((this.x-this.r) <= game.x) {
     		this.vX = -this.vX;
     		this.x = this.r; 
-            //this.viewX = this.x;
             console.log(this.x);
             console.log('left wall collision');
     		} 
@@ -187,26 +182,4 @@ GameObject.prototype.interact = function (dt) {
 
 
 
-// GameObject.prototype.playerMovement =  function(moveType) {
-        
-//         switch(moveType) {
-//             case 'up':
-//             viewY -= 1;       
-//             game.y -=1
-//             break;
-
-//             case 'down':
-//             viewY += 1;      
-//             break;
-
-//             case 'left':
-//             viewX -= 1;
-//             break;
-
-//             case 'right':
-//             viewX += 1;      
-//             break;
-//         }
-
-// }
 

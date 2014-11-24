@@ -20,7 +20,7 @@ var offsetY = canvas.height/2;
 NUM_OF_ENEMIES = 1;
 
 //global player object 
-var player = new Player(offsetX, offsetY);
+var player = new Player(canvas.width, canvas.height);
 
 //creates an array for game objects
 var gameElements = new Array();
@@ -226,18 +226,18 @@ var game = new Game();
 //##################################################################
 // Below code is for the scoreboard - Change to follow player
 //##################################################################
-// Game.prototype.score = function() {
+Game.prototype.score = function() {
 
-// //offfset scoreboard according to game width height
-// ctx.fillStyle = '#FFF';
-// ctx.font = "bold 30pt Sans-Serif";
-// ctx.textAlign = "start";
-// ctx.fillText('Kill Count: ' + playerKills, canvas.x+50, canvas.y+50);
-// ctx.fillText('Your X velocity is ' + Math.floor(player.vX), canvas.x+50, canvas.y+100);
-// ctx.fillText('Your Y velocity is ' + Math.floor(player.vY), canvas.x+50, canvas.y+150);
-// ctx.fillText('Your mass is ' + Math.floor(player.r) + '.', canvas.x+50, canvas.y+200);
+//offfset scoreboard according to game width height
+ctx.fillStyle = '#FFF';
+ctx.font = "bold 30pt Sans-Serif";
+ctx.textAlign = "start";
+ctx.fillText('Kill Count: ' + playerKills, canvas.x+50, canvas.y+50);
+ctx.fillText('Your X velocity is ' + Math.floor(player.vX), canvas.x+50, canvas.y+100);
+ctx.fillText('Your Y velocity is ' + Math.floor(player.vY), canvas.x+50, canvas.y+150);
+ctx.fillText('Your mass is ' + Math.floor(player.r) + '.', canvas.x+50, canvas.y+200);
 
-// }
+}
 
 
 //##################################################################
@@ -253,21 +253,8 @@ var bg = function() {
 
     var self = this;
 
-    // self.draw = function() 
-    
-    // var STARS_IMG = new Image();
-    // STARS_IMG.onload = function (){ctx.drawImage(STARS_IMG, drawX, drawY, self.w, self.h);}
-    // STARS_IMG.src = "static/bg/stars3.png"; }
-
     //gameboard reference object
     self.draw = function() {
-
-    // var drawX = 0;
-    // var drawY = 0;
-
-    //     ctx.strokeStyle='#0f0';
-    //     ctx.lineWidth = 5;
-    //     ctx.strokeRect(drawX, drawY, self.w/2, self.h/2);
 
     var STARS_IMG = new Image();
     STARS_IMG.onload = function (){ctx.drawImage(STARS_IMG, -game.viewX, -game.viewY, self.w/2, self.h/2);}
@@ -287,24 +274,19 @@ Game.prototype.camera =  function(moveType) {
 
         switch(moveType) {
             case 'up':
-            player.vY -= 1;
-            //nextY = player.vY/2;
+            player.vY -= player.speed;
             break;
 
             case 'down':
-            player.vY += 1;
-            //nextY = player.vY/2;
+            player.vY += player.speed;
             break;
 
             case 'left':
-            player.vX -= 1;
-            player.x -= 1;
-            //console.log(nextX);
+            player.vX -= player.speed;
             break;
 
             case 'right':
-            player.vX += 1;
-            //nextX = player.vX/2;
+            player.vX += player.speed;
             break;
         }
 

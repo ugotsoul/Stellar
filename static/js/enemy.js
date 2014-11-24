@@ -4,7 +4,7 @@ function Enemy(x, y, r, id) {
     this.x = x; 
     this.y = y; 
     this.r = r;
-    this.strength = 5;
+    this.strength = 1;
     this.id = id;
     this.drag = .00001;
 
@@ -20,7 +20,6 @@ Enemy.prototype.attack = function (element) {
         //define the maximum enemy mass allowed before player loses
         var maxMass = player.r * 7;
         var minMass = 10;
-        var tick = 100;
 
         //get the current this object to manipulate the instance
         var self = this;
@@ -39,15 +38,15 @@ Enemy.prototype.attack = function (element) {
 
         if (self.r > element.r) {
                 console.log('enemy is gaining mass');
-                self.r += .1;
-                element.r -= .1;
+                self.r += self.strength;
+                element.r -= self.strength;
         }
 
         //eat enemies smaller than yourself
         else if (self.r < element.r) {
             console.log('player is gaining mass');
-            self.r -= .1;
-            element.r += .1;
+            self.r -= self.strength;
+            element.r += self.strength;
         }
 
         else if (self.r == element.r) {
@@ -61,22 +60,22 @@ Enemy.prototype.attack = function (element) {
             //kill one of the game objects
             if (i == 0) {
                 $('#status').html('Random Attack: enemy1 is gaining mass');
-                self.r -= .05;
-                killArr[1] += .05;
+                self.r -= self.strength;
+                killArr[1] += self.strength;
             }
             else {
                 $('#status').html('Random Attack: enemy2 is gaining mass');
-                self.r += .05;
-                killArr[0] -= .05;
+                self.r += self.strength;
+                killArr[0] -= self.strength;
             }
         }
     }
 
 Enemy.prototype.draw = function() {
-    
+
     var drawX = this.x/2 - game.viewX;
     var drawY = this.y/2 - game.viewY;
-    var drawR = this.r;
+    var drawR = this.r/2;
 
         if (this.r > 0) {
 

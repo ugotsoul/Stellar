@@ -3,7 +3,7 @@ function Player(x, y, r) {
     //player attributes
     this.x = x;
     this.y = y;
-    this.r = r || 50;
+    this.r = r || 100;
     this.id = 0;
     this.drag = .001;
     this.speed = 10;
@@ -37,7 +37,7 @@ Player.prototype.draw = function() {
     
     var drawX = this.x/2 - game.viewX;
     var drawY = this.y/2 - game.viewY;
-    var drawR = this.r;
+    var drawR = this.r/2;
 
         if (this.r > 0) {
 
