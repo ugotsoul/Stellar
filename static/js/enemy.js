@@ -72,11 +72,11 @@ Enemy.prototype.attack = function (element) {
         }
     }
 
-Enemy.prototype.draw = function(nextX, nextY) {
-   
-    var drawX = this.x/2 - nextX;
-    var drawY = this.y/2 - nextY;
-    var drawR = this.r/2;
+Enemy.prototype.draw = function() {
+    
+    var drawX = this.x/2 - game.viewX;
+    var drawY = this.y/2 - game.viewY;
+    var drawR = this.r;
 
         if (this.r > 0) {
 

@@ -6,9 +6,6 @@
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext('2d');
 
-//global player object 
-var player = new Player(700, 700);
-
 //define region of the canvas
 ctx.canvas.x= 0;
 ctx.canvas.y= 0;
@@ -21,6 +18,9 @@ var offsetY = canvas.height/2;
 
 //# of enemies
 NUM_OF_ENEMIES = 1;
+
+//global player object 
+var player = new Player(offsetX, offsetY);
 
 //creates an array for game objects
 var gameElements = new Array();
@@ -75,7 +75,6 @@ var Game = function() {
     this.w = 1400;
     this.h = 1400;
     this.intervalHandle = null;
-
 };
 
 Game.prototype.draw = function() {
@@ -90,7 +89,7 @@ Game.prototype.draw = function() {
     for (var c = 0; c < gameElements.length; c++) {
 
         //draw enemy element on canvas
-        gameElements[c].draw(nextX, nextY);
+        gameElements[c].draw();
     }
 
     // game.score();
@@ -249,8 +248,8 @@ var bg = function() {
 
     this.x = 0;
     this.y = 0;
-    this.w = 700;
-    this.h = 700;
+    this.w = 1400;
+    this.h = 1400;
 
     var self = this;
 
@@ -263,19 +262,16 @@ var bg = function() {
     //gameboard reference object
     self.draw = function() {
 
-    var drawX = this.x-nextX;
-    var drawY = this.y-nextY;
+    // var drawX = 0;
+    // var drawY = 0;
 
-    //check gameboard coordinates
-        ctx.fillStyle = '#0f0';
-        ctx.font = "bold 20pt Sans-Serif";
-        ctx.textAlign = 'left';
-        ctx.fillText('nextX coordinates', 5, 25);
-        ctx.fillText(nextX, 5, 50);
+    //     ctx.strokeStyle='#0f0';
+    //     ctx.lineWidth = 5;
+    //     ctx.strokeRect(drawX, drawY, self.w/2, self.h/2);
 
-        ctx.strokeStyle='#0f0';
-        ctx.lineWidth = 5;
-        ctx.strokeRect(drawX, drawY, self.w, self.h);
+    var STARS_IMG = new Image();
+    STARS_IMG.onload = function (){ctx.drawImage(STARS_IMG, -game.viewX, -game.viewY, self.w/2, self.h/2);}
+    STARS_IMG.src = "static/bg/stars3.png"; 
      
     }
 }
@@ -283,31 +279,11 @@ var bg = function() {
 //make a new background object
 var background = new bg();
 
-//Have game camera follow player by geting player translated coordinates 
-var nextX = player.x/2 - offsetX;
-var nextY = 0;
+//get current views by calculating the player's distance from translated origin
+Object.defineProperty(Game.prototype, 'viewX', {get: function(){ return player.x/2 - offsetX; }});
+Object.defineProperty(Game.prototype, 'viewY', {get: function(){ return player.y/2 - offsetY; }});
 
 Game.prototype.camera =  function(moveType) {
-
-    //#########################################################
-    //Restrict Draw Behavior with offset (150 px TEMP offset)
-    //#########################################################
-
-    // if (nextX < -(canvas.width+player.r)) {
-    //     nextX = -(canvas.width+player.r);
-    // }
-
-    // if (nextX > 150) {
-    //     nextX = 150;
-    // }
-
-    // if (nextY < -150) {
-    //    nextY = -150;
-    // }
-
-    // if (nextY > 150) {
-    //    nextY = 150;
-    //}
 
         switch(moveType) {
             case 'up':
@@ -322,7 +298,7 @@ Game.prototype.camera =  function(moveType) {
 
             case 'left':
             player.vX -= 1;
-
+            player.x -= 1;
             //console.log(nextX);
             break;
 
@@ -331,22 +307,5 @@ Game.prototype.camera =  function(moveType) {
             //nextX = player.vX/2;
             break;
         }
-
-}
-
-function moveThings(nextX, nextY) {
-
-//#############################################
-// Translate DRAW functions, not game position
-//#############################################
-
-    // for (var i = 0; i < gameElements.length; i++) {
-    //         //translate game elements coordinates to new draw coordinates in view plane
-    //     }
-
-    // player.x += nx;
-    // player.y += ny;
-   // console.log(player.x, player.y);
-
 
 }
