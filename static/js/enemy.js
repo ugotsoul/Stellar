@@ -73,9 +73,9 @@ Enemy.prototype.attack = function (element) {
 
 Enemy.prototype.draw = function() {
 
-    var drawX = this.x/2 - game.viewX;
-    var drawY = this.y/2 - game.viewY;
-    var drawR = this.r/2;
+    var drawX = this.x - game.viewX;
+    var drawY = this.y - game.viewY;
+    var drawR = this.r;
 
         if (this.r > 0) {
 

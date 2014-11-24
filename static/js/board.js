@@ -243,8 +243,12 @@ ctx.fillText('Your mass is ' + Math.floor(player.r) + '.', canvas.x+5, canvas.y+
 
 
 //##################################################################
-// View port
+// Game Camera - Follows player around, translates Game Objects
 //##################################################################
+
+//get current views by calculating the player's distance from translated origin
+Object.defineProperty(Game.prototype, 'viewX', {get: function(){ return player.x - offsetX; }});
+Object.defineProperty(Game.prototype, 'viewY', {get: function(){ return player.y - offsetY; }});
 
 var bg = function() {
 
@@ -259,7 +263,7 @@ var bg = function() {
     self.draw = function() {
 
     var STARS_IMG = new Image();
-    STARS_IMG.onload = function (){ctx.drawImage(STARS_IMG, -game.viewX, -game.viewY, self.w/2, self.h/2);}
+    STARS_IMG.onload = function (){ctx.drawImage(STARS_IMG, -game.viewX, -game.viewY, self.w, self.h);}
     STARS_IMG.src = "static/bg/stars3.png"; 
      
     }
@@ -268,9 +272,7 @@ var bg = function() {
 //make a new background object
 var background = new bg();
 
-//get current views by calculating the player's distance from translated origin
-Object.defineProperty(Game.prototype, 'viewX', {get: function(){ return player.x/2 - offsetX; }});
-Object.defineProperty(Game.prototype, 'viewY', {get: function(){ return player.y/2 - offsetY; }});
+
 
 Game.prototype.camera =  function(moveType) {
 
