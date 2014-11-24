@@ -41,8 +41,6 @@ Player.prototype.draw = function() {
 
         if (this.r > 0) {
 
-//check if player is in the game world bounds
-
         ctx.beginPath();
         ctx.arc(drawX, drawY, drawR, 0, Math.PI * 2, false);
         ctx.closePath();

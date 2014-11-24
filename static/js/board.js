@@ -17,7 +17,7 @@ var offsetX = canvas.width/2;
 var offsetY = canvas.height/2;
 
 //# of enemies
-NUM_OF_ENEMIES = 1;
+NUM_OF_ENEMIES = 5;
 
 //global player object 
 var player = new Player(canvas.width, canvas.height);
@@ -92,7 +92,7 @@ Game.prototype.draw = function() {
         gameElements[c].draw();
     }
 
-    // game.score();
+    game.score();
     background.draw();
 };
 
@@ -162,7 +162,7 @@ $(window).keydown(function(evt) {
         // For Testing: reset player.r to 20 & player kills on game restart
         //#############################################################################
             player.death = false;
-            player.r = 20;
+            player.r = 100;
             playerKills = 0;
             gameElements = [];
             game.run();
@@ -177,11 +177,11 @@ $(window).keydown(function(evt) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = '#FFF';
         ctx.textAlign = "center";
-        ctx.font = "bold 80pt Sans-Serif";
+        ctx.font = "bold 50pt Sans-Serif";
         //you need to clear the canvas for this instance of the Game object -- game -- not the Game object/class. 
-        ctx.fillText('YOU DIED!', windowW/2, windowH/2);
+        ctx.fillText('YOU DIED!', canvas.width/2, canvas.height/2);
         ctx.font = "bold 20pt Sans-Serif";
-        ctx.fillText('Hit space or Enter to Play Again!', windowW/2, windowH/2+50);
+        ctx.fillText('Hit space or Enter to Play Again!', canvas.width/2, canvas.height/2+30);
     }
 
     if (gameElements.length == 1) {
@@ -191,11 +191,11 @@ $(window).keydown(function(evt) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = '#FFF';
         ctx.textAlign = "center";
-        ctx.font = "bold 80pt Sans-Serif";
+        ctx.font = "bold 50pt Sans-Serif";
         //you need to clear the canvas for this instance of the Game object -- game -- not the Game object/class. 
-        ctx.fillText('YOU WIN! YAY!', windowW/2, windowH/2);
+        ctx.fillText('YOU WIN! YAY!', canvas.width/2, canvas.height/2);
         ctx.font = "bold 20pt Sans-Serif";
-        ctx.fillText('Hit space or Enter to Play Again!', windowW/2, windowH/2+50);
+        ctx.fillText('Hit space or Enter to Play Again!', canvas.width/2, canvas.height/2+30);
         }    
 }
 
@@ -230,12 +230,14 @@ Game.prototype.score = function() {
 
 //offfset scoreboard according to game width height
 ctx.fillStyle = '#FFF';
-ctx.font = "bold 30pt Sans-Serif";
+ctx.font = "bold 16pt Sans-Serif";
 ctx.textAlign = "start";
-ctx.fillText('Kill Count: ' + playerKills, canvas.x+50, canvas.y+50);
-ctx.fillText('Your X velocity is ' + Math.floor(player.vX), canvas.x+50, canvas.y+100);
-ctx.fillText('Your Y velocity is ' + Math.floor(player.vY), canvas.x+50, canvas.y+150);
-ctx.fillText('Your mass is ' + Math.floor(player.r) + '.', canvas.x+50, canvas.y+200);
+ctx.fillText('Score Board', canvas.x+5, canvas.y+20);
+ctx.font = "14pt Sans-Serif";
+ctx.fillText('Enemies Killed: ' + playerKills, canvas.x+5, canvas.y+40);
+ctx.fillText('Your X velocity is ' + Math.floor(player.vX), canvas.x+5, canvas.y+60);
+ctx.fillText('Your Y velocity is ' + Math.floor(player.vY), canvas.x+5, canvas.y+80);
+ctx.fillText('Your mass is ' + Math.floor(player.r) + '.', canvas.x+5, canvas.y+100);
 
 }
 
