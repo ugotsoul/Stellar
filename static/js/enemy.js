@@ -88,7 +88,7 @@ Enemy.prototype.draw = function() {
         //##################################
         var new_opacity = getRandomNum(.5, .6);
 
-        g = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, drawR * .95);
+        var g = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, drawR * .95);
         g.addColorStop(0.0, 'rgba(60,255,255,' + new_opacity + ')');
         g.addColorStop(.75, 'rgba(0,60,255,' + (new_opacity * .7) + ')');
         g.addColorStop(1.0, 'rgba(0,60,255,0)');

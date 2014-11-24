@@ -40,7 +40,3 @@ var aspectRatio = 1.75;
 // }
 // var wCenterX = windowW/bgScalar;
 // var wCenterY = windowH/bgScalar;
-
-//########################################################################
-// ISSUE: Window Resize is not scaled properly - test and change in week 4
-//########################################################################

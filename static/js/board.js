@@ -9,8 +9,8 @@ var ctx = canvas.getContext('2d');
 //define region of the canvas
 ctx.canvas.x= 0;
 ctx.canvas.y= 0;
-ctx.canvas.width = 700;
-ctx.canvas.height = 700;
+ctx.canvas.width = windowW;
+ctx.canvas.height = windowH;
 
 //define player coordinates in the middle of the canvas
 var offsetX = canvas.width/2;
@@ -72,8 +72,8 @@ function getElements() {
 var Game = function() {
     this.x = 0;
     this.y = 0;
-    this.w = 1400;
-    this.h = 1400;
+    this.w = 3000;
+    this.h = 3000;
     this.intervalHandle = null;
 };
 
@@ -91,9 +91,8 @@ Game.prototype.draw = function() {
         //draw enemy element on canvas
         gameElements[c].draw();
     }
-
-    game.score();
     background.draw();
+    game.score();
 };
 
 //Score Card - How many Enemies has the player killed?
@@ -254,18 +253,42 @@ var bg = function() {
 
     this.x = 0;
     this.y = 0;
-    this.w = 1400;
-    this.h = 1400;
+    this.w = game.w;
+    this.h = game.h;
 
     var self = this;
 
-    //gameboard reference object
-    self.draw = function() {
+    var maxStars = 500;
+    var stars = [];
 
-    var STARS_IMG = new Image();
-    STARS_IMG.onload = function (){ctx.drawImage(STARS_IMG, -game.viewX, -game.viewY, self.w, self.h);}
-    STARS_IMG.src = "static/bg/stars3.png"; 
-     
+    //make an array of random stars
+    for (var i=0; i<maxStars; i++) {
+    stars.push({
+        x: getRandomInteger(0, game.w),
+        y: getRandomInteger(0, game.h),
+        r: getRandomInteger(1, 3)
+        });
+    }
+
+    self.draw = function() {
+    //test star background  
+    // var STARS_IMG = new Image();
+    // STARS_IMG.onload = function (){ctx.drawImage(STARS_IMG, -game.viewX, -game.viewY, self.w, self.h);}
+    // STARS_IMG.src = "static/bg/stars3.png"; 
+
+    ctx.fillStyle="rgba(255, 255, 255, .6)";
+    ctx.beginPath();
+        
+        //draw the stars
+        for (var i=0; i<stars.length; i++) {
+        var star = stars[i];
+        ctx.moveTo(star.x, star.y);
+        ctx.arc(star.x-game.viewX, star.y-game.viewY, star.r, 0, Math.PI * 2, false);
+        }
+    
+    ctx.fill();
+    ctx.closePath();
+    
     }
 }
 
@@ -295,3 +318,4 @@ Game.prototype.camera =  function(moveType) {
         }
 
 }
+

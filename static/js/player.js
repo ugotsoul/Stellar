@@ -50,7 +50,7 @@ Player.prototype.draw = function() {
         //##################################
 
         var new_opacity = getRandomNum(.7, .8);
-        g = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, drawR);
+        var g = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, drawR);
         g.addColorStop(0.0, 'rgba(255,255,255,' + new_opacity + ')');
         g.addColorStop(.85, 'rgba(255,239,0,' + (new_opacity * .70) + ')');
         g.addColorStop(1.0, 'rgba(255,239,0,0)');
