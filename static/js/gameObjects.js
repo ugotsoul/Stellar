@@ -23,8 +23,8 @@ function GameObject(x, y, r) {
     this.dx = 0;
     this.dy = 0;
 
-    //restrict the speed of player movement
-    this.maxV = 75;
+    //restrict the speed of game object movement
+    this.maxV = null;
     this.drag = null;
 
     //Animation attributes - glowing orb
@@ -114,7 +114,7 @@ GameObject.prototype.reboundDirection = function(element, dt) {
         	var vRotationEy = speedElement * Math.sin(directionElement - collisionAngle);
 
             //partially inelastic collision response
-            var coefficientOfRestitution = .7; 
+            var coefficientOfRestitution = .6; 
             var finalVx1 = (this.r * vRotationTx +  element.r * vRotationEx + coefficientOfRestitution*element.r*(vRotationEx- vRotationTx))/ (this.r + element.r);
             var finalVx2 = (this.r * vRotationTx +  element.r * vRotationEx + coefficientOfRestitution*this.r*(vRotationTx- vRotationEx))/ (this.r + element.r);
            	var finalVy1 = vRotationTy;

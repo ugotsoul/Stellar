@@ -1,7 +1,6 @@
 //#######################################
 // Arrow Key Event Handler
 //#######################################
-
 //var keylogger to pass to Player.move('type of move')
 var moveType;
 
@@ -31,10 +30,7 @@ function keyPosition() {
                     break;
             }
     
-    //player.move(moveType);
-
-    game.camera(moveType);
-
+    player.move(moveType);
 
     });
 }

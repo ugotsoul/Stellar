@@ -1,20 +1,36 @@
 // ###############################
-//  Game Objects & Containers
+//  HTML5 Canvas properties
 // ###############################
 
-//draw the game canvas
-var canvas = document.getElementById("canvas");
+//prepare the 'buffer' game canvas
+var canvas = document.createElement('canvas');
 var ctx = canvas.getContext('2d');
 
 //define region of the canvas
-ctx.canvas.x= 0;
-ctx.canvas.y= 0;
+ctx.canvas.x = 0;
+ctx.canvas.y = 0;
 ctx.canvas.width = windowW;
 ctx.canvas.height = windowH;
 
 //define player coordinates in the middle of the canvas
 var offsetX = canvas.width/2;
 var offsetY = canvas.height/2;
+
+// ###########################################################################
+// Note: Double Buffering marginally helped with FPS preformance by 10 frames.
+// ############################################################################ 
+
+//prepare the main game canvas
+var mainCanvas = document.getElementById('main');
+
+mainCanvas.width = canvas.width;
+mainCanvas.height = canvas.height;
+
+var ctxMain = mainCanvas.getContext('2d');
+
+// ###########################################
+//  Game state attributes & object containers
+// ###########################################
 
 //# of enemies
 NUM_OF_ENEMIES = 5;
@@ -25,10 +41,15 @@ var player = new Player(canvas.width, canvas.height);
 //creates an array for game objects
 var gameElements = new Array();
 
+//#########################################
+//Make get Elements part of the Game Class
+//#########################################
+
 //add game objects to an array
 function getElements() {
     //add player to game element array
     gameElements.push(player);
+    
     var enemiesAdded = 0;
 
     //primary key of enemy
@@ -91,11 +112,12 @@ Game.prototype.draw = function() {
         //draw enemy element on canvas
         gameElements[c].draw();
     }
-    background.draw();
+
+    //draw player status board
     game.score();
 };
 
-//Score Card - How many Enemies has the player killed?
+//Note: playerKills == NUM of enemeies signals winning game end state
 var playerKills = 0;
 
 Game.prototype.update = function(dt) {
@@ -114,6 +136,15 @@ Game.prototype.update = function(dt) {
             gameElements[d].update(dt);
         }
     }
+}
+
+//calls the buffer canvas when ready
+Game.prototype.render = function() {
+
+ctxMain.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+ctxMain.drawImage(bgCanvas, 0, 0);
+ctxMain.drawImage(canvas, 0, 0);
+
 }
 
 //runs the game (gets elements, draws game elements, updates game elements) @ 50 FPS
@@ -136,19 +167,26 @@ Game.prototype.run = function() {
             Game.prototype.update(1 / FPS);
             Game.prototype.draw();
         }
-    //#############################################
+    //###########################################################
 
     game.intervalHandle = setInterval(function() {
             if (player.death == true || gameElements.length == 1) {
                 clearInterval(game.intervalHandle);
                 Game.prototype.end();
             } else {
-                Game.prototype.update(1 / FPS);
+                Game.prototype.update(1 / FPS);              
+                //draw star background
+                background.draw();         
                 Game.prototype.draw();
+                Game.prototype.render();
             }
         },
     1000 / FPS);
 }
+
+//#########################################################################
+// Refactor: End should just check for player death & clear state, not draw
+//#########################################################################
 
 Game.prototype.end = function() {
 
@@ -199,18 +237,20 @@ $(window).keydown(function(evt) {
 }
 
 Game.prototype.start = function() {
-    ctx.fillStyle = '#FFF';
-    ctx.font = "bold 50pt Sans-Serif";
-    ctx.textAlign = "center";
+    ctxMain.fillStyle = '#00F';
+    ctxMain.font = "bold 80pt Sans-Serif";
+    ctxMain.textAlign = "center";
     //you need to clear the canvas for this instance of the Game object -- game -- not the Game object. 
-    ctx.fillText('Stellar', canvas.width/2, canvas.height/2);
-    ctx.font = "20pt Sans-Serif";
-    ctx.fillText('Hit enter or space to start', canvas.width/2, (canvas.height/2)+30);
+    ctxMain.fillText('Stellar', canvas.width/2, canvas.height/2 - 150);
+    ctxMain.font = "20pt Sans-Serif";
+    ctxMain.fillText('Be a star. Consume the universe.', canvas.width/2, (canvas.height/2)-100);
+    ctxMain.font = "bold 22pt Sans-Serif";
+    ctxMain.fillStyle = '#00E';
+    ctxMain.fillText('Hit enter or space to start', canvas.width/2, (canvas.height/2)+100);
 
     $(window).keydown(function(evt) {
 
         if (evt.keyCode == 13 || evt.keyCode == 32) {
-            console.log('starting game');
             $(window).off('keydown');
             Game.prototype.run();
         }
@@ -220,11 +260,6 @@ Game.prototype.start = function() {
 //instanciate new game object
 var game = new Game();
 
-
-
-//##################################################################
-// Below code is for the scoreboard - Change to follow player
-//##################################################################
 Game.prototype.score = function() {
 
 //offfset scoreboard according to game width height
@@ -240,82 +275,84 @@ ctx.fillText('Your mass is ' + Math.floor(player.r) + '.', canvas.x+5, canvas.y+
 
 }
 
-
 //##################################################################
 // Game Camera - Follows player around, translates Game Objects
 //##################################################################
 
-//get current views by calculating the player's distance from translated origin
+//get offset values by calculating the player's current distance from translated origin
 Object.defineProperty(Game.prototype, 'viewX', {get: function(){ return player.x - offsetX; }});
 Object.defineProperty(Game.prototype, 'viewY', {get: function(){ return player.y - offsetY; }});
 
-var bg = function() {
+
+var bgCanvas = document.createElement('canvas');
+var bgCtx = bgCanvas.getContext('2d');
+
+bgCanvas.width = canvas.width;
+bgCanvas.height = canvas.height;
+
+var Background = function() {
 
     this.x = 0;
     this.y = 0;
     this.w = game.w;
     this.h = game.h;
 
-    var self = this;
-
     var maxStars = 500;
     var stars = [];
 
-    //make an array of random stars
+    this.makeStars = function(stars) {
+        for (var i=0; i<maxStars; i++) {
+            stars.push({
+            x: getRandomInteger(0, game.w),
+            y: getRandomInteger(0, game.h),
+            r: getRandomInteger(0, 2),
+            });
+        }
+    }
+}
+
+
+//make a new background object
+
+Background.prototype.stars = function() {
+
+    this.fill = 
+    var maxStars = 500;
+    var stars = [];
+
+
     for (var i=0; i<maxStars; i++) {
     stars.push({
         x: getRandomInteger(0, game.w),
         y: getRandomInteger(0, game.h),
-        r: getRandomInteger(1, 3)
+        r: getRandomInteger(0, 2),
         });
     }
 
-    self.draw = function() {
-    //test star background  
-    // var STARS_IMG = new Image();
-    // STARS_IMG.onload = function (){ctx.drawImage(STARS_IMG, -game.viewX, -game.viewY, self.w, self.h);}
-    // STARS_IMG.src = "static/bg/stars3.png"; 
+    //twinkle effect - Not implimented
+    //var twink = getRandomNum(.5, .9);
 
-    ctx.fillStyle="rgba(255, 255, 255, .6)";
-    ctx.beginPath();
-        
+    //fill all stars with a color on the purple/blue scale
+}
+
+
+Background.prototype.draw = function() {
+
+    //clear and then draw canvas & star objects       
+    bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+    //make a game world bounding rectangle
+    bgCtx.strokeStyle = starFill;
+    bgCtx.lineWidth = 2;
+    bgCtx.strokeRect(-game.viewX, -game.viewY, this.w, this.h);
+
+    bgCtx.fillStyle = starFill;
+    bgCtx.beginPath();
         //draw the stars
         for (var i=0; i<stars.length; i++) {
         var star = stars[i];
-        ctx.moveTo(star.x, star.y);
-        ctx.arc(star.x-game.viewX, star.y-game.viewY, star.r, 0, Math.PI * 2, false);
+        bgCtx.moveTo(star.x, star.y);
+        bgCtx.arc(star.x-game.viewX, star.y-game.viewY, star.r, 0, Math.PI * 2, false);
         }
-    
-    ctx.fill();
-    ctx.closePath();
-    
-    }
-}
-
-//make a new background object
-var background = new bg();
-
-
-
-Game.prototype.camera =  function(moveType) {
-
-        switch(moveType) {
-            case 'up':
-            player.vY -= player.speed;
-            break;
-
-            case 'down':
-            player.vY += player.speed;
-            break;
-
-            case 'left':
-            player.vX -= player.speed;
-            break;
-
-            case 'right':
-            player.vX += player.speed;
-            break;
-        }
-
-}
-
+    bgCtx.fill();
+    bgCtx.closePath();

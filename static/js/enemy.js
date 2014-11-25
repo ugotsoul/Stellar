@@ -7,6 +7,7 @@ function Enemy(x, y, r, id) {
     this.strength = 1;
     this.id = id;
     this.drag = .00001;
+    this.maxV = 75;
 
     //assign random directions/speeds to each enemy
     this.vX = getRandomInteger(-50, 50);
@@ -79,28 +80,28 @@ Enemy.prototype.draw = function() {
 
         if (this.r > 0) {
 
-        ctx.beginPath();
-        ctx.arc(drawX, drawY, drawR, 0, Math.PI * 2, false);
-        ctx.closePath();
+            ctx.beginPath();
+            ctx.arc(drawX, drawY, drawR, 0, Math.PI * 2, false);
+            ctx.closePath();
 
-        //##################################
-        //Star effect - pretty stuff
-        //##################################
-        var new_opacity = getRandomNum(.5, .6);
+            //##################################
+            //Star effect - pretty stuff
+            //##################################
+            var new_opacity = getRandomNum(.5, .6);
 
-        var g = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, drawR * .95);
-        g.addColorStop(0.0, 'rgba(60,255,255,' + new_opacity + ')');
-        g.addColorStop(.75, 'rgba(0,60,255,' + (new_opacity * .7) + ')');
-        g.addColorStop(1.0, 'rgba(0,60,255,0)');
-        ctx.fillStyle = g;
-        ctx.fill();
+            // var g = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, drawR * .95);
+            // g.addColorStop(0.0, 'rgba(60,255,255,' + new_opacity + ')');
+            // g.addColorStop(.75, 'rgba(0,60,255,' + (new_opacity * .7) + ')');
+            // g.addColorStop(1.0, 'rgba(0,60,255,0)');
+            ctx.fillStyle = "blue";
+            ctx.fill();
 
-        //center coordinates of enemy object
-        ctx.fillStyle = '#0f0';
-        ctx.fillRect(drawX, drawY,75,15);
-        ctx.fillStyle = '#000';
-        ctx.font = "bold 8pt Sans-Serif";
-        ctx.textAlign = 'left';
-        ctx.fillText('X: ' + Math.floor(this.x) + ' Y: ' + Math.floor(this.y), drawX, drawY+10);
+            //center coordinates of enemy object
+            // ctx.fillStyle = '#0f0';
+            // ctx.fillRect(drawX, drawY,75,15);
+            // ctx.fillStyle = '#000';
+            // ctx.font = "bold 8pt Sans-Serif";
+            // ctx.textAlign = 'left';
+            // ctx.fillText('X: ' + Math.floor(this.x) + ' Y: ' + Math.floor(this.y), drawX, drawY+10);
         }
     }
