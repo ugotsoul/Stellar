@@ -45,11 +45,17 @@ GameObject.prototype.update = function(dt) {
         //limit speed of vectors
         if (this.vX > this.maxV) {
             this.vX = this.maxV;
-        } else if (this.vY > this.maxV) {
-            this.vY = this.maxV;
-        } else if (this.vX < -this.maxV) {
+        }
+
+        else if (this.vX < -this.maxV) {
             this.vX = -this.maxV;
-        } else if (this.vY < -this.maxV) {
+        } 
+
+        if (this.vY > this.maxV) {
+            this.vY = this.maxV;
+        }
+
+        else if (this.vY < -this.maxV) {
             this.vY = -this.maxV;
         }
 
@@ -98,14 +104,17 @@ GameObject.prototype.reboundDirection = function(element, dt) {
 
         	//displacement vector (x,y) array
 			var displacement = this.displacementVector(element);
-        	var collisionAngle = Math.atan2(displacement[0], displacement[1]);
-        	//velocity vectors
+
+            //note: atan2 calculates the right handed coordinate system using (y, x) - canvas world is left handed coordinate system
+        	var collisionAngle = Math.atan2(displacement[1], displacement[0]);
+        	
+            //speed - length of velocity vector
         	var speedThis = Math.sqrt(this.vX*this.vX + this.vY*this.vY);
         	var speedElement = Math.sqrt(element.vX*element.vX + element.vY*element.vY);
         	
         	//angles at current velocities
-        	var directionThis = Math.atan2(this.vX, this.vY); 
-        	var directionElement =  Math.atan2(element.vX, element.vY); 
+        	var directionThis = Math.atan2(this.vY, this.vX); 
+        	var directionElement =  Math.atan2(element.vY, element.vX); 
 
         	//rotate vectors counter clockwise - make the angle of collision flat
         	var vRotationTx = speedThis * Math.cos(directionThis - collisionAngle);        	
@@ -121,7 +130,6 @@ GameObject.prototype.reboundDirection = function(element, dt) {
         	var finalVy2 = vRotationEy;
 
         	//rotate the angles back again so the collision angle is preserved
-
         	this.vX = Math.cos(collisionAngle) * finalVx1 + Math.cos(collisionAngle + Math.PI/2) * finalVy1; 	
         	this.vY = Math.sin(collisionAngle) * finalVx1 + Math.sin(collisionAngle + Math.PI/2) * finalVy1;
         	
@@ -135,7 +143,6 @@ GameObject.prototype.reboundDirection = function(element, dt) {
         	element.y = (element.y += element.vY * dt);
 
         }
-
 
 GameObject.prototype.interact = function (dt) {
 
@@ -165,9 +172,9 @@ GameObject.prototype.interact = function (dt) {
             console.log('bottom wall collision');
     		}
 
-		for (var i = 0; i < gameElements.length; i++) {
-			var element = gameElements[i];
-			if (!(element.id == this.id)) {
+		for (var i = 0; i < game.gameObjects.length; i++) {
+			var element = game.gameObjects[i];
+			if (element.id > this.id) {
 		    	if (this.collisionDetect(element)) {
                     console.log('trying to rebound');
 		    		this.reboundDirection(element, dt);
@@ -182,4 +189,7 @@ GameObject.prototype.interact = function (dt) {
 
 
 
+//Stop collision checking happening on 
+//make collision detection only in charge of one element.
+//interact only gets called on ids lower than the element/this obeject
 

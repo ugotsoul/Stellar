@@ -1,38 +1,32 @@
 //#######################################
 // Arrow Key Event Handler
 //#######################################
-//var keylogger to pass to Player.move('type of move')
-var moveType;
 
 //movement handler for player
-function keyPosition() {
+Game.prototype.keyPress = function() {
 
     // event listener for keys
     $(window).keydown(function(evt) {
 
-        $('#status').html('Use the Arrow Keys to Move & Eat The Other Stellar Bodies.');
             switch (true) {
                 case (evt.keyCode == 40):
                     //player moves up, player -y   
-                    moveType = 'down';
+                    return 'down';
                     break;
                 case (evt.keyCode == 38):
                     //player moves down, player +y
-                    moveType = 'up';
+                    return 'up';
                     break;
                 case (evt.keyCode == 37):
                     //player moves right, player +x
-                    moveType = 'left';
+                    return 'left';
                     break;
                 case (evt.keyCode == 39):
                     //player moves left, player -x
-                    moveType = 'right';
+                    return 'right';
                     break;
             }
-    
-    player.move(moveType);
-
-    });
-}
+        });
+    }
 
 

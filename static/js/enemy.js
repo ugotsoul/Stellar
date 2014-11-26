@@ -72,7 +72,7 @@ Enemy.prototype.attack = function (element) {
         }
     }
 
-Enemy.prototype.draw = function() {
+Enemy.prototype.draw = function(ctx) {
 
     var drawX = this.x - game.viewX;
     var drawY = this.y - game.viewY;
@@ -85,23 +85,16 @@ Enemy.prototype.draw = function() {
             ctx.closePath();
 
             //##################################
-            //Star effect - pretty stuff
+            //Twinkle Effect
             //##################################
             var new_opacity = getRandomNum(.5, .6);
 
-            // var g = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, drawR * .95);
-            // g.addColorStop(0.0, 'rgba(60,255,255,' + new_opacity + ')');
-            // g.addColorStop(.75, 'rgba(0,60,255,' + (new_opacity * .7) + ')');
-            // g.addColorStop(1.0, 'rgba(0,60,255,0)');
-            ctx.fillStyle = "blue";
+            var g = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, drawR * .95);
+            g.addColorStop(0.0, 'rgba(60,255,255,' + new_opacity + ')');
+            g.addColorStop(.75, 'rgba(0,60,255,' + (new_opacity * .7) + ')');
+            g.addColorStop(1.0, 'rgba(0,60,255,0)');
+            ctx.fillStyle = g;
             ctx.fill();
 
-            //center coordinates of enemy object
-            // ctx.fillStyle = '#0f0';
-            // ctx.fillRect(drawX, drawY,75,15);
-            // ctx.fillStyle = '#000';
-            // ctx.font = "bold 8pt Sans-Serif";
-            // ctx.textAlign = 'left';
-            // ctx.fillText('X: ' + Math.floor(this.x) + ' Y: ' + Math.floor(this.y), drawX, drawY+10);
         }
     }

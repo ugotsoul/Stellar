@@ -28,25 +28,82 @@ mainCanvas.height = canvas.height;
 
 var ctxMain = mainCanvas.getContext('2d');
 
-// ###########################################
-//  Game state attributes & object containers
-// ###########################################
-
-//# of enemies
-NUM_OF_ENEMIES = 5;
+//##############################
+// Game Constructor Functions
+//##############################
 
 //global player object 
 var player = new Player(canvas.width, canvas.height);
 
-//creates an array for game objects
-var gameElements = new Array();
+var Game = function() {
+    this.x = 0;
+    this.y = 0;
+    this.w = 3000;
+    this.h = 3000;
+    this.intervalHandle = null;
+    this.playerKills = 0;
+    this.maxEnemies = 5;
+    this.gameObjects = this.getElements();
+};
 
-//#########################################
-//Make get Elements part of the Game Class
-//#########################################
+Game.prototype.keyPress = function(player) {
 
-//add game objects to an array
-function getElements() {
+    $(window).keyup(function(evt) {
+
+        switch (true) {
+                case (evt.keyCode == 38):
+                    //player moves up, player -y 
+                    player.moveType['up']= false;
+                    break;
+                case (evt.keyCode == 40):
+                    //player moves down, player +y
+                    player.moveType['down'] = false;
+                    break;
+                case (evt.keyCode == 39):
+                    //player moves right, player +x
+                    player.moveType['right']= false;
+                    break;
+                case (evt.keyCode == 37):
+                    //player moves left, player -x
+                    player.moveType['left'] = false;
+                    break;
+            }
+
+    });
+
+    // event listener for keys
+    $(window).keydown(function(evt) {
+
+            console.log("Keydown: " + evt.keyCode);
+
+
+            
+            switch (true) {
+                case (evt.keyCode == 38):
+                    //player moves up, player -y 
+                    player.moveType['up']= true;
+                    break;
+                case (evt.keyCode == 40):
+                    //player moves down, player +y
+                    player.moveType['down'] = true;
+                    break;
+                case (evt.keyCode == 39):
+                    //player moves right, player +x
+                    player.moveType['right']= true;
+                    break;
+                case (evt.keyCode == 37):
+                    //player moves left, player -x
+                    player.moveType['left'] = true;
+                    break;
+            }
+
+        });
+    }
+
+Game.prototype.getElements = function() {
+    
+    var gameElements = [];
+
     //add player to game element array
     gameElements.push(player);
     
@@ -55,8 +112,7 @@ function getElements() {
     //primary key of enemy
     var rID = 1;
 
-    //check if element has those coordinates already
-    while (enemiesAdded < NUM_OF_ENEMIES) {
+    while (enemiesAdded < this.maxEnemies) {
 
         var n = 0;
 
@@ -65,9 +121,9 @@ function getElements() {
 
         // instanciate enemies in random places on the board 
         // note: bounds are restricted to account for max radius
-        var rX = getRandomInteger(maxR, game.w-maxR);
-        var rY = getRandomInteger(maxR, game.h-maxR);
-        var rR = 30; //getRandomInteger(10, 30);
+        var rX = getRandomInteger(maxR, this.w-maxR);
+        var rY = getRandomInteger(maxR, this.h-maxR);
+        var rR = getRandomInteger(10, 30);
 
         var tempEnemy = new Enemy(rX, rY, rR, rID);
 
@@ -80,70 +136,63 @@ function getElements() {
             gameElements.push(tempEnemy);
             //incriment unique id
             rID++
+            }
+        n++
         }
-    n++
-    }
+
+    return gameElements;
 }
 
-//##############################
-// Game Constructor Functions
-//##############################
-
-//game world boundries - swap out h & w when you decided on a world size
-var Game = function() {
-    this.x = 0;
-    this.y = 0;
-    this.w = 3000;
-    this.h = 3000;
-    this.intervalHandle = null;
-};
-
-Game.prototype.draw = function() {
+Game.prototype.draw = function(ctx) {
        
     if (player.death == true) {
         console.log("Players is dead, stop drawing");
         return;
     }
+
     //clear and then draw canvas & game elements        
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    for (var c = 0; c < gameElements.length; c++) {
+    for (var c = 0; c < this.gameObjects.length; c++) {
 
         //draw enemy element on canvas
-        gameElements[c].draw();
+        this.gameObjects[c].draw(ctx);
     }
 
     //draw player status board
-    game.score();
+    this.score(ctx);
 };
-
-//Note: playerKills == NUM of enemeies signals winning game end state
-var playerKills = 0;
 
 Game.prototype.update = function(dt) {
 
     //update positions of game elements
-    for (var d = 0; d < gameElements.length; d++) {
+    for (var d = 0; d < this.gameObjects.length; d++) {
         //check if element is dead or not
-        if (gameElements[d].death == true) {
+        if (this.gameObjects[d].death == true) {
             //if dead, remove enemy from array
-            gameElements.splice(d, 1);
-            playerKills++
-        }
-        else if (gameElements[d].length == 1) {
+            this.gameObjects.splice(d, 1);
+            this.playerKills++
+            }
+        
+        else if (this.gameObjects[d].length == 1) {
             return;
-        } else {
-            gameElements[d].update(dt);
-        }
+            } 
+
+        else {
+            this.gameObjects[d].update(dt);
+            }
     }
 }
 
 //calls the buffer canvas when ready
 Game.prototype.render = function() {
 
-ctxMain.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
-ctxMain.drawImage(bgCanvas, 0, 0);
-ctxMain.drawImage(canvas, 0, 0);
+    ctxMain.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+
+    background.draw(ctx);         
+    this.draw(ctx);
+
+    return ctxMain.drawImage(bgCanvas, 0, 0), ctxMain.drawImage(canvas, 0, 0);
 
 }
 
@@ -151,10 +200,7 @@ ctxMain.drawImage(canvas, 0, 0);
 Game.prototype.run = function() {
 
     //get arrow key types
-    keyPosition();
-
-    //get game objects
-    getElements();
+    this.keyPress(player);
 
     //frames per second
     FPS = 50;
@@ -163,24 +209,25 @@ Game.prototype.run = function() {
     // This incriments the game by 1 time step to check for bugs
     //      game.step();
     //##########################################################
-    this.step = function() {
-            Game.prototype.update(1 / FPS);
-            Game.prototype.draw();
-        }
+    //this.step = function() {
+    //        Game.prototype.update(1 / FPS);
+    //      Game.prototype.draw();  }
     //###########################################################
+    
+    //inherted variable scope
+    var self = this;
 
-    game.intervalHandle = setInterval(function() {
-            if (player.death == true || gameElements.length == 1) {
-                clearInterval(game.intervalHandle);
-                Game.prototype.end();
+    this.intervalHandle = setInterval( function() {
+            
+            if (player.death == true || self.gameObjects.length == 1) {
+                clearInterval(self.intervalHandle);
+                self.end();
             } else {
-                Game.prototype.update(1 / FPS);              
-                //draw star background
-                background.draw();         
-                Game.prototype.draw();
-                Game.prototype.render();
+                self.update(1 / FPS);              
+                self.render();
             }
         },
+
     1000 / FPS);
 }
 
@@ -189,6 +236,8 @@ Game.prototype.run = function() {
 //#########################################################################
 
 Game.prototype.end = function() {
+
+    var self = this;
 
 $(window).keydown(function(evt) {
 
@@ -200,9 +249,9 @@ $(window).keydown(function(evt) {
         //#############################################################################
             player.death = false;
             player.r = 100;
-            playerKills = 0;
-            gameElements = [];
-            game.run();
+            self.playerKills = 0;
+            self.gameObjects = null;
+            self.run();
 
         }
     });
@@ -211,32 +260,33 @@ $(window).keydown(function(evt) {
     if (player.death == true) {
         $('#status').empty();
         $('#status').off('html');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#FFF';
-        ctx.textAlign = "center";
-        ctx.font = "bold 50pt Sans-Serif";
+        ctxMain.clearRect(0, 0, canvas.width, canvas.height);
+        ctxMain.fillStyle = '#FFF';
+        ctxMain.textAlign = "center";
+        ctxMain.font = "bold 50pt Sans-Serif";
         //you need to clear the canvas for this instance of the Game object -- game -- not the Game object/class. 
-        ctx.fillText('YOU DIED!', canvas.width/2, canvas.height/2);
-        ctx.font = "bold 20pt Sans-Serif";
-        ctx.fillText('Hit space or Enter to Play Again!', canvas.width/2, canvas.height/2+30);
+        ctxMain.fillText('YOU DIED!', canvas.width/2, canvas.height/2);
+        ctxMain.font = "bold 20pt Sans-Serif";
+        ctxMain.fillText('Hit space or Enter to Play Again!', canvas.width/2, canvas.height/2+30);
     }
 
-    if (gameElements.length == 1) {
+    if (this.gameObjects.length == 1) {
         // you win!
         $('#status').empty();
         $('#status').off('html');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#FFF';
-        ctx.textAlign = "center";
-        ctx.font = "bold 50pt Sans-Serif";
+        ctxMain.clearRect(0, 0, canvas.width, canvas.height);
+        ctxMain.fillStyle = '#FFF';
+        ctxMain.textAlign = "center";
+        ctxMain.font = "bold 50pt Sans-Serif";
         //you need to clear the canvas for this instance of the Game object -- game -- not the Game object/class. 
-        ctx.fillText('YOU WIN! YAY!', canvas.width/2, canvas.height/2);
-        ctx.font = "bold 20pt Sans-Serif";
-        ctx.fillText('Hit space or Enter to Play Again!', canvas.width/2, canvas.height/2+30);
+        ctxMain.fillText('YOU WIN! YAY!', canvas.width/2, canvas.height/2);
+        ctxMain.font = "bold 20pt Sans-Serif";
+        ctxMain.fillText('Hit space or Enter to Play Again!', canvas.width/2, canvas.height/2+30);
         }    
 }
 
 Game.prototype.start = function() {
+
     ctxMain.fillStyle = '#00F';
     ctxMain.font = "bold 80pt Sans-Serif";
     ctxMain.textAlign = "center";
@@ -244,15 +294,17 @@ Game.prototype.start = function() {
     ctxMain.fillText('Stellar', canvas.width/2, canvas.height/2 - 150);
     ctxMain.font = "20pt Sans-Serif";
     ctxMain.fillText('Be a star. Consume the universe.', canvas.width/2, (canvas.height/2)-100);
-    ctxMain.font = "bold 22pt Sans-Serif";
-    ctxMain.fillStyle = '#00E';
+    ctxMain.font = "bold italic 22pt Sans-Serif";
+    ctxMain.fillStyle = '#00f';
     ctxMain.fillText('Hit enter or space to start', canvas.width/2, (canvas.height/2)+100);
 
+    var self = this;
+    
     $(window).keydown(function(evt) {
 
         if (evt.keyCode == 13 || evt.keyCode == 32) {
             $(window).off('keydown');
-            Game.prototype.run();
+            self.run();
         }
     });
 }
@@ -260,18 +312,19 @@ Game.prototype.start = function() {
 //instanciate new game object
 var game = new Game();
 
+
 Game.prototype.score = function() {
 
-//offfset scoreboard according to game width height
-ctx.fillStyle = '#FFF';
-ctx.font = "bold 16pt Sans-Serif";
-ctx.textAlign = "start";
-ctx.fillText('Score Board', canvas.x+5, canvas.y+20);
-ctx.font = "14pt Sans-Serif";
-ctx.fillText('Enemies Killed: ' + playerKills, canvas.x+5, canvas.y+40);
-ctx.fillText('Your X velocity is ' + Math.floor(player.vX), canvas.x+5, canvas.y+60);
-ctx.fillText('Your Y velocity is ' + Math.floor(player.vY), canvas.x+5, canvas.y+80);
-ctx.fillText('Your mass is ' + Math.floor(player.r) + '.', canvas.x+5, canvas.y+100);
+    //offset scoreboard according to game width height
+    ctx.fillStyle = '#FFF';
+    ctx.font = "bold 30pt Sans-Serif";
+    ctx.textAlign = "start";
+    ctx.fillText('Score Board', canvas.x+5, canvas.y+30);
+    ctx.font = "22pt Sans-Serif";
+    ctx.fillText('Enemies Killed: ' + this.playerKills, canvas.x+5, canvas.y+60);
+    ctx.fillText('Your X velocity is ' + Math.floor(player.vX), canvas.x+5, canvas.y+90);
+    ctx.fillText('Your Y velocity is ' + Math.floor(player.vY), canvas.x+5, canvas.y+120);
+    ctx.fillText('Your mass is ' + Math.floor(player.r) + '.', canvas.x+5, canvas.y+150);
 
 }
 
@@ -291,68 +344,52 @@ bgCanvas.width = canvas.width;
 bgCanvas.height = canvas.height;
 
 var Background = function() {
-
     this.x = 0;
     this.y = 0;
     this.w = game.w;
     this.h = game.h;
-
-    var maxStars = 500;
-    var stars = [];
-
-    this.makeStars = function(stars) {
-        for (var i=0; i<maxStars; i++) {
-            stars.push({
-            x: getRandomInteger(0, game.w),
-            y: getRandomInteger(0, game.h),
-            r: getRandomInteger(0, 2),
-            });
-        }
-    }
+    this.stars = this.makeStars();
 }
 
+Background.prototype.makeStars = function() {
 
-//make a new background object
-
-Background.prototype.stars = function() {
-
-    this.fill = 
-    var maxStars = 500;
+    this.fill = 'blue';
+    this.maxStars = 500;
     var stars = [];
 
-
-    for (var i=0; i<maxStars; i++) {
+    for (var i=0; i<this.maxStars; i++) {
     stars.push({
         x: getRandomInteger(0, game.w),
         y: getRandomInteger(0, game.h),
         r: getRandomInteger(0, 2),
         });
     }
-
-    //twinkle effect - Not implimented
-    //var twink = getRandomNum(.5, .9);
-
-    //fill all stars with a color on the purple/blue scale
+    return stars;
 }
 
 
 Background.prototype.draw = function() {
-
+    
     //clear and then draw canvas & star objects       
     bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
 
     //make a game world bounding rectangle
-    bgCtx.strokeStyle = starFill;
+    bgCtx.strokeStyle = this.fill;
     bgCtx.lineWidth = 2;
     bgCtx.strokeRect(-game.viewX, -game.viewY, this.w, this.h);
 
-    bgCtx.fillStyle = starFill;
+    bgCtx.fillStyle = this.fill;
     bgCtx.beginPath();
+
         //draw the stars
-        for (var i=0; i<stars.length; i++) {
-        var star = stars[i];
+        for (var i=0; i<this.stars.length; i++) {
+        var star = this.stars[i];
         bgCtx.moveTo(star.x, star.y);
         bgCtx.arc(star.x-game.viewX, star.y-game.viewY, star.r, 0, Math.PI * 2, false);
         }
+
     bgCtx.fill();
     bgCtx.closePath();
+}
+
+var background = new Background();

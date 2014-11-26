@@ -8,34 +8,55 @@ function Player(x, y, r) {
     this.drag = .001;
     this.speed = 10;
     this.maxV = 250;
+    this.moveType = {
+
+        'up': false,
+        'down': false,
+        'left': false,
+        'right': false
+    }
 
 }
 
 Player.prototype = Object.create(GameObject.prototype);
 
+
+Player.prototype.update = function(dt) {
+
+    this.move();
+
+    return GameObject.prototype.update.call(this, dt);
+}
+
 Player.prototype.move = function () {
 
-        switch(moveType) {
-            case 'up':      
-            this.vY -= this.speed;
-            break;
+    for (var direction in this.moveType) {
 
-            case 'down': 
-            this.vY += this.speed;              
-            break;
+        if (this.moveType[direction]) { 
 
-            case 'left':
-            this.vX -= this.speed;            
-            break;
+            switch(direction) {           
+                case 'up':    
+                this.vY -= this.speed;
+                break;
 
-            case 'right':
-            this.vX += this.speed;
-            break;
+                case 'down': 
+                this.vY += this.speed;              
+                break;
+
+                case 'left':
+                this.vX -= this.speed;            
+                break;
+
+                case 'right':
+                this.vX += this.speed;
+                break;
+            }
         }
     }
+}
 
 
-Player.prototype.draw = function() {
+Player.prototype.draw = function(ctx) {
     
     var drawX = this.x - game.viewX;
     var drawY = this.y - game.viewY;
@@ -52,11 +73,11 @@ Player.prototype.draw = function() {
             //##################################
 
             var new_opacity = getRandomNum(.7, .8);
-            // var g = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, drawR);
-            // g.addColorStop(0.0, 'rgba(255,255,255,' + new_opacity + ')');
-            // g.addColorStop(.85, 'rgba(255,239,0,' + (new_opacity * .70) + ')');
-            // g.addColorStop(1.0, 'rgba(255,239,0,0)');
-            ctx.fillStyle = "green";
+            var g = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, drawR);
+            g.addColorStop(0.0, 'rgba(255,255,255,' + new_opacity + ')');
+            g.addColorStop(.85, 'rgba(255,239,0,' + (new_opacity * .70) + ')');
+            g.addColorStop(1.0, 'rgba(255,239,0,0)');
+            ctx.fillStyle = g;
             ctx.fill();
        		}
 
