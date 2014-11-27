@@ -1,3 +1,4 @@
+
 // ###############################
 //  HTML5 Canvas properties
 // ###############################
@@ -22,11 +23,12 @@ var offsetY = canvas.height/2;
 
 //prepare the main game canvas
 var mainCanvas = document.getElementById('main');
-
-mainCanvas.width = canvas.width;
-mainCanvas.height = canvas.height;
-
 var ctxMain = mainCanvas.getContext('2d');
+
+ctxMain.canvas.x = 0;
+ctxMain.canvas.y = 0;
+ctxMain.canvas.width = ctx.canvas.width;
+ctxMain.canvas.height = ctx.canvas.height;
 
 //##############################
 // Game Constructor Functions
@@ -74,10 +76,6 @@ Game.prototype.keyPress = function(player) {
     // event listener for keys
     $(window).keydown(function(evt) {
 
-            console.log("Keydown: " + evt.keyCode);
-
-
-            
             switch (true) {
                 case (evt.keyCode == 38):
                     //player moves up, player -y 
@@ -189,7 +187,8 @@ Game.prototype.render = function() {
 
     ctxMain.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
 
-    background.draw(ctx);         
+    background.render(); 
+    
     this.draw(ctx);
 
     return ctxMain.drawImage(bgCanvas, 0, 0), ctxMain.drawImage(canvas, 0, 0);
@@ -201,6 +200,9 @@ Game.prototype.run = function() {
 
     //get arrow key types
     this.keyPress(player);
+
+    //get mouse clicks
+    //this.mouseClick();
 
     //frames per second
     FPS = 50;
@@ -221,7 +223,7 @@ Game.prototype.run = function() {
             
             if (player.death == true || self.gameObjects.length == 1) {
                 clearInterval(self.intervalHandle);
-                self.end();
+                self.end(ctxMain);
             } else {
                 self.update(1 / FPS);              
                 self.render();
@@ -235,7 +237,7 @@ Game.prototype.run = function() {
 // Refactor: End should just check for player death & clear state, not draw
 //#########################################################################
 
-Game.prototype.end = function() {
+Game.prototype.end = function(ctxMain) {
 
     var self = this;
 
@@ -256,10 +258,8 @@ $(window).keydown(function(evt) {
         }
     });
 
-// 2 end states - you win or you lose.
     if (player.death == true) {
-        $('#status').empty();
-        $('#status').off('html');
+
         ctxMain.clearRect(0, 0, canvas.width, canvas.height);
         ctxMain.fillStyle = '#FFF';
         ctxMain.textAlign = "center";
@@ -271,9 +271,7 @@ $(window).keydown(function(evt) {
     }
 
     if (this.gameObjects.length == 1) {
-        // you win!
-        $('#status').empty();
-        $('#status').off('html');
+
         ctxMain.clearRect(0, 0, canvas.width, canvas.height);
         ctxMain.fillStyle = '#FFF';
         ctxMain.textAlign = "center";
@@ -312,25 +310,53 @@ Game.prototype.start = function() {
 //instanciate new game object
 var game = new Game();
 
-
-Game.prototype.score = function() {
+Game.prototype.score = function(ctx) {
 
     //offset scoreboard according to game width height
     ctx.fillStyle = '#FFF';
     ctx.font = "bold 30pt Sans-Serif";
     ctx.textAlign = "start";
-    ctx.fillText('Score Board', canvas.x+5, canvas.y+30);
+    ctx.fillText('Score Board', canvas.x+5, canvas.y+40);
     ctx.font = "22pt Sans-Serif";
-    ctx.fillText('Enemies Killed: ' + this.playerKills, canvas.x+5, canvas.y+60);
-    ctx.fillText('Your X velocity is ' + Math.floor(player.vX), canvas.x+5, canvas.y+90);
-    ctx.fillText('Your Y velocity is ' + Math.floor(player.vY), canvas.x+5, canvas.y+120);
-    ctx.fillText('Your mass is ' + Math.floor(player.r) + '.', canvas.x+5, canvas.y+150);
+    ctx.fillText('Enemies Killed: ' + this.playerKills, canvas.x+5, canvas.y+70);
+    ctx.fillText('Your X velocity is ' + Math.floor(player.vX), canvas.x+5, canvas.y+100);
+    ctx.fillText('Your Y velocity is ' + Math.floor(player.vY), canvas.x+5, canvas.y+130);
+    ctx.fillText('Your mass is ' + Math.floor(player.r) + '.', canvas.x+5, canvas.y+160);
 
 }
+
+Game.prototype.mouseClick = function(){
+
+    //mouseEvent listener
+    $(window).click(function (evt) {
+    
+    //store mouse clicks
+    //these coordinates are the click offset from the players game world position
+    var xClick = evt.pageX - offsetX;
+    var yClick = evt.pageY - offsetY;
+
+    console.log('Click Coordinates', xClick, yClick);
+
+    return player.mouseClick = [xClick, yClick];
+
+    });
+}
+
 
 //##################################################################
 // Game Camera - Follows player around, translates Game Objects
 //##################################################################
+
+
+Object.defineProperty(Game.prototype, 'zoom', {get: function(){ 
+
+    if (this.playerKills > 0) {
+        return this.maxEnemies/this.playerKills;
+    }
+
+    else {
+        return this.maxEnemies; }
+    }});
 
 //get offset values by calculating the player's current distance from translated origin
 Object.defineProperty(Game.prototype, 'viewX', {get: function(){ return player.x - offsetX; }});
@@ -340,6 +366,8 @@ Object.defineProperty(Game.prototype, 'viewY', {get: function(){ return player.y
 var bgCanvas = document.createElement('canvas');
 var bgCtx = bgCanvas.getContext('2d');
 
+bgCanvas.x = 0;
+bgCanvas.y = 0;
 bgCanvas.width = canvas.width;
 bgCanvas.height = canvas.height;
 
@@ -351,32 +379,61 @@ var Background = function() {
     this.stars = this.makeStars();
 }
 
+Object.defineProperty(Background.prototype, 'viewX', {get: function(){ return -(player.x - offsetX); }});
+Object.defineProperty(Background.prototype, 'viewY', {get: function(){ return -(player.y - offsetY); }});
+// Object.defineProperty(Background.prototype, 'w', {get: function(){ return game.w; }});
+// Object.defineProperty(Background.prototype, 'h', {get: function(){ return game.h; }});
+
+//Object.defineProperty(Background.prototype, 'stars' {get: function(){ return this.makeStars(); }});
+
 Background.prototype.makeStars = function() {
 
     this.fill = 'blue';
-    this.maxStars = 500;
+    this.maxStars = 1000;
     var stars = [];
 
     for (var i=0; i<this.maxStars; i++) {
     stars.push({
-        x: getRandomInteger(0, game.w),
-        y: getRandomInteger(0, game.h),
+        x: getRandomInteger(this.x, this.w),
+        y: getRandomInteger(this.y, this.h),
         r: getRandomInteger(0, 2),
+        draw: false,
         });
     }
     return stars;
 }
 
 
-Background.prototype.draw = function() {
-    
+Background.prototype.update = function() {
+
+    //move stars in player direction of movement
+    // for (var i=0; i < this.stars.length; i++){
+    //     this.stars[i].x -= (-player.vX/player.vX);
+    //     this.stars[i].y -= (-player.vY/player.vY);
+    // }
+
+    // function range(x, min, max) {
+    //     return x > min && x < max;
+    // }
+
+    // for (var n=0; n < this.stars.length; n++){
+
+    //     //check if stars are in game world
+    //     if (range(this.stars[n].x, this.viewX, this.w) && range(this.stars[n].y, this.viewY, this.h)){
+    //         this.stars[n].draw = true;     
+    //     }
+    // }
+}
+
+Background.prototype.draw = function(bgCtx) {
+
     //clear and then draw canvas & star objects       
     bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
 
     //make a game world bounding rectangle
     bgCtx.strokeStyle = this.fill;
     bgCtx.lineWidth = 2;
-    bgCtx.strokeRect(-game.viewX, -game.viewY, this.w, this.h);
+    bgCtx.strokeRect(this.viewX, this.viewY, this.w, this.h);
 
     bgCtx.fillStyle = this.fill;
     bgCtx.beginPath();
@@ -384,12 +441,23 @@ Background.prototype.draw = function() {
         //draw the stars
         for (var i=0; i<this.stars.length; i++) {
         var star = this.stars[i];
-        bgCtx.moveTo(star.x, star.y);
-        bgCtx.arc(star.x-game.viewX, star.y-game.viewY, star.r, 0, Math.PI * 2, false);
-        }
+        
+        //if (star.draw) {
+            bgCtx.moveTo(star.x, star.y);
+            bgCtx.arc(star.x, star.y, star.r, 0, Math.PI * 2, false);
+            }
+        //}
 
     bgCtx.fill();
     bgCtx.closePath();
+}
+
+Background.prototype.render = function(){
+
+    //check for changes in x, y coordinate plane of player view
+    this.update();
+    //redraw stars on canvacs
+    this.draw(bgCtx);
 }
 
 var background = new Background();

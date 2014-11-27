@@ -27,8 +27,9 @@ function GameObject(x, y, r) {
     this.maxV = null;
     this.drag = null;
 
-    //Animation attributes - glowing orb
+    //Animation attributes - glowing orb effect
     this.stop = Math.random() * .2 + .4;
+
 }
 
 
@@ -63,7 +64,7 @@ GameObject.prototype.update = function(dt) {
         this.vX -= this.vX * this.drag;
         this.vY -= this.vY * this.drag;
 
-        //check game board restricts, adjust angle of vector accordingly
+        //interact handles collision detection and response
         this.interact(dt);
         
 }
@@ -80,8 +81,6 @@ GameObject.prototype.displacementVector = function (element) {
         }
 
 GameObject.prototype.displacement = function(element) {
-            //vector subtraction yields the hypotenuse of the triangle law
-
             //get distance array object
             var distance = this.displacementVector(element);
 
@@ -98,9 +97,9 @@ GameObject.prototype.collisionDetect = function (element) {
 
 GameObject.prototype.reboundDirection = function(element, dt) {
 
-        	//######################################################################################
-        	//HTML5 Canvas guide - Multiple Collisions w/ the equation for conservation of momentum
-        	//######################################################################################
+        	//###############################################################################################
+        	//Modified HTML5 Canvas code for Multiple Collisions w/ the equation for conservation of momentum
+        	//###############################################################################################
 
         	//displacement vector (x,y) array
 			var displacement = this.displacementVector(element);
@@ -122,8 +121,9 @@ GameObject.prototype.reboundDirection = function(element, dt) {
         	var vRotationEx = speedElement * Math.cos(directionElement - collisionAngle);
         	var vRotationEy = speedElement * Math.sin(directionElement - collisionAngle);
 
-            //partially inelastic collision response
-            var coefficientOfRestitution = .6; 
+            //Change Cofficient of Resitution 
+            //Adapted from wiki entry on partially inelastic collision response
+            var coefficientOfRestitution = .4; 
             var finalVx1 = (this.r * vRotationTx +  element.r * vRotationEx + coefficientOfRestitution*element.r*(vRotationEx- vRotationTx))/ (this.r + element.r);
             var finalVx2 = (this.r * vRotationTx +  element.r * vRotationEx + coefficientOfRestitution*this.r*(vRotationTx- vRotationEx))/ (this.r + element.r);
            	var finalVy1 = vRotationTy;
@@ -149,35 +149,28 @@ GameObject.prototype.interact = function (dt) {
     	if ((this.x+this.r) >= game.w) {
     		this.vX = -this.vX;
     		this.x = game.w - this.r;
-            console.log(this.r);
-            console.log('right wall collision');
     		} 
     	else if ((this.x-this.r) <= game.x) {
     		this.vX = -this.vX;
     		this.x = this.r; 
-            console.log(this.x);
-            console.log('left wall collision');
     		} 
     	else if ((this.y-this.r) <= game.y) {
     		this.vY = -this.vY;	
     		this.y = this.r; 
-            console.log(this.y);
-            console.log('top wall collision');
-
     		}
     	else if (this.y+this.r >= game.h) {
     		this.vY = -this.vY;
     		this.y = game.h - this.r;
-            console.log(this.y);
-            console.log('bottom wall collision');
     		}
 
 		for (var i = 0; i < game.gameObjects.length; i++) {
 			var element = game.gameObjects[i];
 			if (element.id > this.id) {
 		    	if (this.collisionDetect(element)) {
-                    console.log('trying to rebound');
+
+                    //console.log('trying to rebound');
 		    		this.reboundDirection(element, dt);
+
                     //Note: enemy handles all attack behavior
                     if (element instanceof Enemy) {
                         element.attack(this);
@@ -188,8 +181,45 @@ GameObject.prototype.interact = function (dt) {
 	}
 
 
+//##############################################
+// Payment System - Object Pooling & Creation
+//##############################################
 
-//Stop collision checking happening on 
-//make collision detection only in charge of one element.
-//interact only gets called on ids lower than the element/this obeject
+GameObject.prototype.payment = function() {
 
+    var self = this;
+    
+    var currentPayment = Date.now();
+
+    if (self.matterLoss && (currentPayment - self.lastPayment > 500)){
+
+        var maxFood = 1;
+        var foodPool = [];
+        var foodID = game.gameObjects.length + 1;
+
+        var foodVector = self.direction( 1/FPS );
+        
+        console.log(foodVector);
+
+        var foodX = foodVector[0];
+        var foodY = foodVector[1];
+        var foodR = 10;
+
+        //console.log(foodID);
+        var tempFood = new Enemy(foodX, foodY, foodR, foodID);
+
+        tempFood.vX = (self.vX*-1);
+        tempFood.vY = (self.vY*-1);
+
+        //add the food to the array of game objects
+        game.gameObjects.push(tempFood);
+
+        self.r -= 1/foodR;
+
+        self.matterLoss = false;
+
+        self.lastPayment = Date.now();
+        this.mouseClick = null;
+    }
+
+}

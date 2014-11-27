@@ -7,7 +7,10 @@ function Player(x, y, r) {
     this.id = 0;
     this.drag = .001;
     this.speed = 10;
-    this.maxV = 250;
+    this.maxV = 200;
+    this.mouseClick = null;
+    this.lastPayment = Date.now();
+    this.matterLoss = false;
     this.moveType = {
 
         'up': false,
@@ -20,39 +23,89 @@ function Player(x, y, r) {
 
 Player.prototype = Object.create(GameObject.prototype);
 
-
 Player.prototype.update = function(dt) {
 
-    this.move();
+    if (this.mouseClick != null) {
+        
+        this.move(dt);
+    }
 
     return GameObject.prototype.update.call(this, dt);
 }
 
-Player.prototype.move = function () {
+// Player.prototype.move = function () {
 
-    for (var direction in this.moveType) {
+//     for (var direction in this.moveType) {
 
-        if (this.moveType[direction]) { 
+//         if (this.moveType[direction]) { 
 
-            switch(direction) {           
-                case 'up':    
-                this.vY -= this.speed;
-                break;
+//             switch(direction) {           
+//                 case 'up':    
+//                 this.vY -= this.speed;
+//                 break;
 
-                case 'down': 
-                this.vY += this.speed;              
-                break;
+//                 case 'down': 
+//                 this.vY += this.speed;              
+//                 break;
 
-                case 'left':
-                this.vX -= this.speed;            
-                break;
+//                 case 'left':
+//                 this.vX -= this.speed;            
+//                 break;
 
-                case 'right':
-                this.vX += this.speed;
-                break;
-            }
-        }
-    }
+//                 case 'right':
+//                 this.vX += this.speed;
+//                 break;
+//             }
+
+//         this.matterLoss = true;
+//         }
+//     }
+    
+//     this.payment();
+// }
+
+
+
+Player.prototype.direction = function() {
+
+    //console.log('Direction ', this.mouseClick);
+   
+    var distArr = this.mouseClick;
+    
+    var d = Math.atan2(distArr[1], distArr[0]);
+
+    return d;
+}
+
+Player.prototype.playerDisplacement = function(){
+
+    var distArr = this.mouseClick;
+
+    var moveDist = [distArr[0], distArr[1]]
+
+    var moveLength = Math.sqrt(moveDist[0]*moveDist[0] + moveDist[1]*moveDist[1]);
+                
+    return moveLength;
+}
+
+Player.prototype.move = function (dt) {
+
+    //t
+    var angle = this.direction() * 180/Math.PI;
+
+    var displacement = this.playerDisplacement();
+
+    //this.vX = Math.cos(angle) * displacement;
+    //this.vY = Math.sin(angle) * displacement;
+
+    this.x = this.x - this.mouseClick[0];
+    this.y = this.y - this.mouseClick[1];
+   console.log('Move Direction', this.x, this.y);
+
+
+    this.matterLoss = true;
+    this.mouseClick = null;
+    //this.payment();
 }
 
 
@@ -79,6 +132,7 @@ Player.prototype.draw = function(ctx) {
             g.addColorStop(1.0, 'rgba(255,239,0,0)');
             ctx.fillStyle = g;
             ctx.fill();
+            
        		}
 
             //center coordinates of player object

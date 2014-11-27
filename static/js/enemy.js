@@ -4,7 +4,7 @@ function Enemy(x, y, r, id) {
     this.x = x; 
     this.y = y; 
     this.r = r;
-    this.strength = 1;
+    this.strength = this.r/50;
     this.id = id;
     this.drag = .00001;
     this.maxV = 75;
@@ -19,13 +19,14 @@ Enemy.prototype = Object.create(GameObject.prototype);
 Enemy.prototype.attack = function (element) {
 
         //define the maximum enemy mass allowed before player loses
-        var maxMass = player.r * 7;
+        var maxMass = player.r * 5;
         var minMass = 10;
 
         //get the current this object to manipulate the instance
         var self = this;
 
-        if (self.r <= minMass) {
+        if (self.r < minMass) {
+            element.r += self.strength;
             self.death = true;
             console.log('enemy died');
             return;
