@@ -335,7 +335,7 @@ Game.prototype.mouseClick = function(){
     var xClick = evt.pageX - offsetX;
     var yClick = evt.pageY - offsetY;
 
-    console.log('Click Coordinates', xClick, yClick);
+    //console.log('Click Coordinates', xClick, yClick);
 
     return player.mouseClick = [xClick, yClick];
 

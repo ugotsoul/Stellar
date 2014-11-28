@@ -123,7 +123,7 @@ GameObject.prototype.reboundDirection = function(element, dt) {
 
             //Change Cofficient of Resitution 
             //Adapted from wiki entry on partially inelastic collision response
-            var coefficientOfRestitution = .4; 
+            var coefficientOfRestitution = .2; 
             var finalVx1 = (this.r * vRotationTx +  element.r * vRotationEx + coefficientOfRestitution*element.r*(vRotationEx- vRotationTx))/ (this.r + element.r);
             var finalVx2 = (this.r * vRotationTx +  element.r * vRotationEx + coefficientOfRestitution*this.r*(vRotationTx- vRotationEx))/ (this.r + element.r);
            	var finalVy1 = vRotationTy;
@@ -165,7 +165,7 @@ GameObject.prototype.interact = function (dt) {
 
 		for (var i = 0; i < game.gameObjects.length; i++) {
 			var element = game.gameObjects[i];
-			if (element.id > this.id) {
+			if (element.id != this.id) {
 		    	if (this.collisionDetect(element)) {
 
                     //console.log('trying to rebound');
@@ -197,12 +197,14 @@ GameObject.prototype.payment = function() {
         var foodPool = [];
         var foodID = game.gameObjects.length + 1;
 
-        var foodVector = self.direction( 1/FPS );
+        var foodVector = self.direction();
         
-        console.log(foodVector);
-
         var foodX = foodVector[0];
         var foodY = foodVector[1];
+
+        // console.log('Food Vector Coordinates: ',foodX, foodY);
+        // console.log('Displacement Vector: ', this.displacement());
+
         var foodR = 10;
 
         //console.log(foodID);
@@ -214,7 +216,7 @@ GameObject.prototype.payment = function() {
         //add the food to the array of game objects
         game.gameObjects.push(tempFood);
 
-        self.r -= 1/foodR;
+        self.r -= 1;
 
         self.matterLoss = false;
 

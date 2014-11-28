@@ -33,7 +33,7 @@ Enemy.prototype.attack = function (element) {
         }
 
         if (player.r <= minMass || self.r >= maxMass) {
-            //if player radius/mass lower than 20 pixels, death!
+            //if player radius/mass lower than 10 pixels, death!
             player.death = true;
             return;
         }

@@ -5,8 +5,8 @@ function Player(x, y, r) {
     this.y = y;
     this.r = r || 50;
     this.id = 0;
-    this.drag = .001;
-    this.speed = 10;
+    this.drag = .01;
+    this.speed = this.r/2;
     this.maxV = 200;
     this.mouseClick = null;
     this.lastPayment = Date.now();
@@ -68,44 +68,45 @@ Player.prototype.update = function(dt) {
 
 Player.prototype.direction = function() {
 
-    //console.log('Direction ', this.mouseClick);
-   
-    var distArr = this.mouseClick;
-    
-    var d = Math.atan2(distArr[1], distArr[0]);
+    var distArr = [-this.mouseClick[0], -this.mouseClick[1]];
 
-    return d;
+    var tail = this.r + this.r/2;
+
+    var angle = Math.atan2(distArr[1], distArr[0]);
+
+    //length of food - poop tail from player object
+    var foodArr = [this.x - tail*Math.cos(angle), this.y - tail*Math.sin(angle)];
+    
+    console.log('Distance from Player butt: ', distArr);
+
+    return foodArr;
 }
 
 Player.prototype.playerDisplacement = function(){
 
     var distArr = this.mouseClick;
 
-    var moveDist = [distArr[0], distArr[1]]
-
-    var moveLength = Math.sqrt(moveDist[0]*moveDist[0] + moveDist[1]*moveDist[1]);
+    var moveLength = Math.sqrt(distArr[0]*distArr[0] + distArr[1]*distArr[1]);
                 
     return moveLength;
 }
 
 Player.prototype.move = function (dt) {
 
-    //t
-    var angle = this.direction() * 180/Math.PI;
+    //calculate magnitudes of both vectors
+    var distArr = [-this.mouseClick[0], -this.mouseClick[1]];
 
-    var displacement = this.playerDisplacement();
+    //console.log('Player direction: ', distArr);
 
-    //this.vX = Math.cos(angle) * displacement;
-    //this.vY = Math.sin(angle) * displacement;
+    var angle = Math.atan2(distArr[1], distArr[0]);
 
-    this.x = this.x - this.mouseClick[0];
-    this.y = this.y - this.mouseClick[1];
-   console.log('Move Direction', this.x, this.y);
+    //console.log('Test angle: ', angle);
 
+    this.vX += Math.cos(angle) * this.speed;
+    this.vY += Math.sin(angle) * this.speed;
 
     this.matterLoss = true;
-    this.mouseClick = null;
-    //this.payment();
+    this.payment();
 }
 
 
