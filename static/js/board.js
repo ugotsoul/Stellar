@@ -43,60 +43,59 @@ var Game = function() {
     this.w = 3000;
     this.h = 3000;
     this.intervalHandle = null;
-    this.playerKills = 0;
     this.maxEnemies = 5;
     this.gameObjects = this.getElements();
 };
 
-Game.prototype.keyPress = function(player) {
+// Game.prototype.keyPress = function(player) {
 
-    $(window).keyup(function(evt) {
+//     $(window).keyup(function(evt) {
 
-        switch (true) {
-                case (evt.keyCode == 38):
-                    //player moves up, player -y 
-                    player.moveType['up']= false;
-                    break;
-                case (evt.keyCode == 40):
-                    //player moves down, player +y
-                    player.moveType['down'] = false;
-                    break;
-                case (evt.keyCode == 39):
-                    //player moves right, player +x
-                    player.moveType['right']= false;
-                    break;
-                case (evt.keyCode == 37):
-                    //player moves left, player -x
-                    player.moveType['left'] = false;
-                    break;
-            }
+//         switch (true) {
+//                 case (evt.keyCode == 38):
+//                     //player moves up, player -y 
+//                     player.moveType['up']= false;
+//                     break;
+//                 case (evt.keyCode == 40):
+//                     //player moves down, player +y
+//                     player.moveType['down'] = false;
+//                     break;
+//                 case (evt.keyCode == 39):
+//                     //player moves right, player +x
+//                     player.moveType['right']= false;
+//                     break;
+//                 case (evt.keyCode == 37):
+//                     //player moves left, player -x
+//                     player.moveType['left'] = false;
+//                     break;
+//             }
 
-    });
+//     });
 
-    // event listener for keys
-    $(window).keydown(function(evt) {
+//     // event listener for keys
+//     $(window).keydown(function(evt) {
 
-            switch (true) {
-                case (evt.keyCode == 38):
-                    //player moves up, player -y 
-                    player.moveType['up']= true;
-                    break;
-                case (evt.keyCode == 40):
-                    //player moves down, player +y
-                    player.moveType['down'] = true;
-                    break;
-                case (evt.keyCode == 39):
-                    //player moves right, player +x
-                    player.moveType['right']= true;
-                    break;
-                case (evt.keyCode == 37):
-                    //player moves left, player -x
-                    player.moveType['left'] = true;
-                    break;
-            }
+//             switch (true) {
+//                 case (evt.keyCode == 38):
+//                     //player moves up, player -y 
+//                     player.moveType['up']= true;
+//                     break;
+//                 case (evt.keyCode == 40):
+//                     //player moves down, player +y
+//                     player.moveType['down'] = true;
+//                     break;
+//                 case (evt.keyCode == 39):
+//                     //player moves right, player +x
+//                     player.moveType['right']= true;
+//                     break;
+//                 case (evt.keyCode == 37):
+//                     //player moves left, player -x
+//                     player.moveType['left'] = true;
+//                     break;
+//             }
 
-        });
-    }
+//         });
+//     }
 
 Game.prototype.getElements = function() {
     
@@ -158,7 +157,7 @@ Game.prototype.draw = function(ctx) {
     }
 
     //draw player status board
-    this.score(ctx);
+    this.score(ctx, player);
 };
 
 Game.prototype.update = function(dt) {
@@ -169,8 +168,11 @@ Game.prototype.update = function(dt) {
         if (this.gameObjects[d].death == true) {
             //if dead, remove enemy from array
             this.gameObjects.splice(d, 1);
-            this.playerKills++
             }
+
+        else if (this.gameObjects[d].death == true && this.gameObjects[d] instanceof Player){
+            return;
+        }
         
         else if (this.gameObjects[d].length == 1) {
             return;
@@ -199,10 +201,7 @@ Game.prototype.render = function() {
 Game.prototype.run = function() {
 
     //get arrow key types
-    this.keyPress(player);
-
-    //get mouse clicks
-    //this.mouseClick();
+    //this.keyPress(player);
 
     //frames per second
     FPS = 50;
@@ -252,7 +251,7 @@ $(window).keydown(function(evt) {
             player.death = false;
             player.r = 100;
             self.playerKills = 0;
-            self.gameObjects = null;
+            self.gameObjects = [];
             self.run();
 
         }
@@ -292,7 +291,7 @@ Game.prototype.start = function() {
     ctxMain.fillText('Stellar', canvas.width/2, canvas.height/2 - 150);
     ctxMain.font = "20pt Sans-Serif";
     ctxMain.fillText('Be a star. Consume the universe.', canvas.width/2, (canvas.height/2)-100);
-    ctxMain.font = "bold italic 22pt Sans-Serif";
+    ctxMain.font = "bold 22pt Sans-Serif";
     ctxMain.fillStyle = '#00f';
     ctxMain.fillText('Hit enter or space to start', canvas.width/2, (canvas.height/2)+100);
 
@@ -310,7 +309,7 @@ Game.prototype.start = function() {
 //instanciate new game object
 var game = new Game();
 
-Game.prototype.score = function(ctx) {
+Game.prototype.score = function(ctx, player) {
 
     //offset scoreboard according to game width height
     ctx.fillStyle = '#FFF';
@@ -318,30 +317,27 @@ Game.prototype.score = function(ctx) {
     ctx.textAlign = "start";
     ctx.fillText('Score Board', canvas.x+5, canvas.y+40);
     ctx.font = "22pt Sans-Serif";
-    ctx.fillText('Enemies Killed: ' + this.playerKills, canvas.x+5, canvas.y+70);
+    ctx.fillText('Enemies Killed: ' + player.kills, canvas.x+5, canvas.y+70);
     ctx.fillText('Your X velocity is ' + Math.floor(player.vX), canvas.x+5, canvas.y+100);
     ctx.fillText('Your Y velocity is ' + Math.floor(player.vY), canvas.x+5, canvas.y+130);
     ctx.fillText('Your mass is ' + Math.floor(player.r) + '.', canvas.x+5, canvas.y+160);
+    ctx.fillText('Total Enemies '+(this.gameObjects.length-1)+ '.', canvas.x+5, canvas.y+190);
 
 }
 
 Game.prototype.mouseClick = function(){
 
-    //mouseEvent listener
+    //mouse click event listener
     $(window).click(function (evt) {
     
-    //store mouse clicks
     //these coordinates are the click offset from the players game world position
     var xClick = evt.pageX - offsetX;
     var yClick = evt.pageY - offsetY;
-
-    //console.log('Click Coordinates', xClick, yClick);
 
     return player.mouseClick = [xClick, yClick];
 
     });
 }
-
 
 //##################################################################
 // Game Camera - Follows player around, translates Game Objects
@@ -374,22 +370,18 @@ bgCanvas.height = canvas.height;
 var Background = function() {
     this.x = 0;
     this.y = 0;
-    this.w = game.w;
-    this.h = game.h;
+    this.w = windowW;
+    this.h = windowH;
     this.stars = this.makeStars();
 }
 
 Object.defineProperty(Background.prototype, 'viewX', {get: function(){ return -(player.x - offsetX); }});
 Object.defineProperty(Background.prototype, 'viewY', {get: function(){ return -(player.y - offsetY); }});
-// Object.defineProperty(Background.prototype, 'w', {get: function(){ return game.w; }});
-// Object.defineProperty(Background.prototype, 'h', {get: function(){ return game.h; }});
-
-//Object.defineProperty(Background.prototype, 'stars' {get: function(){ return this.makeStars(); }});
 
 Background.prototype.makeStars = function() {
 
     this.fill = 'blue';
-    this.maxStars = 1000;
+    this.maxStars = 200;
     var stars = [];
 
     for (var i=0; i<this.maxStars; i++) {
@@ -397,32 +389,27 @@ Background.prototype.makeStars = function() {
         x: getRandomInteger(this.x, this.w),
         y: getRandomInteger(this.y, this.h),
         r: getRandomInteger(0, 2),
-        draw: false,
+        vX: 1,
+        vY: 1
         });
     }
     return stars;
 }
 
 
-Background.prototype.update = function() {
+Background.prototype.update = function(player) {
 
     //move stars in player direction of movement
-    // for (var i=0; i < this.stars.length; i++){
-    //     this.stars[i].x -= (-player.vX/player.vX);
-    //     this.stars[i].y -= (-player.vY/player.vY);
-    // }
 
-    // function range(x, min, max) {
-    //     return x > min && x < max;
-    // }
+    if (player.mouseClick != null) {
 
-    // for (var n=0; n < this.stars.length; n++){
+        for (var i=0; i < this.stars.length; i++){
 
-    //     //check if stars are in game world
-    //     if (range(this.stars[n].x, this.viewX, this.w) && range(this.stars[n].y, this.viewY, this.h)){
-    //         this.stars[n].draw = true;     
-    //     }
-    // }
+            // this.stars[i].x += this.viewX-player.vX;
+            // this.stars[i].y += this.viewY-player.vY;
+
+        }
+    }
 }
 
 Background.prototype.draw = function(bgCtx) {
@@ -433,7 +420,7 @@ Background.prototype.draw = function(bgCtx) {
     //make a game world bounding rectangle
     bgCtx.strokeStyle = this.fill;
     bgCtx.lineWidth = 2;
-    bgCtx.strokeRect(this.viewX, this.viewY, this.w, this.h);
+    bgCtx.strokeRect(this.viewX, this.viewY, game.w, game.h);
 
     bgCtx.fillStyle = this.fill;
     bgCtx.beginPath();
@@ -455,7 +442,7 @@ Background.prototype.draw = function(bgCtx) {
 Background.prototype.render = function(){
 
     //check for changes in x, y coordinate plane of player view
-    this.update();
+    this.update(player);
     //redraw stars on canvacs
     this.draw(bgCtx);
 }

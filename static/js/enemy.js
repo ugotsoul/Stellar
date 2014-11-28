@@ -9,6 +9,10 @@ function Enemy(x, y, r, id) {
     this.drag = .00001;
     this.maxV = 75;
 
+    //death and win state criteria 
+    this.minMass = 10;
+    this.maxMass = 150;
+
     //assign random directions/speeds to each enemy
     this.vX = getRandomInteger(-50, 50);
     this.vY = getRandomInteger(-50, 50);
@@ -18,30 +22,36 @@ Enemy.prototype = Object.create(GameObject.prototype);
 
 Enemy.prototype.attack = function (element) {
 
-        //define the maximum enemy mass allowed before player loses
-        var maxMass = player.r * 5;
-        var minMass = 10;
-
         //get the current this object to manipulate the instance
         var self = this;
 
-        if (self.r < minMass) {
+        if (self.r < self.minMass && element instanceof Enemy) {
             element.r += self.strength;
             self.death = true;
-            console.log('enemy died');
+            console.log('Enemy killed enemy');
             return;
         }
 
-        if (player.r <= minMass || self.r >= maxMass) {
-            //if player radius/mass lower than 10 pixels, death!
-            player.death = true;
-            return;
-        }
+        else if (self.r < self.minMass && element instanceof Player)  {
+                element.r += self.strength;
+                self.death = true;
+                element.kills++
+                console.log('Player killed enemy');
+                console.log('Player kill count: ',element.kills);
+                return;
+            }
+
+        // if (player.r <= minMass || self.r >= maxMass) {
+        //     //if player radius/mass lower than 10 pixels, death!
+        //     player.death = true;
+        //     return;
+        // }
 
         if (self.r > element.r) {
                 console.log('enemy is gaining mass');
                 self.r += self.strength;
                 element.r -= self.strength;
+                return;
         }
 
         //eat enemies smaller than yourself
@@ -49,6 +59,7 @@ Enemy.prototype.attack = function (element) {
             console.log('player is gaining mass');
             self.r -= self.strength;
             element.r += self.strength;
+            return;
         }
 
         else if (self.r == element.r) {

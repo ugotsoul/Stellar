@@ -9,8 +9,9 @@ function Player(x, y, r) {
     this.speed = this.r/2;
     this.maxV = 200;
     this.mouseClick = null;
-    this.lastPayment = Date.now();
     this.matterLoss = false;
+    this.minMass = 20;
+    this.kills = 0;
     this.moveType = {
 
         'up': false,
@@ -22,6 +23,19 @@ function Player(x, y, r) {
 }
 
 Player.prototype = Object.create(GameObject.prototype);
+
+Object.defineProperty(Player.prototype, 'death', {get: function(){ 
+
+    var self = this;
+
+    if (self.r < self.minMass) {
+        return self.death = true;
+    }
+
+    else {
+        return self.death = false;
+    }
+}});
 
 Player.prototype.update = function(dt) {
 

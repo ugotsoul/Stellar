@@ -10,16 +10,15 @@ function GameObject(x, y, r) {
     this.r = r;
     this.fill = null;
     this.death = false;
+    this.lastPayment = Date.now();
 
     this.viewX = this.x;
     this.viewY = this.y;
 
-    //physics attributes here
-    //pixels per second
     this.vX = 1;
     this.vY = 1;
 
-    //this is the incriment of vX & vY divided by the timestep (x pixels per 1/FPS)
+    //Distance traveled in 1 timestep: this is the incriment of vX & vY divided by the timestep (x pixels per 1/FPS)
     this.dx = 0;
     this.dy = 0;
 
@@ -29,6 +28,10 @@ function GameObject(x, y, r) {
 
     //Animation attributes - glowing orb effect
     this.stop = Math.random() * .2 + .4;
+
+    //this is a unique id to identify objects during collision response // attack
+    //so objects do not colide with themselves or hurt themselves
+    this.foodID = 100;
 
 }
 
@@ -195,7 +198,6 @@ GameObject.prototype.payment = function() {
 
         var maxFood = 1;
         var foodPool = [];
-        var foodID = game.gameObjects.length + 1;
 
         var foodVector = self.direction();
         
@@ -207,8 +209,10 @@ GameObject.prototype.payment = function() {
 
         var foodR = 10;
 
+        console.log('Food ID: ', this.foodID);
+
         //console.log(foodID);
-        var tempFood = new Enemy(foodX, foodY, foodR, foodID);
+        var tempFood = new Enemy(foodX, foodY, foodR, this.foodID);
 
         tempFood.vX = (self.vX*-1);
         tempFood.vY = (self.vY*-1);
@@ -222,6 +226,7 @@ GameObject.prototype.payment = function() {
 
         self.lastPayment = Date.now();
         this.mouseClick = null;
+        this.foodID++;
     }
 
 }

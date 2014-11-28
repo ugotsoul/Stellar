@@ -1,7 +1,8 @@
 #canvas {
 	position: absolute;
-  background: transparent;
-  z-index: 1;
+  	background: transparent;
+  	z-index: 1;
+	cursor: url(../imgs/cursor.png), auto;
 }
 
 #bg {
@@ -18,5 +19,7 @@ height: 100%;*/
 margin: 0;
 background: #000;
 overflow: hidden;
+cursor: url(../imgs/cursor.png), auto;
+
 }
 
