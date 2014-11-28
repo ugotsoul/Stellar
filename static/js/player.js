@@ -82,7 +82,7 @@ Player.prototype.update = function(dt) {
 
 Player.prototype.direction = function() {
 
-    var distArr = [-this.mouseClick[0], -this.mouseClick[1]];
+    var distArr = [this.mouseClick[0], this.mouseClick[1]];
 
     var tail = this.r + this.r/2;
 
@@ -108,7 +108,7 @@ Player.prototype.playerDisplacement = function(){
 Player.prototype.move = function (dt) {
 
     //calculate magnitudes of both vectors
-    var distArr = [-this.mouseClick[0], -this.mouseClick[1]];
+    var distArr = [this.mouseClick[0], this.mouseClick[1]];
 
     //console.log('Player direction: ', distArr);
 
