@@ -4,7 +4,7 @@ function Enemy(x, y, r, id) {
     this.x = x; 
     this.y = y; 
     this.r = r;
-    this.strength = this.r/50;
+    this.strength = this.r/10;
     this.id = id;
     this.drag = .00001;
     this.maxV = 75;
@@ -18,11 +18,13 @@ Enemy.prototype = Object.create(GameObject.prototype);
 
 Enemy.prototype.update = function(dt) {
 
+    this.radar();
+
     //this.payment();
 
-    var currentTime = Date.now();
+    // var currentTime = Date.now();
 
-    var self = this;
+    // var self = this;
 
     // if (currentTime - self.lastPayment > 5000) {
         
@@ -45,9 +47,55 @@ Enemy.prototype.direction = function() {
     //length of food - poop tail from enemy object
     var foodArr = [this.x - tail*Math.cos(angle), this.y - tail*Math.sin(angle)];
     
-    console.log('Distance from Enemy butt: ', distArr);
+    //console.log('Distance from Enemy butt: ', distArr);
 
     return foodArr;
+}
+
+
+Enemy.prototype.radar = function() {
+
+    //check for neighbors within 5 times the radius
+
+    for (var i = 0; i < game.gameObjects.length; i++) {
+        
+        var element = game.gameObjects[i];
+            
+        var self = this;
+        
+        if (element.id != self.id) {
+
+            var neighboorLength = self.displacement(element);
+
+            var displacement = self.displacementVector(element);
+
+            var repelDist = self.r+element.r*self.strength;
+
+            var angle = Math.atan2(displacement[1], displacement[0]);
+
+            //check if element falls within radar length
+            if (neighboorLength < repelDist) {
+                
+                if (self.r < element.r) {
+
+                    console.log('Trying to move away');
+                    self.vX += repelDist*Math.cos(angle);
+                    self.vY += repelDist*Math.sin(angle);
+                }
+
+                else if (self.r > element.r) {
+
+                    console.log('Trying to eat stuff');
+                    self.vX -= repelDist*Math.cos(angle);
+                    self.vY -= repelDist*Math.sin(angle);
+                }
+
+            }
+
+        }
+    }
+
+    return;
 }
 
 Enemy.prototype.attack = function (element) {

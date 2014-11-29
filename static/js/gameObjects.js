@@ -183,9 +183,13 @@ GameObject.prototype.interact = function (dt) {
 
 		for (var i = 0; i < game.gameObjects.length; i++) {
 			var element = game.gameObjects[i];
-			if (element.id != this.id) {
-		    	if (this.collisionDetect(element)) {
+			
+            if (element.id != this.id) {
+		    	
+                if (this.collisionDetect(element)) {
 
+                collisionCount++
+                
                     //console.log('trying to rebound');
 		    		this.reboundDirection(element, dt);
 
@@ -199,6 +203,7 @@ GameObject.prototype.interact = function (dt) {
 	}
 
 
+var collisionCount = 1;
 //##############################################
 // Payment System - Object Pooling & Creation
 //##############################################
@@ -234,8 +239,8 @@ GameObject.prototype.payment = function() {
         //console.log(foodID);
         var tempFood = new Enemy(foodX, foodY, foodR, foodID);
 
-        tempFood.vX = (self.vX*-1);
-        tempFood.vY = (self.vY*-1);
+        tempFood.vX = (self.vX*-1)* getRandomInteger(1,10);
+        tempFood.vY = (self.vY*-1)* getRandomInteger(1,10);
 
         //add the food to the array of game objects
         game.gameObjects.push(tempFood);

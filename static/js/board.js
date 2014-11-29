@@ -43,7 +43,7 @@ var Game = function() {
     this.w = 3000;
     this.h = 3000;
     this.intervalHandle = null;
-    this.maxEnemies = 1;
+    this.maxEnemies = 20;
     this.gameObjects = this.getElements();
 };
 
