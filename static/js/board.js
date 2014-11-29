@@ -43,7 +43,7 @@ var Game = function() {
     this.w = 3000;
     this.h = 3000;
     this.intervalHandle = null;
-    this.maxEnemies = 5;
+    this.maxEnemies = 1;
     this.gameObjects = this.getElements();
 };
 
@@ -370,81 +370,117 @@ bgCanvas.height = canvas.height;
 var Background = function() {
     this.x = 0;
     this.y = 0;
-    this.w = windowW;
-    this.h = windowH;
-    this.stars = this.makeStars();
+    this.w = game.w;
+    this.h = game.h;
+    this.bgStars = this.makeStars(500);
+    this.fgStars = this.makeStars(200);
 }
 
 Object.defineProperty(Background.prototype, 'viewX', {get: function(){ return -(player.x - offsetX); }});
 Object.defineProperty(Background.prototype, 'viewY', {get: function(){ return -(player.y - offsetY); }});
 
-Background.prototype.makeStars = function() {
+Background.prototype.makeStars = function(numOfStars) {
 
-    this.fill = 'blue';
-    this.maxStars = 200;
     var stars = [];
 
-    for (var i=0; i<this.maxStars; i++) {
+    for (var i=0; i<numOfStars; i++) {
+    
     stars.push({
+
         x: getRandomInteger(this.x, this.w),
         y: getRandomInteger(this.y, this.h),
         r: getRandomInteger(0, 2),
-        vX: 1,
-        vY: 1
+        drawX: 0,
+        drawY: 0,
+        vX: 0,
+        vY: 0
         });
     }
+
     return stars;
 }
 
 
-Background.prototype.update = function(player) {
 
-    //move stars in player direction of movement
+Background.prototype.update = function(layer, speed) {
 
-    if (player.mouseClick != null) {
+    //move stars in player direction of movemen
+    for (var i=0; i < layer.length; i++){
 
-        for (var i=0; i < this.stars.length; i++){
+        var targetX = layer[i].x + this.viewX;
+        var targetY = layer[i].y + this.viewY;
 
-            // this.stars[i].x += this.viewX-player.vX;
-            // this.stars[i].y += this.viewY-player.vY;
+        layer[i].drawX = targetX;
+        layer[i].drawY = targetY;
 
+        if (speed){
+
+
+            layer[i].drawX += targetX/3;
+            layer[i].drawY += targetY/3;
+
+
+            //never have stars draw off canvas
+            if (layer[i].drawX - this.viewX < layer[i].x) {
+                layer[i].drawX = targetX;
+            }
+
+            if (layer[i].drawY - this.viewY < layer[i].y) {
+                layer[i].drawY = targetY;
+            }
+  
+            if (layer[i].drawX - this.viewX >= this.w) {
+                layer[i].drawX = this.viewX;
+            }
+
+            if (layer[i].drawY - this.viewY >= this.h) {
+                layer[i].drawY = this.viewY;
+            }
+  
         }
+
+        
     }
+
+    return;
 }
 
-Background.prototype.draw = function(bgCtx) {
 
-    //clear and then draw canvas & star objects       
-    bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+Background.prototype.draw = function(bgCtx, fill, layer) {
 
-    //make a game world bounding rectangle
-    bgCtx.strokeStyle = this.fill;
-    bgCtx.lineWidth = 2;
-    bgCtx.strokeRect(this.viewX, this.viewY, game.w, game.h);
-
-    bgCtx.fillStyle = this.fill;
+    bgCtx.fillStyle = fill;
     bgCtx.beginPath();
 
         //draw the stars
-        for (var i=0; i<this.stars.length; i++) {
-        var star = this.stars[i];
-        
-        //if (star.draw) {
-            bgCtx.moveTo(star.x, star.y);
-            bgCtx.arc(star.x, star.y, star.r, 0, Math.PI * 2, false);
+        for (var i=0; i<layer.length; i++) {
+
+            bgCtx.moveTo(layer[i].drawX, layer[i].drawY);
+            bgCtx.arc(layer[i].drawX, layer[i].drawY, layer[i].r, 0, Math.PI * 2, false);
             }
-        //}
 
     bgCtx.fill();
     bgCtx.closePath();
+
+    //make a game world bounding rectangle
+    bgCtx.strokeStyle = 'blue';
+    bgCtx.lineWidth = 2;
+    bgCtx.strokeRect(this.viewX, this.viewY, game.w, game.h);
+
 }
 
 Background.prototype.render = function(){
 
+    
+    //clear and then draw canvas & star objects       
+    bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+
     //check for changes in x, y coordinate plane of player view
-    this.update(player);
+    this.update(this.bgStars, false);
+    this.update(this.fgStars, true);
+
     //redraw stars on canvacs
-    this.draw(bgCtx);
+    this.draw(bgCtx, 'blue', this.bgStars);
+    this.draw(bgCtx, '#90DAA7', this.fgStars);
 }
 
 var background = new Background();

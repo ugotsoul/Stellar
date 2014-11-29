@@ -9,16 +9,46 @@ function Enemy(x, y, r, id) {
     this.drag = .00001;
     this.maxV = 75;
 
-    //death and win state criteria 
-    this.minMass = 10;
-    this.maxMass = 150;
-
     //assign random directions/speeds to each enemy
     this.vX = getRandomInteger(-50, 50);
     this.vY = getRandomInteger(-50, 50);
 }
 
 Enemy.prototype = Object.create(GameObject.prototype);
+
+Enemy.prototype.update = function(dt) {
+
+    //this.payment();
+
+    var currentTime = Date.now();
+
+    var self = this;
+
+    // if (currentTime - self.lastPayment > 5000) {
+        
+    //     if (self.r > 10){
+    //     self.matterLoss = true;
+    //     }
+    // }
+
+    return GameObject.prototype.update.call(this, dt);
+}
+
+Enemy.prototype.direction = function() {
+
+    var distArr = [this.x, this.y];
+
+    var tail = this.r + this.r/2;
+
+    var angle = Math.atan2(distArr[1], distArr[0]);
+
+    //length of food - poop tail from enemy object
+    var foodArr = [this.x - tail*Math.cos(angle), this.y - tail*Math.sin(angle)];
+    
+    console.log('Distance from Enemy butt: ', distArr);
+
+    return foodArr;
+}
 
 Enemy.prototype.attack = function (element) {
 
@@ -72,14 +102,16 @@ Enemy.prototype.attack = function (element) {
 
             //kill one of the game objects
             if (i == 0) {
-                $('#status').html('Random Attack: enemy1 is gaining mass');
                 self.r -= self.strength;
                 killArr[1] += self.strength;
+                console.log('enemy1 gains mass');
+                return;
             }
             else {
-                $('#status').html('Random Attack: enemy2 is gaining mass');
                 self.r += self.strength;
                 killArr[0] -= self.strength;
+                console.log('enemy2 gains mass');
+                return;
             }
         }
     }
@@ -102,9 +134,9 @@ Enemy.prototype.draw = function(ctx) {
             var new_opacity = getRandomNum(.5, .6);
 
             var g = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, drawR * .95);
-            g.addColorStop(0.0, 'rgba(60,255,255,' + new_opacity + ')');
-            g.addColorStop(.75, 'rgba(0,60,255,' + (new_opacity * .7) + ')');
-            g.addColorStop(1.0, 'rgba(0,60,255,0)');
+            g.addColorStop(0.0, 'rgba(255,0,0,' + new_opacity + ')');
+            g.addColorStop(.75, 'rgba(200,0,0,' + (new_opacity * .7) + ')');
+            g.addColorStop(1.0, 'rgba(200,0,0,0)');
             ctx.fillStyle = g;
             ctx.fill();
 

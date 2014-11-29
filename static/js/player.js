@@ -5,37 +5,23 @@ function Player(x, y, r) {
     this.y = y;
     this.r = r || 50;
     this.id = 0;
-    this.drag = .01;
+    this.drag = .005;
     this.speed = this.r/2;
-    this.maxV = 200;
+    this.maxV = 300;
     this.mouseClick = null;
-    this.matterLoss = false;
     this.minMass = 20;
     this.kills = 0;
-    this.moveType = {
+    // this.moveType = {
 
-        'up': false,
-        'down': false,
-        'left': false,
-        'right': false
-    }
+    //     'up': false,
+    //     'down': false,
+    //     'left': false,
+    //     'right': false
+    // }
 
 }
 
 Player.prototype = Object.create(GameObject.prototype);
-
-Object.defineProperty(Player.prototype, 'death', {get: function(){ 
-
-    var self = this;
-
-    if (self.r < self.minMass) {
-        return self.death = true;
-    }
-
-    else {
-        return self.death = false;
-    }
-}});
 
 Player.prototype.update = function(dt) {
 

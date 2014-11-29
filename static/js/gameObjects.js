@@ -11,6 +11,11 @@ function GameObject(x, y, r) {
     this.fill = null;
     this.death = false;
     this.lastPayment = Date.now();
+    this.matterLoss = false;
+
+    //death and win state criteria 
+    this.minMass = 10;
+    this.maxMass = 150;
 
     this.viewX = this.x;
     this.viewY = this.y;
@@ -29,11 +34,21 @@ function GameObject(x, y, r) {
     //Animation attributes - glowing orb effect
     this.stop = Math.random() * .2 + .4;
 
-    //this is a unique id to identify objects during collision response // attack
-    //so objects do not colide with themselves or hurt themselves
-    this.foodID = 100;
-
 }
+
+Object.defineProperty(GameObject.prototype, 'death', {get: function(){ 
+
+    var self = this;
+
+    if (self.r < self.minMass) {
+        return self.death = true;
+    }
+
+    else {
+        return self.death = false;
+    }
+}});
+
 
 
 GameObject.prototype.update = function(dt) {
@@ -188,6 +203,11 @@ GameObject.prototype.interact = function (dt) {
 // Payment System - Object Pooling & Creation
 //##############################################
 
+//this is a unique id to identify objects during collision response // attack
+//so objects do not colide with themselves or hurt themselves
+var foodID = 100;
+
+
 GameObject.prototype.payment = function() {
 
     var self = this;
@@ -204,15 +224,15 @@ GameObject.prototype.payment = function() {
         var foodX = foodVector[0];
         var foodY = foodVector[1];
 
-        // console.log('Food Vector Coordinates: ',foodX, foodY);
+        console.log('Food Vector Coordinates: ',foodX, foodY);
         // console.log('Displacement Vector: ', this.displacement());
 
         var foodR = 10;
 
-        console.log('Food ID: ', this.foodID);
+        console.log('Food ID: ', foodID);
 
         //console.log(foodID);
-        var tempFood = new Enemy(foodX, foodY, foodR, this.foodID);
+        var tempFood = new Enemy(foodX, foodY, foodR, foodID);
 
         tempFood.vX = (self.vX*-1);
         tempFood.vY = (self.vY*-1);
@@ -221,12 +241,12 @@ GameObject.prototype.payment = function() {
         game.gameObjects.push(tempFood);
 
         self.r -= 1;
-
         self.matterLoss = false;
 
         self.lastPayment = Date.now();
-        this.mouseClick = null;
-        this.foodID++;
+        self.mouseClick = null;
+        
+        foodID++;
     }
 
 }
