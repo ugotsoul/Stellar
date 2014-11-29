@@ -19,7 +19,7 @@ var offsetY = canvas.height/2;
 
 // ###########################################################################
 // Note: Double Buffering marginally helped with FPS preformance by 10 frames.
-// ############################################################################ 
+// ########################################################################### 
 
 //prepare the main game canvas
 var mainCanvas = document.getElementById('main');
@@ -43,7 +43,7 @@ var Game = function() {
     this.w = 3000;
     this.h = 3000;
     this.intervalHandle = null;
-    this.maxEnemies = 20;
+    this.startEnemies = 10;
     this.gameObjects = this.getElements();
 };
 
@@ -109,7 +109,7 @@ Game.prototype.getElements = function() {
     //primary key of enemy
     var rID = 1;
 
-    while (enemiesAdded < this.maxEnemies) {
+    while (enemiesAdded < this.startEnemies) {
 
         var n = 0;
 
@@ -325,16 +325,19 @@ Game.prototype.score = function(ctx, player) {
 
 }
 
+//monitors player movement
 Game.prototype.mouseClick = function(){
 
     //mouse click event listener
     $(window).click(function (evt) {
-    
+
     //these coordinates are the click offset from the players game world position
     var xClick = evt.pageX - offsetX;
     var yClick = evt.pageY - offsetY;
 
     return player.mouseClick = [xClick, yClick];
+
+    evt.preventDefault();
 
     });
 }
@@ -347,7 +350,7 @@ Game.prototype.mouseClick = function(){
 Object.defineProperty(Game.prototype, 'zoom', {get: function(){ 
 
     if (this.playerKills > 0) {
-        return this.maxEnemies/this.playerKills;
+        return this.startEnemies/this.playerKills;
     }
 
     else {

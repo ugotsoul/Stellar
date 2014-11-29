@@ -5,9 +5,9 @@ function Player(x, y, r) {
     this.y = y;
     this.r = r || 50;
     this.id = 0;
-    this.drag = .005;
+    this.drag = .0005;
     this.speed = this.r/2;
-    this.maxV = 300;
+    this.maxV = 200;
     this.mouseClick = null;
     this.minMass = 20;
     this.kills = 0;
@@ -122,9 +122,9 @@ Player.prototype.draw = function(ctx) {
             ctx.arc(drawX, drawY, drawR, 0, Math.PI * 2, false);
             ctx.closePath();
 
-            //##################################
-            //Star effect - pretty stuff
-            //##################################
+            //######################################################
+            //Twinkle effect - Change rgba to a fill param in player
+            //######################################################
 
             var new_opacity = getRandomNum(.7, .8);
             var g = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, drawR);

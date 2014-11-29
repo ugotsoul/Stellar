@@ -20,9 +20,16 @@ function getRandomNum(min, max) {
 
 // window.addEventListener('resize', resizeGame, false);
 
-var windowH = window.screen.availHeight;
-var windowW = window.screen.availWidth;
+var windowH = $(window).height();
+var windowW = $(window).width();
 var aspectRatio = 1.75; 
+
+//stop right click menu from showing
+window.oncontextmenu = function(evt) {
+    evt.preventDefault();
+    evt.stopPropagation();
+    return false;
+};
 
 // function resizeGame() {
 

@@ -6,7 +6,7 @@ function Enemy(x, y, r, id) {
     this.r = r;
     this.strength = this.r/10;
     this.id = id;
-    this.drag = .00001;
+    this.drag = .0001;
     this.maxV = 75;
 
     //assign random directions/speeds to each enemy
@@ -15,6 +15,28 @@ function Enemy(x, y, r, id) {
 }
 
 Enemy.prototype = Object.create(GameObject.prototype);
+
+
+//Mood param identifies if an object is edible or not edible
+Object.defineProperty(Enemy.prototype, 'mood', {get: function(){
+
+    //find the difference between enemy and player radii
+
+    if (this.r < Math.floor(player.r*.50)){
+        return 200;
+    }
+
+    else if (this.r <player.r){
+        return 80;
+    }
+
+    else {
+        return 0;
+    }
+
+    //if larger, change the color to red - player is edible
+
+}}); 
 
 Enemy.prototype.update = function(dt) {
 
@@ -26,7 +48,7 @@ Enemy.prototype.update = function(dt) {
 
     // var self = this;
 
-    // if (currentTime - self.lastPayment > 5000) {
+    // if (currentTime - self.lastPayment > 1000) {
         
     //     if (self.r > 10){
     //     self.matterLoss = true;
@@ -69,25 +91,26 @@ Enemy.prototype.radar = function() {
 
             var displacement = self.displacementVector(element);
 
-            var repelDist = self.r+element.r*self.strength;
+            var radarLength = Math.floor(2*self.r*Math.PI);
 
             var angle = Math.atan2(displacement[1], displacement[0]);
 
             //check if element falls within radar length
-            if (neighboorLength < repelDist) {
-                
-                if (self.r < element.r) {
+            if (neighboorLength < radarLength) {
 
-                    console.log('Trying to move away');
-                    self.vX += repelDist*Math.cos(angle);
-                    self.vY += repelDist*Math.sin(angle);
-                }
-
-                else if (self.r > element.r) {
+                if (self.r > element.r) {
 
                     console.log('Trying to eat stuff');
-                    self.vX -= repelDist*Math.cos(angle);
-                    self.vY -= repelDist*Math.sin(angle);
+                    self.vX -= neighboorLength*Math.cos(angle);
+                    self.vY -= neighboorLength*Math.sin(angle);
+                    return;
+                }
+
+                else {
+                    console.log('Trying to move away');
+                    self.vX += neighboorLength*Math.cos(angle);
+                    self.vY += neighboorLength*Math.sin(angle);
+                    return;
                 }
 
             }
@@ -118,12 +141,6 @@ Enemy.prototype.attack = function (element) {
                 console.log('Player kill count: ',element.kills);
                 return;
             }
-
-        // if (player.r <= minMass || self.r >= maxMass) {
-        //     //if player radius/mass lower than 10 pixels, death!
-        //     player.death = true;
-        //     return;
-        // }
 
         if (self.r > element.r) {
                 console.log('enemy is gaining mass');
@@ -179,14 +196,16 @@ Enemy.prototype.draw = function(ctx) {
             //##################################
             //Twinkle Effect
             //##################################
+
             var new_opacity = getRandomNum(.5, .6);
 
             var g = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, drawR * .95);
-            g.addColorStop(0.0, 'rgba(255,0,0,' + new_opacity + ')');
-            g.addColorStop(.75, 'rgba(200,0,0,' + (new_opacity * .7) + ')');
-            g.addColorStop(1.0, 'rgba(200,0,0,0)');
+            g.addColorStop(0.0, 'rgba(255,'+this.mood+',0,' + new_opacity + ')');
+            g.addColorStop(.75, 'rgba(200,'+this.mood+',0,' + (new_opacity * .7) + ')');
+            g.addColorStop(1.0, 'rgba(200,'+this.mood+',0,0)');
             ctx.fillStyle = g;
             ctx.fill();
 
         }
     }
+
