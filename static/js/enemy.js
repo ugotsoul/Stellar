@@ -6,7 +6,7 @@ function Enemy(x, y, r, id) {
     this.r = r;
     this.strength = Math.floor(this.r/5);
     this.id = id;
-    this.drag = .00001*this.r;
+    this.drag = .000001*this.r;
 
     //death and win state criteria 
     this.minMass = 10;
@@ -67,22 +67,6 @@ Enemy.prototype.interact = function(dt) {
     return GameObject.prototype.interact.call(this, dt);
 }
 
-Enemy.prototype.direction = function() {
-
-    var distArr = [this.x, this.y];
-
-    var tail = this.r + Math.floor(this.r/2);
-
-    var angle = Math.atan2(distArr[1], distArr[0]);
-
-    //length of food - poop tail from enemy object
-    var foodArr = [this.x - tail*Math.cos(angle), this.y - tail*Math.sin(angle)];
-    
-    //console.log('Distance from Enemy butt: ', distArr);
-
-    return foodArr;
-}
-
 
 Enemy.prototype.radar = function() {
 
@@ -96,13 +80,14 @@ Enemy.prototype.radar = function() {
         
         if (element.id != self.id) {
 
-            var neighboorLength = self.displacement(element);
+            //raw distance from other object
+            var distance = vector.distance(self, element);
 
-            var displacement = self.displacementVector(element);
+            var neighboorLength = vector.magnitude(distance);
 
-            var radarLength = Math.floor(self.r*self.r*Math.PI);
+            var radarLength = Math.floor(self.r*10);
 
-            var angle = Math.atan2(displacement[1], displacement[0]);
+            var angle = vector.angle(distance);
 
             //check if element falls within radar length
             if (neighboorLength < radarLength) {
@@ -110,7 +95,7 @@ Enemy.prototype.radar = function() {
                 if (self.r > element.r) {
 
                     //console.log('Trying to eat stuff');
-                    self.vX -= self.strength*Math.cos(angle);
+                    self.vX -= self.strength *Math.cos(angle);
                     self.vY -= self.strength *Math.sin(angle);
                     return;
                 }
@@ -167,8 +152,10 @@ Enemy.prototype.attack = function (element) {
         }
 
         else if (self.r == element.r) {
+            
             //randomly choose which one will be eaten
             var killArr = new Array();
+            
             killArr.push(self.r);
             killArr.push(element.r);
 

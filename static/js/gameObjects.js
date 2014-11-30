@@ -73,30 +73,32 @@ GameObject.prototype.update = function(dt) {
         
 }
 
-GameObject.prototype.displacementVector = function (element) {
-            //get the distance between centers of player and enemy object
-            var distance = new Array();
+// GameObject.prototype.displacementVector = function (element) {
+//             //get the distance between centers of player and enemy object
+//             var distance = new Array();
 
-            //eX & eY are for the elements X, Y
-            distance[0] = this.x - element.x;
-            distance[1] = this.y - element.y;
+//             //eX & eY are for the elements X, Y
+//             distance[0] = this.x - element.x;
+//             distance[1] = this.y - element.y;
 
-            return distance;
-        }
+//             return distance;
+//         }
 
-GameObject.prototype.displacement = function(element) {
-            //get distance array object
-            var distance = this.displacementVector(element);
+// GameObject.prototype.displacement = function(element) {
+//             //get distance array object
+//             var distance = this.displacementVector(element);
 
-            //get the hypotenuse 
-            var moveLength = Math.sqrt(distance[0]*distance[0] + distance[1]*distance[1]);
+//             //get the hypotenuse 
+//             var moveLength = Math.sqrt(distance[0]*distance[0] + distance[1]*distance[1]);
             
-            return moveLength;
-        }
+//             return moveLength;
+//         }
 
 GameObject.prototype.collisionDetect = function (element) {
         	//get the length of the distance from center of player to element
-        	return this.displacement(element) <= (this.r+element.r);
+            var distance = vector.distance(this, element);
+
+        	return vector.magnitude(distance) <= (this.r+element.r);
         }
 
 GameObject.prototype.reboundDirection = function(element, dt) {
@@ -105,40 +107,23 @@ GameObject.prototype.reboundDirection = function(element, dt) {
         	//Modified HTML5 Canvas code for Multiple Collisions w/ the equation for conservation of momentum
         	//###############################################################################################
 
-        	//displacement vector (x,y) array
-			var displacement = this.displacementVector(element);
+            //displacement vector (x,y) array
+            var displacement = vector.distance(this, element);
 
             //note: atan2 calculates the right handed coordinate system using (y, x) - canvas world is left handed coordinate system
-        	var collisionAngle = Math.atan2(displacement[1], displacement[0]);
-        	
-            //speed - length of velocity vector
-        	var speedThis = Math.sqrt(this.vX*this.vX + this.vY*this.vY);
-        	var speedElement = Math.sqrt(element.vX*element.vX + element.vY*element.vY);
-        	
-        	//angles at current velocities
-        	var directionThis = Math.atan2(this.vY, this.vX); 
-        	var directionElement =  Math.atan2(element.vY, element.vX); 
+            var collisionAngle = vector.angle(displacement);
 
-        	//rotate vectors counter clockwise - make the angle of collision flat
-        	var vRotationTx = speedThis * Math.cos(directionThis - collisionAngle);        	
-        	var vRotationTy = speedThis * Math.sin(directionThis - collisionAngle);
-        	var vRotationEx = speedElement * Math.cos(directionElement - collisionAngle);
-        	var vRotationEy = speedElement * Math.sin(directionElement - collisionAngle);
+            //get the rotation matrix
+            var rotation = vector.rotation(this, element, collisionAngle);
 
-            //Change Cofficient of Resitution 
-            //Adapted from wiki entry on partially inelastic collision response
-            var coefficientOfRestitution = .2; 
-            var finalVx1 = (this.r * vRotationTx +  element.r * vRotationEx + coefficientOfRestitution*element.r*(vRotationEx- vRotationTx))/ (this.r + element.r);
-            var finalVx2 = (this.r * vRotationTx +  element.r * vRotationEx + coefficientOfRestitution*this.r*(vRotationTx- vRotationEx))/ (this.r + element.r);
-           	var finalVy1 = vRotationTy;
-        	var finalVy2 = vRotationEy;
+            var finalV = vector.momentum(this, element, rotation);
 
         	//rotate the angles back again so the collision angle is preserved
-        	this.vX = Math.cos(collisionAngle) * finalVx1 + Math.cos(collisionAngle + Math.PI/2) * finalVy1; 	
-        	this.vY = Math.sin(collisionAngle) * finalVx1 + Math.sin(collisionAngle + Math.PI/2) * finalVy1;
+        	this.vX = Math.cos(collisionAngle) * finalV[0][0]+ Math.cos(collisionAngle + Math.PI/2) * finalV[0][1]; 	
+        	this.vY = Math.sin(collisionAngle) * finalV[0][0]+ Math.sin(collisionAngle + Math.PI/2) * finalV[0][1];
         	
-        	element.vX = Math.cos(collisionAngle) * finalVx2 + Math.cos(collisionAngle + Math.PI/2) * finalVy2;
-        	element.vY = Math.sin(collisionAngle) * finalVx2 + Math.sin(collisionAngle + Math.PI/2) * finalVy2;
+        	element.vX = Math.cos(collisionAngle) * finalV[1][0] + Math.cos(collisionAngle + Math.PI/2) * finalV[1][1];
+        	element.vY = Math.sin(collisionAngle) * finalV[1][0] + Math.sin(collisionAngle + Math.PI/2) * finalV[1][1];
 
         	//update objects position @ x,y
         	this.x = (this.x += this.vX * dt);
@@ -173,8 +158,6 @@ GameObject.prototype.interact = function (dt) {
             if (element.id != this.id) {
 		    	
                 if (this.collisionDetect(element)) {
-
-                collisionCount++
                 
                     //console.log('trying to rebound');
 		    		this.reboundDirection(element, dt);
@@ -189,10 +172,24 @@ GameObject.prototype.interact = function (dt) {
 	}
 
 
-var collisionCount = 1;
 //##############################################
 // Payment System - Object Pooling & Creation
 //##############################################
+
+
+GameObject.prototype.poop = function() {
+
+    //the scalar below is trival distance away from player
+    var tail = Math.floor(this.r * 1.5);
+
+    var angle = vector.angle(this.mouseClick);
+
+    //length of food - poop tail from game object
+    var foodArr = [this.x - tail*Math.cos(angle), this.y - tail*Math.sin(angle)];
+    
+    return foodArr;
+}
+
 
 //this is a unique id to identify objects during collision response // attack
 //so objects do not colide with themselves or hurt themselves
@@ -215,9 +212,6 @@ GameObject.prototype.payment = function() {
         var foodX = foodVector[0];
         var foodY = foodVector[1];
 
-        console.log('Food Vector Coordinates: ',foodX, foodY);
-        // console.log('Displacement Vector: ', this.displacement());
-
         var foodR = 10;
 
         console.log('Food ID: ', foodID);
@@ -225,8 +219,8 @@ GameObject.prototype.payment = function() {
         //console.log(foodID);
         var tempFood = new Enemy(foodX, foodY, foodR, foodID);
 
-        tempFood.vX = (self.vX*-1)* getRandomInteger(1,10);
-        tempFood.vY = (self.vY*-1)* getRandomInteger(1,10);
+        tempFood.vX = (self.vX*-1)*getRandomInteger(1,10);
+        tempFood.vY = (self.vY*-1)*getRandomInteger(1,10);
 
         //add the food to the array of game objects
         game.gameObjects.push(tempFood);

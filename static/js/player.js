@@ -83,42 +83,9 @@ Player.prototype.update = function(dt) {
 
 
 
-Player.prototype.direction = function() {
-
-    var distArr = [this.mouseClick[0], this.mouseClick[1]];
-
-    //the scalar below is trival
-    var tail = Math.floor(this.r * 1.5);
-
-    var angle = Math.atan2(distArr[1], distArr[0]);
-
-    //length of food - poop tail from player object
-    var foodArr = [this.x - tail*Math.cos(angle), this.y - tail*Math.sin(angle)];
-    
-    console.log('Distance from Player butt: ', distArr);
-
-    return foodArr;
-}
-
-Player.prototype.playerDisplacement = function(){
-
-    var distArr = this.mouseClick;
-
-    var moveLength = Math.sqrt(distArr[0]*distArr[0] + distArr[1]*distArr[1]);
-                
-    return moveLength;
-}
-
 Player.prototype.move = function (dt) {
 
-    //calculate magnitudes of both vectors
-    var distArr = [this.mouseClick[0], this.mouseClick[1]];
-
-    //console.log('Player direction: ', distArr);
-
-    var angle = Math.atan2(distArr[1], distArr[0]);
-
-    //console.log('Test angle: ', angle);
+    var angle = vector.angle(this.mouseClick);
 
     this.vX += Math.cos(angle) * this.speed;
     this.vY += Math.sin(angle) * this.speed;
