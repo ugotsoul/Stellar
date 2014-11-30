@@ -9,8 +9,12 @@ function Player(x, y, r) {
     this.speed = this.r/2;
     this.maxV = 200;
     this.mouseClick = null;
+    
+    //death and win state criteria 
     this.minMass = 20;
+    this.maxMass = 150;
     this.kills = 0;
+    
     // this.moveType = {
 
     //     'up': false,
@@ -22,6 +26,19 @@ function Player(x, y, r) {
 }
 
 Player.prototype = Object.create(GameObject.prototype);
+
+Object.defineProperty(Player.prototype, 'death', {get: function(){ 
+
+    var self = this;
+
+    if (self.r < self.minMass) {
+        return self.death = true;
+    }
+
+    else {
+        return self.death = false;
+    }
+}});
 
 Player.prototype.update = function(dt) {
 
@@ -70,7 +87,8 @@ Player.prototype.direction = function() {
 
     var distArr = [this.mouseClick[0], this.mouseClick[1]];
 
-    var tail = this.r + this.r/2;
+    //the scalar below is trival
+    var tail = Math.floor(this.r * 1.5);
 
     var angle = Math.atan2(distArr[1], distArr[0]);
 
@@ -136,13 +154,18 @@ Player.prototype.draw = function(ctx) {
             
        		}
 
+
+            //#####################################################################
+            // Test code below - Displays player coordinates in canvas & game world
+            //#####################################################################
+
             //center coordinates of player object
-            ctx.fillStyle = '#000';
-            ctx.font = "bold 8pt Sans-Serif";
-            ctx.textAlign = 'center';
-            ctx.fillText('Game World', drawX, drawY-10);
-            ctx.fillText('X: ' + Math.floor(this.x) + ' Y: ' + Math.floor(this.y), drawX, drawY);
-            ctx.fillText('Draw World', drawX, drawY+10);
-            ctx.fillText('X: ' + Math.floor(drawX) + ' Y: ' + Math.floor(drawY), drawX, drawY+20);
+            // ctx.fillStyle = '#000';
+            // ctx.font = "bold 8pt Sans-Serif";
+            // ctx.textAlign = 'center';
+            // ctx.fillText('Game World', drawX, drawY-10);
+            // ctx.fillText('X: ' + Math.floor(this.x) + ' Y: ' + Math.floor(this.y), drawX, drawY);
+            // ctx.fillText('Draw World', drawX, drawY+10);
+            // ctx.fillText('X: ' + Math.floor(drawX) + ' Y: ' + Math.floor(drawY), drawX, drawY+20);
      
     }

@@ -4,10 +4,19 @@ function Enemy(x, y, r, id) {
     this.x = x; 
     this.y = y; 
     this.r = r;
-    this.strength = this.r/10;
+    this.strength = Math.floor(this.r/5);
     this.id = id;
-    this.drag = .0001;
-    this.maxV = 75;
+    this.drag = .00001*this.r;
+
+    //death and win state criteria 
+    this.minMass = 10;
+    this.maxMass = 150;
+
+    //max speed porportional to size of object
+    //larger things move slower
+    //smaller things move faster
+    //make a max mass attribute
+    this.maxV = Math.floor(1000/this.r);
 
     //assign random directions/speeds to each enemy
     this.vX = getRandomInteger(-50, 50);
@@ -26,8 +35,8 @@ Object.defineProperty(Enemy.prototype, 'mood', {get: function(){
         return 200;
     }
 
-    else if (this.r <player.r){
-        return 80;
+    else if (this.r < Math.floor(player.r*.85)){
+        return 100;
     }
 
     else {
@@ -38,7 +47,7 @@ Object.defineProperty(Enemy.prototype, 'mood', {get: function(){
 
 }}); 
 
-Enemy.prototype.update = function(dt) {
+Enemy.prototype.interact = function(dt) {
 
     this.radar();
 
@@ -55,14 +64,14 @@ Enemy.prototype.update = function(dt) {
     //     }
     // }
 
-    return GameObject.prototype.update.call(this, dt);
+    return GameObject.prototype.interact.call(this, dt);
 }
 
 Enemy.prototype.direction = function() {
 
     var distArr = [this.x, this.y];
 
-    var tail = this.r + this.r/2;
+    var tail = this.r + Math.floor(this.r/2);
 
     var angle = Math.atan2(distArr[1], distArr[0]);
 
@@ -91,7 +100,7 @@ Enemy.prototype.radar = function() {
 
             var displacement = self.displacementVector(element);
 
-            var radarLength = Math.floor(2*self.r*Math.PI);
+            var radarLength = Math.floor(self.r*self.r*Math.PI);
 
             var angle = Math.atan2(displacement[1], displacement[0]);
 
@@ -100,16 +109,16 @@ Enemy.prototype.radar = function() {
 
                 if (self.r > element.r) {
 
-                    console.log('Trying to eat stuff');
-                    self.vX -= neighboorLength*Math.cos(angle);
-                    self.vY -= neighboorLength*Math.sin(angle);
+                    //console.log('Trying to eat stuff');
+                    self.vX -= self.strength*Math.cos(angle);
+                    self.vY -= self.strength *Math.sin(angle);
                     return;
                 }
 
                 else {
-                    console.log('Trying to move away');
-                    self.vX += neighboorLength*Math.cos(angle);
-                    self.vY += neighboorLength*Math.sin(angle);
+                    //console.log('Trying to move away');
+                    self.vX += self.strength *Math.cos(angle);
+                    self.vY += self.strength *Math.sin(angle);
                     return;
                 }
 
@@ -187,7 +196,7 @@ Enemy.prototype.draw = function(ctx) {
     var drawY = this.y - game.viewY;
     var drawR = this.r;
 
-        if (this.r > 0) {
+        if (this.r > 0 ) {
 
             ctx.beginPath();
             ctx.arc(drawX, drawY, drawR, 0, Math.PI * 2, false);

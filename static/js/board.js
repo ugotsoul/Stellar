@@ -243,20 +243,15 @@ Game.prototype.end = function(ctxMain) {
 $(window).keydown(function(evt) {
 
     if (evt.keyCode == 13 || evt.keyCode == 32) {
-            console.log('Restarting game');
             $(window).off('keydown');
-        //#############################################################################
-        // For Testing: reset player.r to 20 & player kills on game restart
-        //#############################################################################
-            player.death = false;
-            player.r = 100;
-            self.playerKills = 0;
-            self.gameObjects = [];
-            self.run();
-
+            
+            //refresh the page to reload the game
+            document.location.href = "";
         }
     });
 
+
+    //
     if (player.death == true) {
 
         ctxMain.clearRect(0, 0, canvas.width, canvas.height);
@@ -264,9 +259,9 @@ $(window).keydown(function(evt) {
         ctxMain.textAlign = "center";
         ctxMain.font = "bold 50pt Sans-Serif";
         //you need to clear the canvas for this instance of the Game object -- game -- not the Game object/class. 
-        ctxMain.fillText('YOU DIED!', canvas.width/2, canvas.height/2);
-        ctxMain.font = "bold 20pt Sans-Serif";
-        ctxMain.fillText('Hit space or Enter to Play Again!', canvas.width/2, canvas.height/2+30);
+        ctxMain.fillText('YOU DIED! Ow.', canvas.width/2, canvas.height/2);
+        //txMain.font = "bold 20pt Sans-Serif";
+        //ctxMain.fillText('Hit space or Enter to Play Again!', canvas.width/2, canvas.height/2+30);
     }
 
     if (this.gameObjects.length == 1) {
@@ -277,14 +272,14 @@ $(window).keydown(function(evt) {
         ctxMain.font = "bold 50pt Sans-Serif";
         //you need to clear the canvas for this instance of the Game object -- game -- not the Game object/class. 
         ctxMain.fillText('YOU WIN! YAY!', canvas.width/2, canvas.height/2);
-        ctxMain.font = "bold 20pt Sans-Serif";
-        ctxMain.fillText('Hit space or Enter to Play Again!', canvas.width/2, canvas.height/2+30);
+        //ctxMain.font = "bold 20pt Sans-Serif";
+        //ctxMain.fillText('Hit space or Enter to Play Again!', canvas.width/2, canvas.height/2+30);
         }    
 }
 
 Game.prototype.start = function() {
 
-    ctxMain.fillStyle = '#00F';
+    ctxMain.fillStyle = '#FFF';
     ctxMain.font = "bold 80pt Sans-Serif";
     ctxMain.textAlign = "center";
     //you need to clear the canvas for this instance of the Game object -- game -- not the Game object. 
@@ -292,7 +287,7 @@ Game.prototype.start = function() {
     ctxMain.font = "20pt Sans-Serif";
     ctxMain.fillText('Be a star. Consume the universe.', canvas.width/2, (canvas.height/2)-100);
     ctxMain.font = "bold 22pt Sans-Serif";
-    ctxMain.fillStyle = '#00f';
+    ctxMain.fillStyle = '#FFF';
     ctxMain.fillText('Hit enter or space to start', canvas.width/2, (canvas.height/2)+100);
 
     var self = this;
@@ -336,8 +331,6 @@ Game.prototype.mouseClick = function(){
     var yClick = evt.pageY - offsetY;
 
     return player.mouseClick = [xClick, yClick];
-
-    evt.preventDefault();
 
     });
 }

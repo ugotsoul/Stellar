@@ -9,13 +9,12 @@ function GameObject(x, y, r) {
     this.y = y;
     this.r = r;
     this.fill = null;
-    this.death = false;
     this.lastPayment = Date.now();
     this.matterLoss = false;
 
     //death and win state criteria 
-    this.minMass = 10;
-    this.maxMass = 150;
+    this.minMass = null;
+    this.maxMass = null;
 
     this.viewX = this.x;
     this.viewY = this.y;
@@ -35,19 +34,6 @@ function GameObject(x, y, r) {
     this.stop = Math.random() * .2 + .4;
 
 }
-
-Object.defineProperty(GameObject.prototype, 'death', {get: function(){ 
-
-    var self = this;
-
-    if (self.r < self.minMass) {
-        return self.death = true;
-    }
-
-    else {
-        return self.death = false;
-    }
-}});
 
 
 
