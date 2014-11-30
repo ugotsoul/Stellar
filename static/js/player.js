@@ -50,6 +50,12 @@ Player.prototype.update = function(dt) {
     return GameObject.prototype.update.call(this, dt);
 }
 
+
+//#####################################################################
+// Code Below for Keypress handler
+//#####################################################################
+
+
 // Player.prototype.move = function () {
 
 //     for (var direction in this.moveType) {
@@ -80,6 +86,7 @@ Player.prototype.update = function(dt) {
     
 //     this.payment();
 // }
+//#####################################################################
 
 
 

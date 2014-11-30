@@ -16,8 +16,7 @@ function GameObject(x, y, r) {
     this.minMass = null;
     this.maxMass = null;
 
-    this.viewX = this.x;
-    this.viewY = this.y;
+    this.speed = null;
 
     this.vX = 1;
     this.vY = 1;
@@ -182,7 +181,15 @@ GameObject.prototype.poop = function() {
     //the scalar below is trival distance away from player
     var tail = Math.floor(this.r * 1.5);
 
-    var angle = vector.angle(this.mouseClick);
+        if (this instanceof Player){
+            var angle = vector.angle(this.mouseClick);
+        }
+
+        else {
+            //need the unit vector of enemy several steps in the future
+            var angle = vector.angle([(this.x*this.x*this.vX), (this.y*this.y*this.vY)]);
+            //console.log('Enemy trying to poop');
+        }
 
     //length of food - poop tail from game object
     var foodArr = [this.x - tail*Math.cos(angle), this.y - tail*Math.sin(angle)];
@@ -202,36 +209,42 @@ GameObject.prototype.payment = function() {
     
     var currentPayment = Date.now();
 
+    var maxEnemies = 150;
+
     if (self.matterLoss && (currentPayment - self.lastPayment > 500)){
 
-        var maxFood = 1;
-        var foodPool = [];
-
-        var foodVector = self.direction();
+        var foodVector = self.poop();
         
         var foodX = foodVector[0];
         var foodY = foodVector[1];
 
-        var foodR = 10;
+        var foodR = Math.floor(self.r/5);
 
         console.log('Food ID: ', foodID);
 
         //console.log(foodID);
         var tempFood = new Enemy(foodX, foodY, foodR, foodID);
 
-        tempFood.vX = (self.vX*-1)*getRandomInteger(1,10);
-        tempFood.vY = (self.vY*-1)*getRandomInteger(1,10);
+        tempFood.vX = (self.vX*-1)*getRandomInteger(10,50);
+        tempFood.vY = (self.vY*-1)*getRandomInteger(10,50);
 
         //add the food to the array of game objects
         game.gameObjects.push(tempFood);
 
-        self.r -= 1;
+        self.r -= 2;
         self.matterLoss = false;
 
-        self.lastPayment = Date.now();
-        self.mouseClick = null;
+        if (self instanceof Player){
+            self.mouseClick = null;
+            self.lastPayment = Date.now();
+        }
+
+        else {
+            self.lastPayment = Date.now();
+        }
         
         foodID++;
+        return;
     }
 
 }

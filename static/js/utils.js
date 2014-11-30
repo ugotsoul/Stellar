@@ -61,7 +61,7 @@ Vector.prototype.momentum = function(a, b, matrix){
 
     //Cofficient of Restitution - here an arbitrary scalar to make the collision less bouncy
     //Adapted from Wiki - Partially inelastic collision response
-    var coefficientOfRestitution = .2; 
+    var coefficientOfRestitution = .1; 
     
     var finalVxA = (a.r * matrix[0][0] +  b.r * matrix[1][0] + coefficientOfRestitution*b.r*(matrix[1][0] - matrix[0][0]))/ (a.r + b.r);
    	var finalVyA = matrix[0][1];

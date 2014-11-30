@@ -43,7 +43,7 @@ var Game = function() {
     this.w = 3000;
     this.h = 3000;
     this.intervalHandle = null;
-    this.startEnemies = 10;
+    this.startEnemies = 50;
     this.gameObjects = this.getElements();
 };
 
@@ -113,14 +113,11 @@ Game.prototype.getElements = function() {
 
         var n = 0;
 
-        //set max enemy radius - will be born no more than 2 times player radius
-        var maxR = player.r*2;
-
         // instanciate enemies in random places on the board 
         // note: bounds are restricted to account for max radius
-        var rX = getRandomInteger(maxR, this.w-maxR);
-        var rY = getRandomInteger(maxR, this.h-maxR);
-        var rR = getRandomInteger(10, 30);
+        var rX = getRandomInteger(50, this.w-50);
+        var rY = getRandomInteger(50, this.h-50);
+        var rR = getRandomInteger(10, 15);
 
         var tempEnemy = new Enemy(rX, rY, rR, rID);
 
@@ -143,7 +140,6 @@ Game.prototype.getElements = function() {
 Game.prototype.draw = function(ctx) {
        
     if (player.death == true) {
-        console.log("Players is dead, stop drawing");
         return;
     }
 
@@ -260,8 +256,8 @@ $(window).keydown(function(evt) {
         ctxMain.font = "bold 50pt Sans-Serif";
         //you need to clear the canvas for this instance of the Game object -- game -- not the Game object/class. 
         ctxMain.fillText('YOU DIED! Ow.', canvas.width/2, canvas.height/2);
-        //txMain.font = "bold 20pt Sans-Serif";
-        //ctxMain.fillText('Hit space or Enter to Play Again!', canvas.width/2, canvas.height/2+30);
+        txMain.font = "bold 20pt Sans-Serif";
+        ctxMain.fillText('Hit space or Enter to Play Again!', canvas.width/2, canvas.height/2+30);
     }
 
     if (this.gameObjects.length == 1) {
@@ -272,8 +268,8 @@ $(window).keydown(function(evt) {
         ctxMain.font = "bold 50pt Sans-Serif";
         //you need to clear the canvas for this instance of the Game object -- game -- not the Game object/class. 
         ctxMain.fillText('YOU WIN! YAY!', canvas.width/2, canvas.height/2);
-        //ctxMain.font = "bold 20pt Sans-Serif";
-        //ctxMain.fillText('Hit space or Enter to Play Again!', canvas.width/2, canvas.height/2+30);
+        ctxMain.font = "bold 20pt Sans-Serif";
+        ctxMain.fillText('Hit space or Enter to Play Again!', canvas.width/2, canvas.height/2+30);
         }    
 }
 
@@ -368,8 +364,9 @@ var Background = function() {
     this.y = 0;
     this.w = game.w;
     this.h = game.h;
-    this.bgStars = this.makeStars(500);
-    this.fgStars = this.makeStars(200);
+    this.bgStars = this.makeStars(400);
+    this.fgStars = this.makeStars(300);
+    this.topStars = this.makeStars(150);
 }
 
 Object.defineProperty(Background.prototype, 'viewX', {get: function(){ return -(player.x - offsetX); }});
@@ -409,11 +406,11 @@ Background.prototype.update = function(layer, speed) {
         layer[i].drawX = targetX;
         layer[i].drawY = targetY;
 
-        if (speed){
+        if (speed > 0){
 
 
-            layer[i].drawX += targetX/3;
-            layer[i].drawY += targetY/3;
+            layer[i].drawX += targetX/speed;
+            layer[i].drawY += targetY/speed;
 
 
             //never have stars draw off canvas
@@ -471,12 +468,14 @@ Background.prototype.render = function(){
     bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
 
     //check for changes in x, y coordinate plane of player view
-    this.update(this.bgStars, false);
-    this.update(this.fgStars, true);
+    this.update(this.bgStars, 0);
+    this.update(this.fgStars, 2);
+    this.update(this.topStars, 1);
 
     //redraw stars on canvacs
     this.draw(bgCtx, 'blue', this.bgStars);
-    this.draw(bgCtx, '#90DAA7', this.fgStars);
+    this.draw(bgCtx, 'violet', this.fgStars);
+    this.draw(bgCtx, 'red', this.topStars);
 }
 
 var background = new Background();

@@ -4,9 +4,10 @@ function Enemy(x, y, r, id) {
     this.x = x; 
     this.y = y; 
     this.r = r;
-    this.strength = Math.floor(this.r/5);
+    this.strength = Math.floor(this.r/10);
     this.id = id;
-    this.drag = .000001*this.r;
+    this.drag = .0000001*this.r;
+    this.speed = 100/this.r;
 
     //death and win state criteria 
     this.minMass = 10;
@@ -36,35 +37,33 @@ Object.defineProperty(Enemy.prototype, 'mood', {get: function(){
     }
 
     else if (this.r < Math.floor(player.r*.85)){
-        return 100;
+        return 80;
     }
 
     else {
         return 0;
     }
 
-    //if larger, change the color to red - player is edible
-
 }}); 
 
 Enemy.prototype.interact = function(dt) {
 
     this.radar();
-
-    //this.payment();
-
-    // var currentTime = Date.now();
-
-    // var self = this;
-
-    // if (currentTime - self.lastPayment > 1000) {
-        
-    //     if (self.r > 10){
-    //     self.matterLoss = true;
-    //     }
-    // }
-
+    
     return GameObject.prototype.interact.call(this, dt);
+}
+
+Enemy.prototype.update = function(dt) {
+
+    var currentPayment = Date.now();
+
+    if (currentPayment - this.lastPayment > 5000 && self.r > 10){
+        this.matterLoss = true;
+        this.payment();
+    }
+
+
+    return GameObject.prototype.update.call(this, dt);
 }
 
 
@@ -91,28 +90,36 @@ Enemy.prototype.radar = function() {
 
             //check if element falls within radar length
             if (neighboorLength < radarLength) {
-
+                
                 if (self.r > element.r) {
 
                     //console.log('Trying to eat stuff');
-                    self.vX -= self.strength *Math.cos(angle);
-                    self.vY -= self.strength *Math.sin(angle);
+                    self.vX -= (self.speed+self.strength) *Math.cos(angle);
+                    self.vY -= (self.speed+self.strength) *Math.sin(angle);
+
+                    // //slow down enemy
+                    // element.vX -= .001;
+                    // element.vY -= .001;
+
+                    return;
+                }
+
+                else if (self.r < element.r) {
+
+                    self.vX += self.speed *Math.cos(angle);
+                    self.vY += self.speed *Math.sin(angle);
                     return;
                 }
 
                 else {
                     //console.log('Trying to move away');
-                    self.vX += self.strength *Math.cos(angle);
-                    self.vY += self.strength *Math.sin(angle);
+                    self.vX += neighboorLength *Math.cos(angle);
+                    self.vY += neighboorLength *Math.sin(angle);
                     return;
                 }
-
             }
-
         }
     }
-
-    return;
 }
 
 Enemy.prototype.attack = function (element) {
@@ -196,7 +203,7 @@ Enemy.prototype.draw = function(ctx) {
             var new_opacity = getRandomNum(.5, .6);
 
             var g = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, drawR * .95);
-            g.addColorStop(0.0, 'rgba(255,'+this.mood+',0,' + new_opacity + ')');
+            g.addColorStop(0.0, 'rgba(255,'+this.mood+','+this.mood+',' + new_opacity + ')');
             g.addColorStop(.75, 'rgba(200,'+this.mood+',0,' + (new_opacity * .7) + ')');
             g.addColorStop(1.0, 'rgba(200,'+this.mood+',0,0)');
             ctx.fillStyle = g;
