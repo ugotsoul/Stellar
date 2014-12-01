@@ -5,8 +5,8 @@
 
 function GameObject(x, y, r) {
 
-    this.x = x;
-    this.y = y;
+    this.x = Math.floor(x);
+    this.y = Math.floor(y);
     this.r = r;
 
     this.lastPayment = Date.now();
@@ -73,27 +73,6 @@ GameObject.prototype.update = function(dt) {
         
 }
 
-// GameObject.prototype.displacementVector = function (element) {
-//             //get the distance between centers of player and enemy object
-//             var distance = new Array();
-
-//             //eX & eY are for the elements X, Y
-//             distance[0] = this.x - element.x;
-//             distance[1] = this.y - element.y;
-
-//             return distance;
-//         }
-
-// GameObject.prototype.displacement = function(element) {
-//             //get distance array object
-//             var distance = this.displacementVector(element);
-
-//             //get the hypotenuse 
-//             var moveLength = Math.sqrt(distance[0]*distance[0] + distance[1]*distance[1]);
-            
-//             return moveLength;
-//         }
-
 GameObject.prototype.collisionDetect = function (element) {
         	//get the length of the distance from center of player to element
             var distance = vector.distance(this, element);
@@ -104,7 +83,7 @@ GameObject.prototype.collisionDetect = function (element) {
 GameObject.prototype.reboundDirection = function(element, dt) {
 
         	//###############################################################################################
-        	//Modified HTML5 Canvas code for Multiple Collisions w/ the equation for conservation of momentum
+        	//Modified HTML5 Canvas Book code for Multiple Collisions
         	//###############################################################################################
 
             //displacement vector (x,y) array

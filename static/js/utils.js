@@ -26,13 +26,13 @@ function Vector(){};
 
 Vector.prototype.distance = function(a, b){
 
-    return [a.x - b.x, a.y - b.y];
+    return [Math.floor(a.x - b.x), Math.floor(a.y - b.y)];
 };
 
 //length of vector
 Vector.prototype.magnitude = function(distance){
 
-	return Math.sqrt(distance[0]*distance[0] + distance[1]*distance[1]);
+	return Math.floor(Math.sqrt(distance[0]*distance[0] + distance[1]*distance[1]));
 };
 
 Vector.prototype.angle = function(distance){
@@ -88,14 +88,13 @@ Vector.prototype.dotproduct = function(a, b){
 
 Vector.prototype.collision = function(a, b){
 
-	//Make a matrix for rotation: http://gamedevelopment.tutsplus.com/tutorials/lets-build-a-3d-graphics-engine-linear-transformations--gamedev-7716
+	//Make a rotation matrix: http://gamedevelopment.tutsplus.com/tutorials/lets-build-a-3d-graphics-engine-linear-transformations--gamedev-7716
 	
 	var magA = this.magnitude([a.x, a.y]);
 	var magB = this.magnitude([b.x, b.y]);
 	var dot = this.dotproduct(a,b);
 
 	return [];
-
 };
 
 

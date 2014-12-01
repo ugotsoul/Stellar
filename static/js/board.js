@@ -154,17 +154,11 @@ Game.prototype.render = function(mainCanvas) {
 
     mainCanvas.ctx.clearRect(0, 0, mainCanvas.w, mainCanvas.h);
     
-    //draw background
-    //this.bg.render(); 
-
     this.draw();
 
-    //return mainCanvas.ctx.drawImage(this.bg.canvas.canvas, 0, 0),
     return  mainCanvas.ctx.drawImage(this.canvas.canvas, 0, 0);
-
 }
 
-//runs the game (gets elements, draws game elements, updates game elements) @ 50 FPS
 Game.prototype.run = function(mainCanvas) {
 
     //get player position
@@ -221,26 +215,28 @@ $(window).keydown(function(evt) {
     //
     if (this.playerDeath == true) {
 
-        canvas.ctx.clearRect(0, 0, canvas.width, canvas.height);
+        canvas.ctx.clearRect(0, 0, canvas.w, canvas.h);
         canvas.ctx.fillStyle = '#FFF';
         canvas.ctx.textAlign = "center";
         canvas.ctx.font = "bold 50pt Sans-Serif";
         //you need to clear the canvas for this instance of the Game object -- game -- not the Game object/class. 
-        canvas.ctx.fillText('YOU DIED! Ow.', canvas.width/2, canvas.height/2);
+        canvas.ctx.fillText('YOU DIED! Ow.', canvas.w/2, canvas.h/2);
         canvas.ctx.font = "bold 20pt Sans-Serif";
-        canvas.ctx.fillText('Hit space or Enter to Play Again!', canvas.width/2, canvas.height/2+30);
+        canvas.ctx.fillText('You killed '+this.playerKills+' enemies.', canvas.w/2, canvas.h/2+50);
+        canvas.ctx.fillText('Hit space or Enter to Play Again!', canvas.w/2, canvas.h/2+100);
     }
 
     if (this.gameObjects.length == 1) {
 
-        canvas.ctx.clearRect(0, 0, canvas.width, canvas.height);
+        canvas.ctx.clearRect(0, 0, canvas.w, canvas.h);
         canvas.ctx.fillStyle = '#FFF';
         canvas.ctx.textAlign = "center";
         canvas.ctx.font = "bold 50pt Sans-Serif";
         //you need to clear the canvas for this instance of the Game object -- game -- not the Game object/class. 
-        canvas.ctx.fillText('YOU WIN! YAY!', canvas.width/2, canvas.height/2);
+        canvas.ctx.fillText('YOU WIN! YAY!', canvas.w/2, canvas.h/2);
         canvas.ctx.font = "bold 20pt Sans-Serif";
-        canvas.ctx.fillText('Hit space or Enter to Play Again!', canvas.width/2, canvas.height/2+30);
+        canvas.ctx.fillText('You killed '+this.playerKills+' enemies.', canvas.w/2, canvas.h/2+50);
+        canvas.ctx.fillText('Hit space or Enter to Play Again!', canvas.w/2, canvas.h/2+100);
         }    
 }
 
@@ -298,8 +294,8 @@ Game.prototype.score = function() {
 
 
 //get offset values by calculating the player's current distance from translated origin
-Object.defineProperty(Game.prototype, 'viewX', {get: function(){ return this.gameObjects[0].x - this.canvas.offsetX; }});
-Object.defineProperty(Game.prototype, 'viewY', {get: function(){ return this.gameObjects[0].y - this.canvas.offsetY; }});
+Object.defineProperty(Game.prototype, 'viewX', {get: function(){ return Math.floor(this.gameObjects[0].x - this.canvas.offsetX); }});
+Object.defineProperty(Game.prototype, 'viewY', {get: function(){ return Math.floor(this.gameObjects[0].y - this.canvas.offsetY); }});
 Object.defineProperty(Game.prototype, 'playerDeath', {get: function(){ return this.gameObjects[0].death; }});
 Object.defineProperty(Game.prototype, 'playerMass', {get: function(){ return this.gameObjects[0].r; }});
 Object.defineProperty(Game.prototype, 'playerKills', {get: function(){ return this.gameObjects[0].kills; }});
@@ -322,122 +318,6 @@ Game.prototype.mouseClick = function(){
     });
 }
 
-
-//##################################################################
-// Parallax-y Background Constructor Function
-//##################################################################
-
-var Background = function() {
-    this.x = 0;
-    this.y = 0;
-    this.w = 3000;
-    this.h = 3000;
-    this.bgStars = this.makeStars(400);
-    this.fgStars = this.makeStars(300);
-    this.topStars = this.makeStars(150);
-    // this.canvas = null;
-}
-
-Object.defineProperty(Background.prototype, 'viewX', {get: function(){ return -(game.viewX); }});
-Object.defineProperty(Background.prototype, 'viewY', {get: function(){ return -(game.viewY); }});
-
-Background.prototype.makeStars = function(numOfStars) {
-
-    var stars = [];
-
-    for (var i=0; i<numOfStars; i++) {
-    
-    stars.push({
-
-        x: getRandomInteger(this.x, this.w),
-        y: getRandomInteger(this.y, this.h),
-        r: getRandomInteger(0, 2),
-        drawX: 0,
-        drawY: 0,
-        vX: 0,
-        vY: 0
-        });
-    }
-    return stars;
-}
-
-Background.prototype.update = function(layer, speed) {
-
-    //move stars in player direction of movemen
-    for (var i=0; i < layer.length; i++){
-
-        var targetX = layer[i].x + this.viewX;
-        var targetY = layer[i].y + this.viewY;
-
-        layer[i].drawX = targetX;
-        layer[i].drawY = targetY;
-
-        if (speed > 0){
-
-
-            layer[i].drawX += targetX/speed;
-            layer[i].drawY += targetY/speed;
-
-
-            //never have stars draw off canvas
-            if (layer[i].drawX - this.viewX < layer[i].x) {
-                layer[i].drawX = targetX;
-            }
-
-            if (layer[i].drawY - this.viewY < layer[i].y) {
-                layer[i].drawY = targetY;
-            }
-  
-            if (layer[i].drawX - this.viewX >= this.w) {
-                layer[i].drawX = this.viewX;
-            }
-
-            if (layer[i].drawY - this.viewY >= this.h) {
-                layer[i].drawY = this.viewY;
-            }
-  
-        }
-    }
-    return;
-}
-
-
-Background.prototype.draw = function(canvas, fill, layer) {
-
-    canvas.ctx.fillStyle = fill;
-    canvas.ctx.beginPath();
-
-        //draw the stars
-        for (var i=0; i<layer.length; i++) {
-
-            canvas.ctx.moveTo(layer[i].drawX, layer[i].drawY);
-            canvas.ctx.arc(layer[i].drawX, layer[i].drawY, layer[i].r, 0, Math.PI * 2, false);
-            }
-
-    canvas.ctx.fill();
-    canvas.ctx.closePath();
-
-    //make a game world bounding rectangle
-    canvas.ctx.strokeStyle = 'blue';
-    canvas.ctx.lineWidth = 2;
-    canvas.ctx.strokeRect(this.viewX, this.viewY, this.w, this.h);
-
-}
-
-Background.prototype.render = function(canvas){
-   
-    //check for changes in x, y coordinate plane of player view
-    this.update(this.bgStars, 0);
-    this.update(this.fgStars, 2);
-    this.update(this.topStars, 1);
-
-    //redraw stars on canvacs
-    this.draw(canvas, 'blue', this.bgStars);
-    this.draw(canvas, 'violet', this.fgStars);
-    this.draw(canvas, 'red', this.topStars);
-}
-
-//prepares the canvases, loads game objects
 Game.prototype.init = function(){
 
     var background = new Background();
