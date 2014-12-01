@@ -37,7 +37,7 @@ Background.prototype.makeStars = function(numOfStars) {
     return stars;
 }
 
-Background.prototype.update = function(layer, speed) {
+Background.prototype.update = function(layer, speed, dt) {
 
     //move stars in player direction of movement
     for (var i=0; i < layer.length; i++){
@@ -97,13 +97,8 @@ Background.prototype.draw = function(canvas, fill, layer) {
 
 Background.prototype.render = function(canvas){
    
-    //check for changes in x, y coordinate plane of player view
-    this.update(this.bgStars, 0);
-    this.update(this.midStars, 6);
-    this.update(this.fgStars, 4);
-
     //redraw stars on canvas
     this.draw(canvas, 'blue', this.bgStars);
-    this.draw(canvas, '#98FB98', this.midStars);
-    this.draw(canvas, 'purple', this.fgStars);
+    this.draw(canvas, 'red', this.midStars);
+    this.draw(canvas, 'violet', this.fgStars);
 }

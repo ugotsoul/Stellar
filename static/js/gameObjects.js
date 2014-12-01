@@ -138,7 +138,6 @@ GameObject.prototype.interact = function (dt) {
 		    	
                 if (this.collisionDetect(element)) {
                 
-                    //console.log('trying to rebound');
 		    		this.reboundDirection(element, dt);
 
                     //Note: enemy handles all attack behavior
@@ -216,10 +215,6 @@ GameObject.prototype.payment = function() {
             self.mouseClick = null;
             self.lastPayment = Date.now();
         }
-
-        // else {
-        //     self.lastPayment = Date.now();
-        // }
         
         foodID++;
     }

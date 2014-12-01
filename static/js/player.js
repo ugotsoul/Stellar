@@ -5,7 +5,7 @@ function Player(x, y, r) {
 
     //player attributes
     this.id = 0;
-    this.drag = .0001;
+    this.drag = .00005;
     this.speed = 20;
     this.maxV = 200;
     this.mouseClick = null;
@@ -90,5 +90,5 @@ Player.prototype.draw = function(ctx) {
         // ctx.fillText('Draw World', drawX, drawY+10);
         // ctx.fillText('X: ' + Math.floor(drawX) + ' Y: ' + Math.floor(drawY), drawX, drawY+20);
     }
-    
+        
 }

@@ -18,6 +18,12 @@ window.oncontextmenu = function(evt) {
     return false;
 };
 
+if(window.addEventListener){ //Firefox only
+    window.addEventListener("DOMMouseScroll", function(e){e.preventDefault()}, true);
+}
+
+window.onscroll = function(e){e.preventDefault()};
+
 //########################################################################
 // Vector Math Functions
 //########################################################################

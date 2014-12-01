@@ -109,6 +109,12 @@ Game.prototype.draw = function() {
 
 Game.prototype.update = function(dt) {
 
+    //check for changes in x, y coordinate plane of player view
+    this.bg.update(this.bg.bgStars, 0);
+    this.bg.update(this.bg.midStars, 6);
+    this.bg.update(this.bg.fgStars, 4);
+
+
  //update positions of game elements
     for (var d = 0; d < this.gameObjects.length; d++) {
         //check if element is dead or not
@@ -127,8 +133,7 @@ Game.prototype.update = function(dt) {
 Game.prototype.render = function(canvas) {
 
     canvas.ctx.clearRect(0, 0, canvas.w, canvas.h);
-    
-    this.draw(); 
+
 
     return canvas.ctx.drawImage(this.canvas.canvas, 0, 0);
 }
@@ -177,12 +182,12 @@ Game.prototype.run = function(canvas) {
             
             else {
                 
-                self.update(1 / FPS);              
+                self.update(1 / FPS);
+                self.draw();               
                 self.render(canvas);
                 return;
             }
         },
-
     1000 / FPS);
 }
 
@@ -214,7 +219,6 @@ Game.prototype.makeLevel = function(canvas){
             this.bg.fgStars = this.bg.makeStars(Math.floor(this.w/12));
 
             //save player score
-
             this.gameObjects = this.getElements();    
     
             var self = this;
@@ -243,10 +247,7 @@ Game.prototype.end = function(canvas) {
         //you need to clear the canvas for this instance of the Game object -- game -- not the Game object/class. 
         canvas.ctx.fillText('YOU DIED! Ow.', canvas.w/2, canvas.h/2 - 50);
         canvas.ctx.font = "bold 30pt Sans-Serif";
-        canvas.ctx.fillStyle = '#92daf2';
         canvas.ctx.fillText((this.playerKills/(this.gameObjects.length-1)).toFixed(2)+'% of total enemies killed.', canvas.w/2, canvas.h/2+50);
-        canvas.ctx.fillStyle = '#FFF';
-        //canvas.ctx.fillText('Hit space or Enter to Play Again!', canvas.w/2, canvas.h/2+150);
     }
 
     //win state
@@ -259,10 +260,7 @@ Game.prototype.end = function(canvas) {
         //you need to clear the canvas for this instance of the Game object -- game -- not the Game object/class. 
         canvas.ctx.fillText('YOU WON! YAY!', canvas.w/2, canvas.h/2 - 50);
         canvas.ctx.font = "bold 30pt Sans-Serif";
-        canvas.ctx.fillStyle = '#92daf2';
         canvas.ctx.fillText((this.playerKills/(this.gameObjects.length-1)).toFixed(2)+'% of total enemies killed.', canvas.w/2, canvas.h/2+50);
-        canvas.ctx.fillStyle = '#FFF';
-        //canvas.ctx.fillText('Hit space or Enter to Play Again!', canvas.w/2, canvas.h/2+150);
         } 
 
     var replayGame = setTimeout(function(){
@@ -282,8 +280,9 @@ Game.prototype.start = function(canvas) {
     canvas.ctx.font = "bold 80pt Sans-Serif";
     canvas.ctx.textAlign = "center";
     //you need to clear the canvas for this instance of the Game object -- game -- not the Game object. 
+    canvas.ctx.save();
     canvas.ctx.shadowColor = 'black';
-    canvas.ctx.shadowBlur = 2;
+    canvas.ctx.shadowBlur = 4;
     canvas.ctx.shadowOffsetX = 2;
     canvas.ctx.shadowOffsetY = 2;
     canvas.ctx.fillText('Stellar', canvas.w/2, canvas.h/2 - 150);
@@ -292,6 +291,7 @@ Game.prototype.start = function(canvas) {
     canvas.ctx.font = "bold 22pt Sans-Serif";
     canvas.ctx.fillStyle = '#FFF';
     canvas.ctx.fillText('Hit enter or space to start', canvas.w/2, (canvas.h/2)+100);
+    canvas.ctx.restore();
     }
     
     bgImage.src = 'static/imgs/bg.png';
@@ -314,6 +314,11 @@ Game.prototype.start = function(canvas) {
 Game.prototype.score = function() {
 
     //offset scoreboard according to game width height
+    this.canvas.ctx.save();
+    this.canvas.ctx.shadowColor = '#00F';
+    this.canvas.ctx.shadowBlur = 1;
+    this.canvas.ctx.shadowOffsetX = 2;
+    this.canvas.ctx.shadowOffsetY = 2;
     this.canvas.ctx.fillStyle = '#FFF';
     this.canvas.ctx.font = "bold 40pt Sans-Serif";
     this.canvas.ctx.textAlign = "start";
@@ -322,6 +327,7 @@ Game.prototype.score = function() {
     this.canvas.ctx.fillText('Enemies Killed: ' + this.playerKills, this.canvas.x+10, this.canvas.y+100);
     this.canvas.ctx.fillText('Your mass is ' + Math.floor(this.playerMass) + '.', this.canvas.x+10, this.canvas.y+150);
     this.canvas.ctx.fillText('Total Enemies '+(this.gameObjects.length-1)+ '.', this.canvas.x+10, this.canvas.y+200);
+    this.canvas.ctx.restore();
 }
 
 
@@ -375,7 +381,7 @@ Game.prototype.init = function(){
     var mainCanvas = new Canvas('main', false);
     //########################################
 
-    return this.start(mainCanvas);
+    this.start(mainCanvas);
 };
 
 
