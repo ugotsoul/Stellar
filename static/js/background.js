@@ -103,5 +103,7 @@ Background.prototype.render = function(canvas){
     this.update(this.fgStars, 4);
 
     //redraw stars on canvas
-    return this.draw(canvas, 'blue', this.bgStars), this.draw(canvas, '#98FB98', this.midStars), this.draw(canvas, 'purple', this.fgStars);
+    this.draw(canvas, 'blue', this.bgStars);
+    this.draw(canvas, '#98FB98', this.midStars);
+    this.draw(canvas, 'purple', this.fgStars);
 }

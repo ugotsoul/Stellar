@@ -95,7 +95,7 @@ Game.prototype.draw = function() {
     //clear and then draw canvas & game elements        
     canvas.ctx.clearRect(0, 0, canvas.w, canvas.h);
 
-    this.bg.render(this.canvas);
+    this.bg.render(canvas);
     
     for (var c = 0; c < this.gameObjects.length; c++) {
 
@@ -109,7 +109,7 @@ Game.prototype.draw = function() {
 
 Game.prototype.update = function(dt) {
 
-    //update positions of game elements
+ //update positions of game elements
     for (var d = 0; d < this.gameObjects.length; d++) {
         //check if element is dead or not
         if (this.gameObjects[d].death == true) {
@@ -128,7 +128,7 @@ Game.prototype.render = function(canvas) {
 
     canvas.ctx.clearRect(0, 0, canvas.w, canvas.h);
     
-    this.draw();
+    this.draw(); 
 
     return canvas.ctx.drawImage(this.canvas.canvas, 0, 0);
 }
@@ -179,6 +179,7 @@ Game.prototype.run = function(canvas) {
                 
                 self.update(1 / FPS);              
                 self.render(canvas);
+                return;
             }
         },
 
@@ -219,7 +220,7 @@ Game.prototype.makeLevel = function(canvas){
             var self = this;
 
             var startGame = setTimeout(function(){            
-                self.run(canvas);
+                return self.run(canvas);
                 }, 3000);
 
         }
@@ -367,7 +368,7 @@ Game.prototype.init = function(){
     
     // ####### Invisable canvases ############
     this.canvas = new Canvas('buffer', true); 
-    //this.bg = new Canvas('bg', true);
+    //this.bg.canvas = new Canvas('bg', true);
     //########################################
     
     //######## Visible canvas ############## 
