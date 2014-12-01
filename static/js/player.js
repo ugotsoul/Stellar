@@ -93,7 +93,7 @@ Player.prototype.move = function (dt) {
 }
 
 
-Player.prototype.draw = function(board) {
+Player.prototype.draw = function(ctx) {
     
     var drawX = this.x - game.viewX;
     var drawY = this.y - game.viewY;
@@ -101,21 +101,21 @@ Player.prototype.draw = function(board) {
 
         if (this.r > 0) {
 
-            board.ctx.beginPath();
-            board.ctx.arc(drawX, drawY, drawR, 0, Math.PI * 2, false);
-            board.ctx.closePath();
+            ctx.beginPath();
+            ctx.arc(drawX, drawY, drawR, 0, Math.PI * 2, false);
+            ctx.closePath();
 
             //######################################################
             //Twinkle effect - Change rgba to a fill param in player
             //######################################################
 
             var new_opacity = getRandomNum(.7, .8);
-            var g = board.ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, drawR);
+            var g = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, drawR);
             g.addColorStop(0.0, 'rgba(255,255,255,' + new_opacity + ')');
             g.addColorStop(.85, 'rgba(255,239,0,' + (new_opacity * .70) + ')');
             g.addColorStop(1.0, 'rgba(255,239,0,0)');
-            board.ctx.fillStyle = g;
-            board.ctx.fill();
+            ctx.fillStyle = g;
+            ctx.fill();
             
        		}
 

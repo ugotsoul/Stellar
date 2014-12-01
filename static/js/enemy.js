@@ -14,7 +14,7 @@ function Enemy(x, y, r, id) {
     //larger things move slower
     //smaller things move faster
     //make a max mass attribute
-    this.maxV = this.velocity();
+    this.maxV =  50; //this.velocity();
     this.strength = Math.floor(this.r/10);
 
     //assign random directions/speeds to each enemy
@@ -30,32 +30,39 @@ Object.defineProperty(Enemy.prototype, 'mood', {get: function(){
 
     //find the difference between enemy and player radii
 
-    if (this.r < Math.floor(player.r*.50)){
+    if (this.r < Math.floor(game.playerMass*.50)){
         return 200;
     }
 
-    else if (this.r < Math.floor(player.r*.85)){
-        return 80;
+    else if (this.r < Math.floor(game.playerMass*.85)){
+        return 100;
     }
 
-    else if (this.r >= player.r){
-        //danger, will robinson!
+    else if (this.r < game.playerMass){
+        return 50;
+    }
+
+    else {
         return 0;
     }
 }}); 
 
+//restrict enemy max velocity
+// Enemy.prototype.velocity = function(){
 
-Enemy.prototype.velocity = function(){
+//     if (this.r < 20){
+//         return 1000/this.r; 
+//     }
 
-    if (this.r < 20){
-        return; 
-    }
+//     if (this.r > 50){
+//         return 50;
+//     }
 
-    else {
-        return 1000/this.r;
-    }
+//     else {
+//         return 1000/this.r;
+//     }
 
-}
+// }
 
 Enemy.prototype.interact = function(dt) {
 
@@ -103,19 +110,12 @@ Enemy.prototype.radar = function() {
             if (neighboorLength < radarLength) {
                 
                 if (self.r > element.r) {
-
-                    //console.log('Trying to eat stuff');
                     self.vX -= (self.speed+self.strength) *Math.cos(angle);
                     self.vY -= (self.speed+self.strength) *Math.sin(angle);
-
-                    //slow down enemy
-                    element.drag += .0001;
-
                     return;
                 }
 
                 else if (self.r < element.r) {
-
                     self.vX += self.speed *Math.cos(angle);
                     self.vY += self.speed *Math.sin(angle);
                     return;
@@ -194,7 +194,7 @@ Enemy.prototype.attack = function (element) {
         }
     }
 
-Enemy.prototype.draw = function(board) {
+Enemy.prototype.draw = function(ctx) {
 
     var drawX = this.x - game.viewX;
     var drawY = this.y - game.viewY;
@@ -202,9 +202,9 @@ Enemy.prototype.draw = function(board) {
 
         if (this.r > 0 ) {
 
-            board.ctx.beginPath();
-            board.ctx.arc(drawX, drawY, drawR, 0, Math.PI * 2, false);
-            board.ctx.closePath();
+            ctx.beginPath();
+            ctx.arc(drawX, drawY, drawR, 0, Math.PI * 2, false);
+            ctx.closePath();
 
             //##################################
             //Twinkle Effect
@@ -212,12 +212,12 @@ Enemy.prototype.draw = function(board) {
 
             var new_opacity = getRandomNum(.5, .6);
 
-            var g = board.ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, drawR * .95);
+            var g = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, drawR * .95);
             g.addColorStop(0.0, 'rgba(255,'+this.mood+','+this.mood+',' + new_opacity + ')');
             g.addColorStop(.75, 'rgba(200,'+this.mood+',0,' + (new_opacity * .7) + ')');
             g.addColorStop(1.0, 'rgba(200,'+this.mood+',0,0)');
-            board.ctx.fillStyle = g;
-            board.ctx.fill();
+            ctx.fillStyle = g;
+            ctx.fill();
 
         }
     }

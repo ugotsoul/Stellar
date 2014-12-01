@@ -12,13 +12,13 @@ function GameObject(x, y, r) {
     this.lastPayment = Date.now();
     this.matterLoss = false;
     this.id = null;
+    this.death = null;
 
     //death and win state criteria 
     this.minMass = null;
     this.maxMass = null;
 
     this.speed = null;
-
     this.vX = 1;
     this.vY = 1;
 
@@ -226,8 +226,8 @@ GameObject.prototype.payment = function() {
         //console.log(foodID);
         var tempFood = new Enemy(foodX, foodY, foodR, foodID);
 
-        tempFood.vX = (self.vX*-1)*getRandomInteger(10,50);
-        tempFood.vY = (self.vY*-1)*getRandomInteger(10,50);
+        tempFood.vX = (self.vX*-1);
+        tempFood.vY = (self.vY*-1);
 
         //add the food to the array of game objects
         game.gameObjects.push(tempFood);
