@@ -70,6 +70,8 @@ GameObject.prototype.update = function(dt) {
 
         //interact handles collision detection and response
         this.interact(dt);
+
+        return;
         
 }
 
@@ -110,7 +112,9 @@ GameObject.prototype.reboundDirection = function(element, dt) {
         	element.x = (element.x += element.vX * dt);
         	element.y = (element.y += element.vY * dt);
 
-        }
+            return;
+
+}
 
 GameObject.prototype.interact = function (dt) {
 
@@ -144,11 +148,13 @@ GameObject.prototype.interact = function (dt) {
                     //Note: enemy handles all attack behavior
                     if (element instanceof Enemy) {
                         element.attack(this);
+                        return;
                     }
 	    		}
 		    }
-        }   
-	}
+        }
+    return;
+}
 
 
 //##############################################
@@ -199,8 +205,6 @@ GameObject.prototype.payment = function() {
         var foodY = foodVector[1];
 
         var foodR = Math.floor(self.r/5);
-
-        console.log('Food ID: ', foodID);
 
         //console.log(foodID);
         var tempFood = new Enemy(foodX, foodY, foodR, foodID);

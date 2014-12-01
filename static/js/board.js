@@ -1,47 +1,3 @@
-
-// ###############################
-//  HTML5 Canvas Constructor
-// ##############################
-
-var Canvas = function(name, create){
-
-    this.x = 0;
-    this.y = 0;
-    this.w = $(window).width();
-    this.h = $(window).height();
-    this.offsetX = this.w/2;
-    this.offsetY = this.h/2;
-    this.name = name;
-    this.canvas = this.prepare(create);
-    this.ctx = this.context();
-};
-
-Canvas.prototype.prepare = function(create){
-
-    if (create){
-        //create a hidden canvas dom object
-        this.canvas = document.createElement('canvas');
-        this.canvas.width = this.w;
-        this.canvas.height = this.h;   
-        return document.body.appendChild(this.canvas), this.canvas;
-    }
-
-    else {
-        //create a visable canvas dom object
-        this.canvas = document.getElementById(this.name);
-        this.canvas.width = this.w;
-        this.canvas.height = this.h;   
-        return this.canvas;
-        }
-};
-
-Canvas.prototype.context = function(){
-
-    this.ctx = this.canvas.getContext('2d');
-
-    return this.ctx;
-}
-
 //##############################
 // Game Constructor Function
 //##############################
@@ -49,54 +5,62 @@ Canvas.prototype.context = function(){
 var Game = function() {
     this.x = 0;
     this.y = 0;
-    this.w = 3000;
-    this.h = 3000;
+    this.w = 1000;
+    this.h = 1000;
     this.intervalHandle = null;
-    this.startEnemies = 10;
-    this.gameObjects = this.getElements();
     //this.ctx refers to the buffer canvas
     this.canvas = null;
     this.bg = null;
-    this.playerStatus = null;
+    this.level = 0;
+    this.startEnemies = null;
+    this.gameObjects = null;
+    this.win = null;
+
 };
+
 
 Game.prototype.getElements = function() {
     
     var gameElements = [];
     
-    //######## Global Player Object ############
+    //############# Player Object ##############
     var player = new Player(this.w/2, this.h/2);
     //##########################################
   
     //add player to game element array
     gameElements.push(player);
     
+    //keeps track of how many enemies have been added to the game objects array
     var enemiesAdded = 0;
 
-    //primary key of enemy
-    var rID = 1;
+    //primary key of enemy - to optimize collision detection
+    var enemyID = 1;
 
     while (enemiesAdded < this.startEnemies) {
 
+        //accesses the nth element of the array
         var n = 0;
 
         // instanciate enemies in random places on the board 
         // note: bounds are restricted to account for max radius
-        var rX = getRandomInteger(50, this.w-50);
-        var rY = getRandomInteger(50, this.h-50);
-        var rR = getRandomInteger(10, 15);
+        var enemyX = getRandomInteger(50, this.w-50);
+        var enemyY = getRandomInteger(50, this.h-50);
+        var enemyR = getRandomInteger(10, 15);
 
-        var tempEnemy = new Enemy(rX, rY, rR, rID);
+        var tempEnemy = new Enemy(enemyX, enemyY, enemyR, enemyID);
 
-        //do a collision test
+        //preform a collision test to make sure enemies don't appear in the same spot
         var collision = tempEnemy.collisionDetect(gameElements[n]);
 
         if (!collision) {
+
             enemiesAdded++
+            
             //add enemy to the array
             gameElements.push(tempEnemy);
+            
             //incriment unique id
-            rID++
+            enemyID++
             }
         n++
         }
@@ -123,6 +87,8 @@ Game.prototype.draw = function() {
 
     //draw player status board
     this.score();
+
+    return;
 };
 
 Game.prototype.update = function(dt) {
@@ -135,31 +101,25 @@ Game.prototype.update = function(dt) {
             this.gameObjects.splice(d, 1);
             }
 
-        else if (this.gameObjects[d].death == true && this.gameObjects[d] instanceof Player){
-            return;
-        }
-        
-        else if (this.gameObjects[d].length == 1) {
-            return;
-            } 
-
         else {
             this.gameObjects[d].update(dt);
             }
     }
+
+    return;
 }
 
 //calls the buffer canvas when ready
-Game.prototype.render = function(mainCanvas) {
+Game.prototype.render = function(canvas) {
 
-    mainCanvas.ctx.clearRect(0, 0, mainCanvas.w, mainCanvas.h);
+    canvas.ctx.clearRect(0, 0, canvas.w, canvas.h);
     
     this.draw();
 
-    return  mainCanvas.ctx.drawImage(this.canvas.canvas, 0, 0);
+    return  canvas.ctx.drawImage(this.canvas.canvas, 0, 0);
 }
 
-Game.prototype.run = function(mainCanvas) {
+Game.prototype.run = function(canvas) {
 
     //get player position
     this.mouseClick();
@@ -181,16 +141,85 @@ Game.prototype.run = function(mainCanvas) {
 
     this.intervalHandle = setInterval( function() {
             
-            if (self.playerDeath == true || self.gameObjects.length == 1) {
+            if (self.playerDeath == true) {
                 clearInterval(self.intervalHandle);
-                self.end(mainCanvas);
-            } else {
+                self.end(canvas);
+                return;
+            } 
+
+            else if (self.win == self.playerMass) {
+                
+                clearInterval(self.intervalHandle);
+                
+                self.level +=1;
+                
+                //below is a cheap method to show the player score - store this in the session cookie or db session
+                //save the score of the player, or save the player attributes
+                canvas.ctx.clearRect(0, 0, canvas.w, canvas.h);
+                canvas.ctx.fillStyle = '#FFF';
+                canvas.ctx.font = "bold 50pt Sans-Serif";
+                canvas.ctx.fillText('Cleared '+(self.playerKills/(self.gameObjects.length-1)).toFixed(2)+'%. of Level '+(self.level+1), canvas.w/2, canvas.h/2);
+                
+                var showScore = setTimeout(function(){self.makeLevel(canvas);}, 3000);  
+                return; 
+            }
+            
+            else {
+                
                 self.update(1 / FPS);              
-                self.render(mainCanvas);
+                self.render(canvas);
+                return;
             }
         },
 
     1000 / FPS);
+
+    return;
+}
+
+
+Game.prototype.makeLevel = function(canvas){
+        
+        //3 levels
+        var level = [
+            //w, h, num of enemies, player win state
+            [1000,1000, 15, 60],
+            [1500,1500, 30, 100],
+            [3000, 3000, 50, 150]
+        ];
+        
+        if (level[this.level]){
+
+            //console.log('trying to make level');
+            canvas.ctx.clearRect(0, 0, canvas.w, canvas.h);
+            canvas.ctx.fillStyle = '#FFF';
+            canvas.ctx.font = "bold 80pt Sans-Serif";
+            canvas.ctx.fillText('Level '+(this.level+1), canvas.w/2, canvas.h/2);
+            this.w = level[this.level][0];
+            this.h = level[this.level][1];
+            this.startEnemies = level[this.level][2];
+            this.win = level[this.level][3];
+
+            this.bg.bgStars = this.bg.makeStars(Math.floor(this.w/6));
+            this.bg.midStars = this.bg.makeStars(Math.floor(this.w/8));
+            this.bg.fgStars = this.bg.makeStars(Math.floor(this.w/10));
+
+            //save player score
+
+            this.gameObjects = this.getElements();    
+    
+            var self = this;
+
+            var startGame = setTimeout(function(){
+                
+                self.run(canvas);
+                
+                }, 3000);
+
+        }
+
+    return;
+
 }
 
 //#########################################################################
@@ -200,19 +229,7 @@ Game.prototype.run = function(mainCanvas) {
 Game.prototype.end = function(canvas) {
 
     var self = this;
-
-$(window).keydown(function(evt) {
-
-    if (evt.keyCode == 13 || evt.keyCode == 32) {
-            $(window).off('keydown');
-            
-            //refresh the page to reload the game
-            document.location.href = "";
-        }
-    });
-
-
-    //
+    //loss state
     if (this.playerDeath == true) {
 
         canvas.ctx.clearRect(0, 0, canvas.w, canvas.h);
@@ -220,24 +237,36 @@ $(window).keydown(function(evt) {
         canvas.ctx.textAlign = "center";
         canvas.ctx.font = "bold 50pt Sans-Serif";
         //you need to clear the canvas for this instance of the Game object -- game -- not the Game object/class. 
-        canvas.ctx.fillText('YOU DIED! Ow.', canvas.w/2, canvas.h/2);
-        canvas.ctx.font = "bold 20pt Sans-Serif";
-        canvas.ctx.fillText('You killed '+this.playerKills+' enemies.', canvas.w/2, canvas.h/2+50);
-        canvas.ctx.fillText('Hit space or Enter to Play Again!', canvas.w/2, canvas.h/2+100);
+        canvas.ctx.fillText('YOU DIED! Ow.', canvas.w/2, canvas.h/2 - 50);
+        canvas.ctx.font = "bold 30pt Sans-Serif";
+        canvas.ctx.fillStyle = '#92daf2';
+        canvas.ctx.fillText('You killed '+(this.playerKills/(this.gameObjects.length-1)).toFixed(2)+'% enemies.', canvas.w/2, canvas.h/2+50);
+        canvas.ctx.fillStyle = '#FFF';
+        //canvas.ctx.fillText('Hit space or Enter to Play Again!', canvas.w/2, canvas.h/2+150);
     }
 
-    if (this.gameObjects.length == 1) {
+    //win state
+    if (this.gameObjects.length == 1 || this.playerMass > 150) {
 
         canvas.ctx.clearRect(0, 0, canvas.w, canvas.h);
         canvas.ctx.fillStyle = '#FFF';
         canvas.ctx.textAlign = "center";
         canvas.ctx.font = "bold 50pt Sans-Serif";
         //you need to clear the canvas for this instance of the Game object -- game -- not the Game object/class. 
-        canvas.ctx.fillText('YOU WIN! YAY!', canvas.w/2, canvas.h/2);
-        canvas.ctx.font = "bold 20pt Sans-Serif";
-        canvas.ctx.fillText('You killed '+this.playerKills+' enemies.', canvas.w/2, canvas.h/2+50);
-        canvas.ctx.fillText('Hit space or Enter to Play Again!', canvas.w/2, canvas.h/2+100);
-        }    
+        canvas.ctx.fillText('YOU WIN! YAY!', canvas.w/2, canvas.h/2 - 50);
+        canvas.ctx.font = "bold 30pt Sans-Serif";
+        canvas.ctx.fillStyle = '#92daf2';
+        canvas.ctx.fillText('You killed '+(this.playerKills/(this.gameObjects.length-1)).toFixed(2)+'% enemies.', canvas.w/2, canvas.h/2+50);
+        canvas.ctx.fillStyle = '#FFF';
+        //canvas.ctx.fillText('Hit space or Enter to Play Again!', canvas.w/2, canvas.h/2+150);
+        } 
+
+    var replayGame = setTimeout(function(){
+        //refresh the page to reload the game
+        document.location.href = "";
+    }, 5000);
+
+    return;   
 }
 
 Game.prototype.start = function(canvas) {
@@ -254,31 +283,35 @@ Game.prototype.start = function(canvas) {
     canvas.ctx.fillStyle = '#FFF';
     canvas.ctx.fillText('Hit enter or space to start', canvas.w/2, (canvas.h/2)+100);
 
+    //start in the begining level
+    this.level = 0;
+
     var self = this;
     
     $(window).keydown(function(evt) {
 
         if (evt.keyCode == 13 || evt.keyCode == 32) {
             $(window).off('keydown');
-            self.run(canvas);
+            self.makeLevel(canvas);
+            return;
         }
     });
 }
 
+//make this a div - draw operations are expensive
 Game.prototype.score = function() {
 
     //offset scoreboard according to game width height
     this.canvas.ctx.fillStyle = '#FFF';
-    this.canvas.ctx.font = "bold 30pt Sans-Serif";
+    this.canvas.ctx.font = "bold 40pt Sans-Serif";
     this.canvas.ctx.textAlign = "start";
-    this.canvas.ctx.fillText('Score Board', this.canvas.x+5, this.canvas.y+40);
-    this.canvas.ctx.font = "22pt Sans-Serif";
-    this.canvas.ctx.fillText('Enemies Killed: ' + this.playerKills, this.canvas.x+5, this.canvas.y+70);
-    //this.canvas.ctx.fillText('Your X velocity is ' + Math.floor(player.vX), canvas.x+5, canvas.y+100);
-    //this.canvas.ctx.fillText('Your Y velocity is ' + Math.floor(player.vY), canvas.x+5, canvas.y+130);
-    this.canvas.ctx.fillText('Your mass is ' + Math.floor(this.playerMass) + '.', this.canvas.x+5, this.canvas.y+100);
-    this.canvas.ctx.fillText('Total Enemies '+(this.gameObjects.length-1)+ '.', this.canvas.x+5, this.canvas.y+130);
+    this.canvas.ctx.fillText('Score Board', this.canvas.x+10, this.canvas.y+50);
+    this.canvas.ctx.font = "bold 26pt Sans-Serif";
+    this.canvas.ctx.fillText('Enemies Killed: ' + this.playerKills, this.canvas.x+10, this.canvas.y+100);
+    this.canvas.ctx.fillText('Your mass is ' + Math.floor(this.playerMass) + '.', this.canvas.x+10, this.canvas.y+150);
+    this.canvas.ctx.fillText('Total Enemies '+(this.gameObjects.length-1)+ '.', this.canvas.x+10, this.canvas.y+200);
 
+    return;
 }
 
 
@@ -321,7 +354,9 @@ Game.prototype.mouseClick = function(){
 Game.prototype.init = function(){
 
     var background = new Background();
+    
     this.bg = background;
+    
     // ####### Invisable canvases ############
     this.canvas = new Canvas('buffer', true); 
     //this.bg = new Canvas('bg', true);
@@ -331,7 +366,7 @@ Game.prototype.init = function(){
     var mainCanvas = new Canvas('main', false);
     //########################################
 
-    this.start(mainCanvas);
+    return this.start(mainCanvas);
 };
 
 

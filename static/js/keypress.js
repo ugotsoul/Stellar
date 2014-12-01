@@ -63,7 +63,6 @@ Game.prototype.keyPress = function(player) {
 // Player Keypress Object Property
 //#######################################
 
-
     this.moveType = {
 
         'up': false,
@@ -71,3 +70,46 @@ Game.prototype.keyPress = function(player) {
         'left': false,
         'right': false
     }
+
+
+//#####################################################################
+// Code Below for Keypress handler
+//#####################################################################
+
+
+Player.prototype.move = function () {
+
+    for (var direction in this.moveType) {
+
+        if (this.moveType[direction]) { 
+
+            switch(direction) {           
+                case 'up':    
+                this.vY -= this.speed;
+                break;
+
+                case 'down': 
+                this.vY += this.speed;              
+                break;
+
+                case 'left':
+                this.vX -= this.speed;            
+                break;
+
+                case 'right':
+                this.vX += this.speed;
+                break;
+            }
+
+        this.matterLoss = true;
+
+        }
+
+    }
+
+    this.payment();
+}
+
+
+//#####################################################################
+

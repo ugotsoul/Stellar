@@ -10,10 +10,6 @@ function Enemy(x, y, r, id) {
     this.minMass = 10;
     this.maxMass = 150;
 
-    //max speed porportional to size of object
-    //larger things move slower
-    //smaller things move faster
-    //make a max mass attribute
     this.maxV =  50; //this.velocity();
     this.strength = Math.floor(this.r/10);
 
@@ -140,7 +136,6 @@ Enemy.prototype.attack = function (element) {
         if (self.r < self.minMass && element instanceof Enemy) {
             element.r += self.strength;
             self.death = true;
-            console.log('Enemy killed enemy');
             return;
         }
 
@@ -148,13 +143,10 @@ Enemy.prototype.attack = function (element) {
                 element.r += self.strength;
                 self.death = true;
                 element.kills++
-                console.log('Player killed enemy');
-                console.log('Player kill count: ',element.kills);
                 return;
             }
 
         if (self.r > element.r) {
-                console.log('enemy is gaining mass');
                 self.r += self.strength;
                 element.r -= self.strength;
                 return;
@@ -162,7 +154,6 @@ Enemy.prototype.attack = function (element) {
 
         //eat enemies smaller than yourself
         else if (self.r < element.r) {
-            console.log('player is gaining mass');
             self.r -= self.strength;
             element.r += self.strength;
             return;
@@ -182,13 +173,11 @@ Enemy.prototype.attack = function (element) {
             if (i == 0) {
                 self.r -= self.strength;
                 killArr[1] += self.strength;
-                console.log('enemy1 gains mass');
                 return;
             }
             else {
                 self.r += self.strength;
                 killArr[0] -= self.strength;
-                console.log('enemy2 gains mass');
                 return;
             }
         }
@@ -200,25 +189,26 @@ Enemy.prototype.draw = function(ctx) {
     var drawY = this.y - game.viewY;
     var drawR = this.r;
 
-        if (this.r > 0 ) {
+    if (this.r > 0 ) {
 
-            ctx.beginPath();
-            ctx.arc(drawX, drawY, drawR, 0, Math.PI * 2, false);
-            ctx.closePath();
+        ctx.beginPath();
+        ctx.arc(drawX, drawY, drawR, 0, Math.PI * 2, false);
+        ctx.closePath();
 
-            //##################################
-            //Twinkle Effect
-            //##################################
+        //##################################
+        //Twinkle Effect
+        //##################################
 
-            var new_opacity = getRandomNum(.5, .6);
+        var new_opacity = getRandomNum(.5, .6);
 
-            var g = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, drawR * .95);
-            g.addColorStop(0.0, 'rgba(255,'+this.mood+','+this.mood+',' + new_opacity + ')');
-            g.addColorStop(.75, 'rgba(200,'+this.mood+',0,' + (new_opacity * .7) + ')');
-            g.addColorStop(1.0, 'rgba(200,'+this.mood+',0,0)');
-            ctx.fillStyle = g;
-            ctx.fill();
-
-        }
+        var g = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, drawR * .95);
+        g.addColorStop(0.0, 'rgba(255,'+this.mood+','+this.mood+',' + new_opacity + ')');
+        g.addColorStop(.75, 'rgba(200,'+this.mood+',0,' + (new_opacity * .7) + ')');
+        g.addColorStop(1.0, 'rgba(200,'+this.mood+',0,0)');
+        ctx.fillStyle = g;
+        ctx.fill();
     }
+
+    return;
+}
 

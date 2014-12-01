@@ -67,7 +67,7 @@ Vector.prototype.momentum = function(a, b, matrix){
 
     //Cofficient of Restitution - here an arbitrary scalar to make the collision less bouncy
     //Adapted from Wiki - Partially inelastic collision response
-    var coefficientOfRestitution = .1; 
+    var coefficientOfRestitution = .4; 
     
     var finalVxA = (a.r * matrix[0][0] +  b.r * matrix[1][0] + coefficientOfRestitution*b.r*(matrix[1][0] - matrix[0][0]))/ (a.r + b.r);
    	var finalVyA = matrix[0][1];
@@ -103,30 +103,46 @@ var vector = new Vector();
 //################################
 
 
+// ######################################
+//  HTML5 Canvas Constructor Function
+// ######################################
 
-//########################################################################
-// ISSUE: Window Resize is not scaled properly
-//########################################################################
+var Canvas = function(name, create){
 
-// var bgScalar = 3;
+    this.x = 0;
+    this.y = 0;
+    this.w = $(window).width();
+    this.h = $(window).height();
+    this.offsetX = this.w/2;
+    this.offsetY = this.h/2;
+    this.name = name;
+    this.canvas = this.prepare(create);
+    this.ctx = this.context();
+};
 
-// window.addEventListener('resize', resizeGame, false);
+Canvas.prototype.prepare = function(create){
 
-//var aspectRatio = 1.75; 
+    if (create){
+        //create a hidden canvas dom object
+        this.canvas = document.createElement('canvas');
+        this.canvas.width = this.w;
+        this.canvas.height = this.h;   
+        return document.body.appendChild(this.canvas), this.canvas;
+    }
 
-// function resizeGame() {
+    else {
+        //create a visable canvas dom object
+        this.canvas = document.getElementById(this.name);
+        this.canvas.width = this.w;
+        this.canvas.height = this.h;   
+        return this.canvas;
+        }
+};
 
-// 	//load new height/width
-// 	nH = window.screen.availHeight;
-// 	nW = window.screen.availWidth;
+Canvas.prototype.context = function(){
 
-// 	//change scale (Ternarys are cool!)
-// 	(nW/nH > aspectRatio) ? 
-// 	(nW = aspectRatio*nH,  canvas.style.height = nH + 'px', canvas.style.width = nW + 'px', console.log('window width is too wide')) : 
-// 	(nH = nW / aspectRatio,  canvas.style.height = nH + 'px', canvas.style.width = nW + 'px', console.log('window height is too high'));
+    this.ctx = this.canvas.getContext('2d');
 
-// 	windowH = nH;
-// 	windowW = nW;
-// }
-// var wCenterX = windowW/bgScalar;
-// var wCenterY = windowH/bgScalar;
+    return this.ctx;
+}
+
