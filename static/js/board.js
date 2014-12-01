@@ -158,10 +158,10 @@ Game.prototype.run = function(canvas) {
                 canvas.ctx.clearRect(0, 0, canvas.w, canvas.h);
                 canvas.ctx.fillStyle = '#FFF';
                 canvas.ctx.font = "bold 50pt Sans-Serif";
-                canvas.ctx.fillText('Cleared '+(self.playerKills/(self.gameObjects.length-1)).toFixed(2)+'%. of Level '+(self.level+1), canvas.w/2, canvas.h/2);
+                canvas.ctx.fillText('Cleared '+(self.playerKills/(self.gameObjects.length-1)).toFixed(2)+'% of Level '+(self.level), canvas.w/2, canvas.h/2);
                 
-                var showScore = setTimeout(function(){self.makeLevel(canvas);}, 3000);  
-                return; 
+                var showScore = setTimeout(function(){return self.makeLevel(canvas);}, 3000);
+                return;  
             }
             
             else {
@@ -170,10 +170,10 @@ Game.prototype.run = function(canvas) {
                 self.render(canvas);
                 return;
             }
+
         },
 
     1000 / FPS);
-
     return;
 }
 
@@ -200,9 +200,9 @@ Game.prototype.makeLevel = function(canvas){
             this.startEnemies = level[this.level][2];
             this.win = level[this.level][3];
 
-            this.bg.bgStars = this.bg.makeStars(Math.floor(this.w/6));
-            this.bg.midStars = this.bg.makeStars(Math.floor(this.w/8));
-            this.bg.fgStars = this.bg.makeStars(Math.floor(this.w/10));
+            this.bg.bgStars = this.bg.makeStars(Math.floor(this.w/8));
+            this.bg.midStars = this.bg.makeStars(Math.floor(this.w/10));
+            this.bg.fgStars = this.bg.makeStars(Math.floor(this.w/12));
 
             //save player score
 
@@ -213,7 +213,7 @@ Game.prototype.makeLevel = function(canvas){
             var startGame = setTimeout(function(){
                 
                 self.run(canvas);
-                
+                return;
                 }, 3000);
 
         }
@@ -240,7 +240,7 @@ Game.prototype.end = function(canvas) {
         canvas.ctx.fillText('YOU DIED! Ow.', canvas.w/2, canvas.h/2 - 50);
         canvas.ctx.font = "bold 30pt Sans-Serif";
         canvas.ctx.fillStyle = '#92daf2';
-        canvas.ctx.fillText('You killed '+(this.playerKills/(this.gameObjects.length-1)).toFixed(2)+'% enemies.', canvas.w/2, canvas.h/2+50);
+        canvas.ctx.fillText((this.playerKills/(this.gameObjects.length-1)).toFixed(2)+'% of total enemies killed.', canvas.w/2, canvas.h/2+50);
         canvas.ctx.fillStyle = '#FFF';
         //canvas.ctx.fillText('Hit space or Enter to Play Again!', canvas.w/2, canvas.h/2+150);
     }
@@ -253,10 +253,10 @@ Game.prototype.end = function(canvas) {
         canvas.ctx.textAlign = "center";
         canvas.ctx.font = "bold 50pt Sans-Serif";
         //you need to clear the canvas for this instance of the Game object -- game -- not the Game object/class. 
-        canvas.ctx.fillText('YOU WIN! YAY!', canvas.w/2, canvas.h/2 - 50);
+        canvas.ctx.fillText('YOU WON! YAY!', canvas.w/2, canvas.h/2 - 50);
         canvas.ctx.font = "bold 30pt Sans-Serif";
         canvas.ctx.fillStyle = '#92daf2';
-        canvas.ctx.fillText('You killed '+(this.playerKills/(this.gameObjects.length-1)).toFixed(2)+'% enemies.', canvas.w/2, canvas.h/2+50);
+        canvas.ctx.fillText((this.playerKills/(this.gameObjects.length-1)).toFixed(2)+'% of total enemies killed.', canvas.w/2, canvas.h/2+50);
         canvas.ctx.fillStyle = '#FFF';
         //canvas.ctx.fillText('Hit space or Enter to Play Again!', canvas.w/2, canvas.h/2+150);
         } 
@@ -272,17 +272,27 @@ Game.prototype.end = function(canvas) {
 Game.prototype.start = function(canvas) {
 
     //drawn on main canvas, not buffer canvas (this.canvas)
+    var bgImage = new Image(1500,1000);
+    bgImage.style = "z-index: -1";
+    bgImage.onload = function(){
+    canvas.ctx.drawImage(bgImage, -100 ,0, 1500, 1000);
     canvas.ctx.fillStyle = '#FFF';
     canvas.ctx.font = "bold 80pt Sans-Serif";
     canvas.ctx.textAlign = "center";
     //you need to clear the canvas for this instance of the Game object -- game -- not the Game object. 
+    canvas.ctx.shadowColor = 'black';
+    canvas.ctx.shadowBlur = 2;
+    canvas.ctx.shadowOffsetX = 2;
+    canvas.ctx.shadowOffsetY = 2;
     canvas.ctx.fillText('Stellar', canvas.w/2, canvas.h/2 - 150);
     canvas.ctx.font = "20pt Sans-Serif";
     canvas.ctx.fillText('Be a star. Consume the universe.', canvas.w/2, (canvas.h/2)-100);
     canvas.ctx.font = "bold 22pt Sans-Serif";
     canvas.ctx.fillStyle = '#FFF';
     canvas.ctx.fillText('Hit enter or space to start', canvas.w/2, (canvas.h/2)+100);
-
+}
+    bgImage.src = 'static/imgs/bg.png';
+    
     //start in the begining level
     this.level = 0;
 
@@ -362,7 +372,7 @@ Game.prototype.init = function(){
     //this.bg = new Canvas('bg', true);
     //########################################
     
-    //######## Visible canvases ############## 
+    //######## Visible canvas ############## 
     var mainCanvas = new Canvas('main', false);
     //########################################
 

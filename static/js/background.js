@@ -102,8 +102,8 @@ Background.prototype.render = function(canvas){
     //check for changes in x, y coordinate plane of player view
     this.update(this.bgStars, 0);
     this.update(this.midStars, 6);
-    this.update(this.fgStars, 4);
+    //this.update(this.fgStars, 4);
 
     //redraw stars on canvas
-    return this.draw(canvas, 'blue', this.bgStars), this.draw(canvas, 'violet', this.midStars), this.draw(canvas, 'purple', this.fgStars);
+    return this.draw(canvas, 'blue', this.bgStars), this.draw(canvas, '#98FB98', this.midStars), this.draw(canvas, 'purple', this.fgStars);
 }

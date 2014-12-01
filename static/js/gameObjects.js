@@ -171,11 +171,11 @@ GameObject.prototype.poop = function() {
             var angle = vector.angle(this.mouseClick);
         }
 
-        else {
-            //need the unit vector of enemy several steps in the future
-            var angle = vector.angle([(this.x*this.x*this.vX), (this.y*this.y*this.vY)]);
-            //console.log('Enemy trying to poop');
-        }
+        // else {
+        //     //need the unit vector of enemy several steps in the future
+        //     var angle = vector.angle([(this.x*this.x*this.vX), (this.y*this.y*this.vY)]);
+        //     //console.log('Enemy trying to poop');
+        // }
 
     //length of food - poop tail from game object
     var foodArr = [this.x - tail*Math.cos(angle), this.y - tail*Math.sin(angle)];
@@ -223,9 +223,9 @@ GameObject.prototype.payment = function() {
             self.lastPayment = Date.now();
         }
 
-        else {
-            self.lastPayment = Date.now();
-        }
+        // else {
+        //     self.lastPayment = Date.now();
+        // }
         
         foodID++;
         return;

@@ -5,8 +5,8 @@ function Player(x, y, r) {
 
     //player attributes
     this.id = 0;
-    this.drag = .00001;
-    this.speed = 10;
+    this.drag = .0001;
+    this.speed = 20;
     this.maxV = 200;
     this.mouseClick = null;
     
