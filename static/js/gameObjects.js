@@ -71,8 +71,6 @@ GameObject.prototype.update = function(dt) {
         //interact handles collision detection and response
         this.interact(dt);
 
-        return;
-        
 }
 
 GameObject.prototype.collisionDetect = function (element) {
@@ -112,8 +110,6 @@ GameObject.prototype.reboundDirection = function(element, dt) {
         	element.x = (element.x += element.vX * dt);
         	element.y = (element.y += element.vY * dt);
 
-            return;
-
 }
 
 GameObject.prototype.interact = function (dt) {
@@ -148,12 +144,10 @@ GameObject.prototype.interact = function (dt) {
                     //Note: enemy handles all attack behavior
                     if (element instanceof Enemy) {
                         element.attack(this);
-                        return;
                     }
 	    		}
 		    }
         }
-    return;
 }
 
 
@@ -228,7 +222,6 @@ GameObject.prototype.payment = function() {
         // }
         
         foodID++;
-        return;
     }
 
 }

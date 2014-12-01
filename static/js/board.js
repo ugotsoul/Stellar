@@ -1,3 +1,19 @@
+// requestAnimationFrame() shim by Paul Irish
+// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+// window.requestAnimFrame = (function() {
+//     return  window.requestAnimationFrame       || 
+//             window.webkitRequestAnimationFrame || 
+//             window.mozRequestAnimationFrame    || 
+//             window.oRequestAnimationFrame      || 
+//             window.msRequestAnimationFrame     || 
+//             function(/* function */ callback, /* DOMElement */ element){
+
+
+//                 window.setTimeout(callback, 1000 / 60);
+//             };
+// })();
+
+
 //##############################
 // Game Constructor Function
 //##############################
@@ -74,21 +90,21 @@ Game.prototype.draw = function() {
         return;
     }
 
+    var canvas = this.canvas;
+
     //clear and then draw canvas & game elements        
-    this.canvas.ctx.clearRect(0, 0, this.canvas.w, this.canvas.h);
+    canvas.ctx.clearRect(0, 0, canvas.w, canvas.h);
 
     this.bg.render(this.canvas);
     
     for (var c = 0; c < this.gameObjects.length; c++) {
 
         //draw game elements on canvas
-        this.gameObjects[c].draw(this.canvas.ctx);
+        this.gameObjects[c].draw(canvas.ctx);
     }
 
     //draw player status board
     this.score();
-
-    return;
 };
 
 Game.prototype.update = function(dt) {
@@ -105,8 +121,6 @@ Game.prototype.update = function(dt) {
             this.gameObjects[d].update(dt);
             }
     }
-
-    return;
 }
 
 //calls the buffer canvas when ready
@@ -116,7 +130,7 @@ Game.prototype.render = function(canvas) {
     
     this.draw();
 
-    return  canvas.ctx.drawImage(this.canvas.canvas, 0, 0);
+    return canvas.ctx.drawImage(this.canvas.canvas, 0, 0);
 }
 
 Game.prototype.run = function(canvas) {
@@ -144,7 +158,6 @@ Game.prototype.run = function(canvas) {
             if (self.playerDeath == true) {
                 clearInterval(self.intervalHandle);
                 self.end(canvas);
-                return;
             } 
 
             else if (self.win == self.playerMass) {
@@ -159,22 +172,17 @@ Game.prototype.run = function(canvas) {
                 canvas.ctx.fillStyle = '#FFF';
                 canvas.ctx.font = "bold 50pt Sans-Serif";
                 canvas.ctx.fillText('Cleared '+(self.playerKills/(self.gameObjects.length-1)).toFixed(2)+'% of Level '+(self.level), canvas.w/2, canvas.h/2);
-                
-                var showScore = setTimeout(function(){return self.makeLevel(canvas);}, 3000);
-                return;  
+                var showScore = setTimeout(function(){ self.makeLevel(canvas);}, 3000);
             }
             
             else {
                 
                 self.update(1 / FPS);              
                 self.render(canvas);
-                return;
             }
-
         },
 
     1000 / FPS);
-    return;
 }
 
 
@@ -210,16 +218,11 @@ Game.prototype.makeLevel = function(canvas){
     
             var self = this;
 
-            var startGame = setTimeout(function(){
-                
+            var startGame = setTimeout(function(){            
                 self.run(canvas);
-                return;
                 }, 3000);
 
         }
-
-    return;
-
 }
 
 //#########################################################################
@@ -265,17 +268,15 @@ Game.prototype.end = function(canvas) {
         //refresh the page to reload the game
         document.location.href = "";
     }, 5000);
-
-    return;   
 }
 
 Game.prototype.start = function(canvas) {
 
     //drawn on main canvas, not buffer canvas (this.canvas)
-    var bgImage = new Image(1500,1000);
+    var bgImage = new Image(1800,1000);
     bgImage.style = "z-index: -1";
     bgImage.onload = function(){
-    canvas.ctx.drawImage(bgImage, -100 ,0, 1500, 1000);
+    canvas.ctx.drawImage(bgImage, -100 ,0, 1800, 1000);
     canvas.ctx.fillStyle = '#FFF';
     canvas.ctx.font = "bold 80pt Sans-Serif";
     canvas.ctx.textAlign = "center";
@@ -290,7 +291,8 @@ Game.prototype.start = function(canvas) {
     canvas.ctx.font = "bold 22pt Sans-Serif";
     canvas.ctx.fillStyle = '#FFF';
     canvas.ctx.fillText('Hit enter or space to start', canvas.w/2, (canvas.h/2)+100);
-}
+    }
+    
     bgImage.src = 'static/imgs/bg.png';
     
     //start in the begining level
@@ -302,8 +304,7 @@ Game.prototype.start = function(canvas) {
 
         if (evt.keyCode == 13 || evt.keyCode == 32) {
             $(window).off('keydown');
-            self.makeLevel(canvas);
-            return;
+            return self.makeLevel(canvas);
         }
     });
 }
@@ -320,8 +321,6 @@ Game.prototype.score = function() {
     this.canvas.ctx.fillText('Enemies Killed: ' + this.playerKills, this.canvas.x+10, this.canvas.y+100);
     this.canvas.ctx.fillText('Your mass is ' + Math.floor(this.playerMass) + '.', this.canvas.x+10, this.canvas.y+150);
     this.canvas.ctx.fillText('Total Enemies '+(this.gameObjects.length-1)+ '.', this.canvas.x+10, this.canvas.y+200);
-
-    return;
 }
 
 
@@ -357,7 +356,6 @@ Game.prototype.mouseClick = function(){
 
     //player is the first object in the game Objects array
     return self.gameObjects[0].mouseClick = [xClick, yClick];
-
     });
 }
 

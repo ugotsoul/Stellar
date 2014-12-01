@@ -81,21 +81,21 @@ Vector.prototype.momentum = function(a, b, matrix){
 
 };
 
-Vector.prototype.dotproduct = function(a, b){
+// Vector.prototype.dotproduct = function(a, b){
 
-	return a.x*b.x + a.y*b.y;
-};
+// 	return a.x*b.x + a.y*b.y;
+// };
 
-Vector.prototype.collision = function(a, b){
+// Vector.prototype.collision = function(a, b){
 
-	//Make a rotation matrix: http://gamedevelopment.tutsplus.com/tutorials/lets-build-a-3d-graphics-engine-linear-transformations--gamedev-7716
+// 	//Make a rotation matrix: http://gamedevelopment.tutsplus.com/tutorials/lets-build-a-3d-graphics-engine-linear-transformations--gamedev-7716
 	
-	var magA = this.magnitude([a.x, a.y]);
-	var magB = this.magnitude([b.x, b.y]);
-	var dot = this.dotproduct(a,b);
+// 	var magA = this.magnitude([a.x, a.y]);
+// 	var magB = this.magnitude([b.x, b.y]);
+// 	var dot = this.dotproduct(a,b);
 
-	return [];
-};
+// 	return [];
+// };
 
 
 //#### Global Vector Object ######

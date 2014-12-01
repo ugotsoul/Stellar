@@ -90,6 +90,5 @@ Player.prototype.draw = function(ctx) {
         // ctx.fillText('Draw World', drawX, drawY+10);
         // ctx.fillText('X: ' + Math.floor(drawX) + ' Y: ' + Math.floor(drawY), drawX, drawY+20);
     }
-        
-    return;
+    
 }

@@ -72,7 +72,6 @@ Background.prototype.update = function(layer, speed) {
             } 
         }
     }
-    return;
 }
 
 Background.prototype.draw = function(canvas, fill, layer) {
@@ -94,7 +93,6 @@ Background.prototype.draw = function(canvas, fill, layer) {
     canvas.ctx.lineWidth = 2;
     canvas.ctx.strokeRect(this.viewX, this.viewY, this.w, this.h);
 
-    return;
 }
 
 Background.prototype.render = function(canvas){
@@ -102,7 +100,7 @@ Background.prototype.render = function(canvas){
     //check for changes in x, y coordinate plane of player view
     this.update(this.bgStars, 0);
     this.update(this.midStars, 6);
-    //this.update(this.fgStars, 4);
+    this.update(this.fgStars, 4);
 
     //redraw stars on canvas
     return this.draw(canvas, 'blue', this.bgStars), this.draw(canvas, '#98FB98', this.midStars), this.draw(canvas, 'purple', this.fgStars);

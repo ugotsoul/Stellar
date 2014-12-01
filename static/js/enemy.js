@@ -108,20 +108,20 @@ Enemy.prototype.radar = function() {
                 if (self.r > element.r) {
                     self.vX -= (self.speed+self.strength) *Math.cos(angle);
                     self.vY -= (self.speed+self.strength) *Math.sin(angle);
-                    return;
+                    // return;
                 }
 
                 else if (self.r < element.r) {
                     self.vX += self.speed *Math.cos(angle);
                     self.vY += self.speed *Math.sin(angle);
-                    return;
+                    // return;
                 }
 
                 else {
                     //console.log('Trying to move away');
                     self.vX += neighboorLength *Math.cos(angle);
                     self.vY += neighboorLength *Math.sin(angle);
-                    return;
+                    // return;
                 }
             }
         }
@@ -208,7 +208,5 @@ Enemy.prototype.draw = function(ctx) {
         ctx.fillStyle = g;
         ctx.fill();
     }
-
-    return;
 }
 
