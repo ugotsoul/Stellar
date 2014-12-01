@@ -1,10 +1,7 @@
 function Enemy(x, y, r, id) {
     GameObject.apply(this, arguments); 
+    
     //enemy attributes
-    this.x = x; 
-    this.y = y; 
-    this.r = r;
-    this.strength = Math.floor(this.r/10);
     this.id = id;
     this.drag = .0000001*this.r;
     this.speed = 100/this.r;
@@ -17,7 +14,8 @@ function Enemy(x, y, r, id) {
     //larger things move slower
     //smaller things move faster
     //make a max mass attribute
-    this.maxV = Math.floor(1000/this.r);
+    this.maxV = this.velocity();
+    this.strength = Math.floor(this.r/10);
 
     //assign random directions/speeds to each enemy
     this.vX = getRandomInteger(-50, 50);
@@ -40,11 +38,24 @@ Object.defineProperty(Enemy.prototype, 'mood', {get: function(){
         return 80;
     }
 
-    else {
+    else if (this.r >= player.r){
+        //danger, will robinson!
         return 0;
     }
-
 }}); 
+
+
+Enemy.prototype.velocity = function(){
+
+    if (this.r < 20){
+        return; 
+    }
+
+    else {
+        return 1000/this.r;
+    }
+
+}
 
 Enemy.prototype.interact = function(dt) {
 
@@ -97,9 +108,8 @@ Enemy.prototype.radar = function() {
                     self.vX -= (self.speed+self.strength) *Math.cos(angle);
                     self.vY -= (self.speed+self.strength) *Math.sin(angle);
 
-                    // //slow down enemy
-                    // element.vX -= .001;
-                    // element.vY -= .001;
+                    //slow down enemy
+                    element.drag += .0001;
 
                     return;
                 }
@@ -184,7 +194,7 @@ Enemy.prototype.attack = function (element) {
         }
     }
 
-Enemy.prototype.draw = function(ctx) {
+Enemy.prototype.draw = function(board) {
 
     var drawX = this.x - game.viewX;
     var drawY = this.y - game.viewY;
@@ -192,9 +202,9 @@ Enemy.prototype.draw = function(ctx) {
 
         if (this.r > 0 ) {
 
-            ctx.beginPath();
-            ctx.arc(drawX, drawY, drawR, 0, Math.PI * 2, false);
-            ctx.closePath();
+            board.ctx.beginPath();
+            board.ctx.arc(drawX, drawY, drawR, 0, Math.PI * 2, false);
+            board.ctx.closePath();
 
             //##################################
             //Twinkle Effect
@@ -202,12 +212,12 @@ Enemy.prototype.draw = function(ctx) {
 
             var new_opacity = getRandomNum(.5, .6);
 
-            var g = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, drawR * .95);
+            var g = board.ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, drawR * .95);
             g.addColorStop(0.0, 'rgba(255,'+this.mood+','+this.mood+',' + new_opacity + ')');
             g.addColorStop(.75, 'rgba(200,'+this.mood+',0,' + (new_opacity * .7) + ')');
             g.addColorStop(1.0, 'rgba(200,'+this.mood+',0,0)');
-            ctx.fillStyle = g;
-            ctx.fill();
+            board.ctx.fillStyle = g;
+            board.ctx.fill();
 
         }
     }

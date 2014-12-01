@@ -11,6 +11,12 @@ function getRandomNum(min, max) {
     return Math.random() * (max - min + 1) + min;
 }
 
+//stop right click menu from displaying
+window.oncontextmenu = function(evt) {
+    evt.preventDefault();
+    evt.stopPropagation();
+    return false;
+};
 
 //########################################################################
 // Vector Math Functions
@@ -88,10 +94,9 @@ Vector.prototype.collision = function(a, b){
 	var magB = this.magnitude([b.x, b.y]);
 	var dot = this.dotproduct(a,b);
 
-	return Math.acos(dot/(magA*magB));
+	return [];
 
 };
-
 
 
 //#### Global Vector Object ######
@@ -99,20 +104,10 @@ var vector = new Vector();
 //################################
 
 
-//stop right click menu from displaying
-window.oncontextmenu = function(evt) {
-    evt.preventDefault();
-    evt.stopPropagation();
-    return false;
-};
-
 
 //########################################################################
 // ISSUE: Window Resize is not scaled properly
 //########################################################################
-
-var windowH = $(window).height();
-var windowW = $(window).width();
 
 // var bgScalar = 3;
 

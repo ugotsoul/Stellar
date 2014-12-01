@@ -8,9 +8,10 @@ function GameObject(x, y, r) {
     this.x = x;
     this.y = y;
     this.r = r;
-    this.fill = null;
+
     this.lastPayment = Date.now();
     this.matterLoss = false;
+    this.id = null;
 
     //death and win state criteria 
     this.minMass = null;
