@@ -20,7 +20,6 @@ function Enemy(x, y, r, id) {
 
 Enemy.prototype = Object.create(GameObject.prototype);
 
-
 //Mood param identifies if an object is edible or not edible
 Object.defineProperty(Enemy.prototype, 'mood', {get: function(){
 
@@ -43,6 +42,13 @@ Object.defineProperty(Enemy.prototype, 'mood', {get: function(){
     }
 }}); 
 
+
+// Enemy.prototype.update = function(dt) {
+
+//     this.matterLoss = true, this.payment();
+
+//     return GameObject.prototype.update.call(this, dt);
+// }
 
 Enemy.prototype.interact = function(dt) {
 
@@ -69,7 +75,7 @@ Enemy.prototype.radar = function() {
 
             var neighboorLength = vector.magnitude(distance);
 
-            var radarLength = Math.floor(self.r*8);
+            var radarLength = Math.floor(self.r*5);
 
             var angle = vector.angle(distance);
 

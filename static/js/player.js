@@ -14,7 +14,7 @@ function Player(x, y, r) {
     this.minMass = 20;
     this.maxMass = 150;
     this.kills = 0;
-    this.strength = 10;
+    this.strength = 5;
 }
 
 Player.prototype = Object.create(GameObject.prototype);

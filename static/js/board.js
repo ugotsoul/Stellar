@@ -14,6 +14,8 @@ var Game = function() {
     this.startEnemies = null;
     this.gameObjects = null;
     this.win = null;
+    //save state of player win/loss score
+    this.totalScore = null;
 };
 
 
@@ -90,8 +92,8 @@ Game.prototype.update = function(dt) {
 
     //check for changes in x, y coordinate plane of player view
     this.bg.update(this.bg.bgStars, 0);
-    this.bg.update(this.bg.midStars, 6);
-    this.bg.update(this.bg.fgStars, 4);
+    this.bg.update(this.bg.midStars, 2);
+    this.bg.update(this.bg.fgStars, 5);
 
     //update positions of game elements
     for (var d = 0; d < this.gameObjects.length; d++) {
@@ -174,9 +176,19 @@ Game.prototype.makeLevel = function(canvas){
         
         //3 levels
         var level = [
-            //w, h, num of enemies, player win state (eg, player radius == 60), level clear message
-            [1000,800, 10, 70, "Reach 70 Tonnes in mass."],
-            [3000, 3000, 80, 150, "Conserve Matter. Reach 150 Tonnes in mass"]
+            //world width, world height, num of enemies, player win state (eg, player radius == 60), level clear message
+            // {
+            //     worldHeight: 1000,
+            //     worldWidth: 800,
+            //     numEnemies: 20,
+            //     winMass: 70,
+            //     helpText: "Reach 70 tonnes in mass."
+            // },
+            // {
+            // },
+            [1000, 800, 20, 70, "Reach 70 Tonnes in mass."],
+            [2000, 1500, 100, 100, "Conserve Matter. Reach 150 Tonnes in mass"],
+            [3000, 3000, 100, 300, "Beware The Red Stellar Objects. Reach 300 Tonnes in mass"]
         ];
         
 
@@ -196,15 +208,15 @@ Game.prototype.makeLevel = function(canvas){
             this.gameObjects = this.getElements();
 
             if (this.level > 0){
-                //save player mass
-                this.gameObjects[0].r = level[this.level-1][3];  
+                //bonus: player gets extra mass
+                this.gameObjects[0].r += level[this.level-1][3]/10;  
             }
             
             this.win = level[this.level][3];
 
             this.bg.bgStars = this.bg.makeStars(Math.floor(this.w/20));
             this.bg.midStars = this.bg.makeStars(Math.floor(this.w/30));
-            this.bg.fgStars = this.bg.makeStars(Math.floor(this.w/40));
+            this.bg.fgStars = this.bg.makeStars(Math.floor(this.w/30));
   
     
             var self = this;
@@ -237,7 +249,7 @@ Game.prototype.end = function(canvas) {
         canvas.ctx.font = "bold 50pt Sans-Serif";
         canvas.ctx.fillText('YOU DIED!', canvas.w/2, canvas.h/2 - 50);
         canvas.ctx.font = "bold 30pt Sans-Serif";
-        canvas.ctx.fillText('Total Enemies Killed: '+this.playerKills, canvas.w/2, canvas.h/2 + 50);
+        //canvas.ctx.fillText('Total Enemies Killed: '+this.playerKills, canvas.w/2, canvas.h/2 + 50);
     }
 
     //win state
@@ -249,7 +261,7 @@ Game.prototype.end = function(canvas) {
         canvas.ctx.font = "bold 50pt Sans-Serif";
         canvas.ctx.fillText('YOU WON!', canvas.w/2, canvas.h/2 - 50);
         canvas.ctx.font = "bold 30pt Sans-Serif";
-        canvas.ctx.fillText('Total Enemies Killed: '+this.playerKills, canvas.w/2, canvas.h/2 + 50);
+        //canvas.ctx.fillText('Total Enemies Killed: '+this.playerKills, canvas.w/2, canvas.h/2 + 50);
         } 
 
     var replayGame = setTimeout(function(){
