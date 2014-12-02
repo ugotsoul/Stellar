@@ -18,11 +18,14 @@ window.oncontextmenu = function(evt) {
     return false;
 };
 
-if(window.addEventListener){ //Firefox only
-    window.addEventListener("DOMMouseScroll", function(e){e.preventDefault()}, true);
+//stops mouse scroll wheel
+window.onscroll = function(evt) {
+    evt.preventDefault();
+    return false;
 }
 
-window.onscroll = function(e){e.preventDefault()};
+//window resize
+window.onresize = function(evt){ };
 
 //########################################################################
 // Vector Math Functions
@@ -73,7 +76,7 @@ Vector.prototype.momentum = function(a, b, matrix){
 
     //Cofficient of Restitution - here an arbitrary scalar to make the collision less bouncy
     //Adapted from Wiki - Partially inelastic collision response
-    var coefficientOfRestitution = .2; 
+    var coefficientOfRestitution = .4; 
     
     var finalVxA = (a.r * matrix[0][0] +  b.r * matrix[1][0] + coefficientOfRestitution*b.r*(matrix[1][0] - matrix[0][0]))/ (a.r + b.r);
    	var finalVyA = matrix[0][1];
@@ -86,22 +89,6 @@ Vector.prototype.momentum = function(a, b, matrix){
 	];
 
 };
-
-// Vector.prototype.dotproduct = function(a, b){
-
-// 	return a.x*b.x + a.y*b.y;
-// };
-
-// Vector.prototype.collision = function(a, b){
-
-// 	//Make a rotation matrix: http://gamedevelopment.tutsplus.com/tutorials/lets-build-a-3d-graphics-engine-linear-transformations--gamedev-7716
-	
-// 	var magA = this.magnitude([a.x, a.y]);
-// 	var magB = this.magnitude([b.x, b.y]);
-// 	var dot = this.dotproduct(a,b);
-
-// 	return [];
-// };
 
 
 //#### Global Vector Object ######
@@ -117,8 +104,8 @@ var Canvas = function(name, create){
 
     this.x = 0;
     this.y = 0;
-    this.w = $(window).width();
-    this.h = $(window).height();
+    this.w = window.innerWidth;
+    this.h = window.innerHeight;
     this.offsetX = this.w/2;
     this.offsetY = this.h/2;
     this.name = name;

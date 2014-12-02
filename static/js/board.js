@@ -115,7 +115,7 @@ Game.prototype.update = function(dt) {
     this.bg.update(this.bg.fgStars, 4);
 
 
- //update positions of game elements
+    //update positions of game elements
     for (var d = 0; d < this.gameObjects.length; d++) {
         //check if element is dead or not
         if (this.gameObjects[d].death == true) {
@@ -132,10 +132,11 @@ Game.prototype.update = function(dt) {
 //calls the buffer canvas when ready
 Game.prototype.render = function(canvas) {
 
+    var buffer = this.canvas.canvas
+
     canvas.ctx.clearRect(0, 0, canvas.w, canvas.h);
 
-
-    return canvas.ctx.drawImage(this.canvas.canvas, 0, 0);
+    return canvas.ctx.drawImage(buffer, 0, 0);
 }
 
 Game.prototype.run = function(canvas) {
@@ -197,11 +198,20 @@ Game.prototype.makeLevel = function(canvas){
         //3 levels
         var level = [
             //w, h, num of enemies, player win state
-            [1000,1000, 15, 60],
-            [1500,1500, 30, 100],
+            [1000,800, 10, 60],
+            [1500,1000, 30, 100],
             [3000, 3000, 50, 150]
         ];
         
+
+        if(this.level == 0){
+            
+            var showHelp = setTimeout(function(){
+                var helpImg = new Image(1024,768);
+                helpImg.onload = function(){canvas.ctx.drawImage(helpImg, 0 ,0, 1024, 768);}
+                helpImg.src = 'static/imgs/help.png';}, 2000);
+        }
+
         if (level[this.level]){
 
             //console.log('trying to make level');
@@ -214,9 +224,9 @@ Game.prototype.makeLevel = function(canvas){
             this.startEnemies = level[this.level][2];
             this.win = level[this.level][3];
 
-            this.bg.bgStars = this.bg.makeStars(Math.floor(this.w/8));
-            this.bg.midStars = this.bg.makeStars(Math.floor(this.w/10));
-            this.bg.fgStars = this.bg.makeStars(Math.floor(this.w/12));
+            this.bg.bgStars = this.bg.makeStars(Math.floor(this.w/20));
+            this.bg.midStars = this.bg.makeStars(Math.floor(this.w/30));
+            this.bg.fgStars = this.bg.makeStars(Math.floor(this.w/40));
 
             //save player score
             this.gameObjects = this.getElements();    
@@ -224,7 +234,7 @@ Game.prototype.makeLevel = function(canvas){
             var self = this;
 
             var startGame = setTimeout(function(){            
-                return self.run(canvas);
+             self.run(canvas);
                 }, 3000);
 
         }

@@ -30,8 +30,8 @@ Background.prototype.makeStars = function(numOfStars) {
         x: getRandomInteger(this.x, this.w),
         y: getRandomInteger(this.y, this.h),
         r: getRandomInteger(0, 2),
-        drawX: 0,
-        drawY: 0
+        drawX: 50,
+        drawY: 50
         });
     }
     return stars;
@@ -55,19 +55,19 @@ Background.prototype.update = function(layer, speed, dt) {
             layer[i].drawY += targetY/speed;
 
             //never have stars draw off canvas
-            if (layer[i].drawX - this.viewX < layer[i].x) {
+            if (layer[i].drawX - this.viewX < this.x) {
                 layer[i].drawX = targetX;
             }
 
-            if (layer[i].drawY - this.viewY < layer[i].y) {
+            if (layer[i].drawY - this.viewY < this.y) {
                 layer[i].drawY = targetY;
             }
   
-            if (layer[i].drawX - this.viewX >= this.w) {
+            if (layer[i].drawX - this.viewX > this.w) {
                 layer[i].drawX = this.viewX;
             }
 
-            if (layer[i].drawY - this.viewY >= this.h) {
+            if (layer[i].drawY - this.viewY > this.h) {
                 layer[i].drawY = this.viewY;
             } 
         }
@@ -90,7 +90,7 @@ Background.prototype.draw = function(canvas, fill, layer) {
 
     //make a game world bounding rectangle for reference
     canvas.ctx.strokeStyle = 'blue';
-    canvas.ctx.lineWidth = 2;
+    canvas.ctx.lineWidth = 4;
     canvas.ctx.strokeRect(this.viewX, this.viewY, this.w, this.h);
 
 }
@@ -99,6 +99,6 @@ Background.prototype.render = function(canvas){
    
     //redraw stars on canvas
     this.draw(canvas, 'blue', this.bgStars);
-    this.draw(canvas, 'red', this.midStars);
+    this.draw(canvas, 'white', this.midStars);
     this.draw(canvas, 'violet', this.fgStars);
 }

@@ -35,8 +35,6 @@ function GameObject(x, y, r) {
 
 }
 
-
-
 GameObject.prototype.update = function(dt) {
 
         //calculate angle of movement along a vector
@@ -160,15 +158,8 @@ GameObject.prototype.poop = function() {
     //the scalar below is trival distance away from player
     var tail = Math.floor(this.r * 1.5);
 
-        if (this instanceof Player){
-            var angle = vector.angle(this.mouseClick);
-        }
 
-        // else {
-        //     //need the unit vector of enemy several steps in the future
-        //     var angle = vector.angle([(this.x*this.x*this.vX), (this.y*this.y*this.vY)]);
-        //     //console.log('Enemy trying to poop');
-        // }
+    var angle = vector.angle(this.mouseClick);
 
     //length of food - poop tail from game object
     var foodArr = [this.x - tail*Math.cos(angle), this.y - tail*Math.sin(angle)];

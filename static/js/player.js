@@ -5,9 +5,9 @@ function Player(x, y, r) {
 
     //player attributes
     this.id = 0;
-    this.drag = .00005;
+    this.drag = .00001;
     this.speed = 20;
-    this.maxV = 200;
+    this.maxV = 100;
     this.mouseClick = null;
     
     //death and win state criteria 

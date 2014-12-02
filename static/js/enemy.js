@@ -14,8 +14,8 @@ function Enemy(x, y, r, id) {
     this.strength = Math.floor(this.r/10);
 
     //assign random directions/speeds to each enemy
-    this.vX = getRandomInteger(-50, 50);
-    this.vY = getRandomInteger(-50, 50);
+    this.vX = getRandomInteger(-20, 20);
+    this.vY = getRandomInteger(-20, 20);
 }
 
 Enemy.prototype = Object.create(GameObject.prototype);
@@ -43,22 +43,6 @@ Object.defineProperty(Enemy.prototype, 'mood', {get: function(){
     }
 }}); 
 
-//restrict enemy max velocity
-// Enemy.prototype.velocity = function(){
-
-//     if (this.r < 20){
-//         return 1000/this.r; 
-//     }
-
-//     if (this.r > 50){
-//         return 50;
-//     }
-
-//     else {
-//         return 1000/this.r;
-//     }
-
-// }
 
 Enemy.prototype.interact = function(dt) {
 
@@ -108,20 +92,20 @@ Enemy.prototype.radar = function() {
                 if (self.r > element.r) {
                     self.vX -= (self.speed+self.strength) *Math.cos(angle);
                     self.vY -= (self.speed+self.strength) *Math.sin(angle);
-                    return;
+                    // return;
                 }
 
                 else if (self.r < element.r) {
                     self.vX += self.speed *Math.cos(angle);
                     self.vY += self.speed *Math.sin(angle);
-                    return;
+                    // return;
                 }
 
                 else {
                     //console.log('Trying to move away');
                     self.vX += neighboorLength *Math.cos(angle);
                     self.vY += neighboorLength *Math.sin(angle);
-                    return;
+                    // return;
                 }
             }
         }
