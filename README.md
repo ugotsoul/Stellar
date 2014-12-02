@@ -1,6 +1,6 @@
 # Stellar - an HTML5 & JavaScript Game
 
-Stellar is a arcade style game about becoming the biggest, baddest, stellar object in the universe. In this universe, there is one law: eat, or be eaten! Stellar is my adaption of (Osmos)[http://www.osmos-game.com/].
+Stellar is a arcade style game about becoming the biggest, baddest, stellar object in the universe. In this universe, there is one law: eat, or be eaten! Stellar is my adaption of [Osmos](http://www.osmos-game.com/).
 
 #### [Play The Game](http://ugotsoul.github.io/Stellar/)  
 Tested on the latest version of Google Chrome 64 Bit: Firefox users, beware.
