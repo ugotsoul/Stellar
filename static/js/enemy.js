@@ -3,15 +3,15 @@ function Enemy(x, y, r, id) {
     
     //enemy attributes
     this.id = id;
-    this.drag = .0000001*this.r;
+    this.drag = .000001*this.r;
     this.speed = 100/this.r;
 
     //death and win state criteria 
     this.minMass = 10;
     this.maxMass = 150;
 
-    this.maxV =  50; //this.velocity();
-    this.strength = Math.floor(this.r/10);
+    this.maxV =  100; //this.velocity();
+    this.strength = this.r/10;
 
     //assign random directions/speeds to each enemy
     this.vX = getRandomInteger(-20, 20);
@@ -51,19 +51,6 @@ Enemy.prototype.interact = function(dt) {
     return GameObject.prototype.interact.call(this, dt);
 }
 
-// Enemy.prototype.update = function(dt) {
-
-//     var currentPayment = Date.now();
-
-//     if (currentPayment - this.lastPayment > 5000 && self.r > 10){
-//         this.matterLoss = true;
-//         this.payment();
-//     }
-
-
-//     return GameObject.prototype.update.call(this, dt);
-// }
-
 
 Enemy.prototype.radar = function() {
 
@@ -82,7 +69,7 @@ Enemy.prototype.radar = function() {
 
             var neighboorLength = vector.magnitude(distance);
 
-            var radarLength = Math.floor(self.r*10);
+            var radarLength = Math.floor(self.r*8);
 
             var angle = vector.angle(distance);
 
@@ -90,22 +77,18 @@ Enemy.prototype.radar = function() {
             if (neighboorLength < radarLength) {
                 
                 if (self.r > element.r) {
-                    self.vX -= (self.speed+self.strength) *Math.cos(angle);
-                    self.vY -= (self.speed+self.strength) *Math.sin(angle);
-                    // return;
+                    self.vX -= self.speed *Math.cos(angle);
+                    self.vY -= self.speed *Math.sin(angle);
                 }
 
                 else if (self.r < element.r) {
                     self.vX += self.speed *Math.cos(angle);
                     self.vY += self.speed *Math.sin(angle);
-                    // return;
                 }
 
                 else {
-                    //console.log('Trying to move away');
-                    self.vX += neighboorLength *Math.cos(angle);
-                    self.vY += neighboorLength *Math.sin(angle);
-                    // return;
+                    self.vX += neighboorLength + self.speed *Math.cos(angle);
+                    self.vY += neighboorLength + self.speed *Math.sin(angle);
                 }
             }
         }
@@ -117,7 +100,7 @@ Enemy.prototype.attack = function (element) {
         //get the current this object to manipulate the instance
         var self = this;
 
-        if (self.r < self.minMass && element instanceof Enemy) {
+        if (self.r < self.minMass) {
             element.r += self.strength;
             self.death = true;
             return;
@@ -133,16 +116,15 @@ Enemy.prototype.attack = function (element) {
         if (self.r > element.r) {
                 self.r += self.strength;
                 element.r -= self.strength;
-                return;
         }
 
         //eat enemies smaller than yourself
         else if (self.r < element.r) {
-            self.r -= self.strength;
-            element.r += self.strength;
-            return;
+            self.r -= element.strength;
+            element.r += element.strength;
         }
 
+        //fight! randomly choose between two objects of the same size
         else if (self.r == element.r) {
             
             //randomly choose which one will be eaten
@@ -153,16 +135,14 @@ Enemy.prototype.attack = function (element) {
 
             var i = Math.floor(Math.random()*killArr.length);
 
-            //kill one of the game objects
+            //hurt one of the game objects
             if (i == 0) {
                 self.r -= self.strength;
                 killArr[1] += self.strength;
-                return;
             }
             else {
                 self.r += self.strength;
                 killArr[0] -= self.strength;
-                return;
             }
         }
     }

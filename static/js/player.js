@@ -6,14 +6,15 @@ function Player(x, y, r) {
     //player attributes
     this.id = 0;
     this.drag = .00001;
-    this.speed = 20;
-    this.maxV = 100;
+    this.speed = 50;
+    this.maxV = 150;
     this.mouseClick = null;
     
     //death and win state criteria 
     this.minMass = 20;
     this.maxMass = 150;
     this.kills = 0;
+    this.strength = 10;
 }
 
 Player.prototype = Object.create(GameObject.prototype);
@@ -92,3 +93,4 @@ Player.prototype.draw = function(ctx) {
     }
         
 }
+

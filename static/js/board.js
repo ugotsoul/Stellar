@@ -1,19 +1,3 @@
-// requestAnimationFrame() shim by Paul Irish
-// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
-// window.requestAnimFrame = (function() {
-//     return  window.requestAnimationFrame       || 
-//             window.webkitRequestAnimationFrame || 
-//             window.mozRequestAnimationFrame    || 
-//             window.oRequestAnimationFrame      || 
-//             window.msRequestAnimationFrame     || 
-//             function(/* function */ callback, /* DOMElement */ element){
-
-
-//                 window.setTimeout(callback, 1000 / 60);
-//             };
-// })();
-
-
 //##############################
 // Game Constructor Function
 //##############################
@@ -24,14 +8,12 @@ var Game = function() {
     this.w = 1000;
     this.h = 1000;
     this.intervalHandle = null;
-    //this.ctx refers to the buffer canvas
     this.canvas = null;
     this.bg = null;
     this.level = 0;
     this.startEnemies = null;
     this.gameObjects = null;
     this.win = null;
-
 };
 
 
@@ -99,11 +81,8 @@ Game.prototype.draw = function() {
     
     for (var c = 0; c < this.gameObjects.length; c++) {
 
-        //draw game elements on canvas
         this.gameObjects[c].draw(canvas.ctx);
     }
-
-    //draw player status board
     this.score();
 };
 
@@ -114,15 +93,15 @@ Game.prototype.update = function(dt) {
     this.bg.update(this.bg.midStars, 6);
     this.bg.update(this.bg.fgStars, 4);
 
-
     //update positions of game elements
     for (var d = 0; d < this.gameObjects.length; d++) {
         //check if element is dead or not
         if (this.gameObjects[d].death == true) {
+            
             //if dead, remove enemy from array
             this.gameObjects.splice(d, 1);
             }
-
+        
         else {
             this.gameObjects[d].update(dt);
             }
@@ -148,9 +127,7 @@ Game.prototype.run = function(canvas) {
     FPS = 50;
 
     //####### Below code is for debugging ######################
-    // This incriments the game by 1 time step to check for bugs
-    //      game.step();
-    //##########################################################
+    // This incriments the game by 1 time step
     //this.step = function() {
     //      Game.prototype.update(1 / FPS);
     //      Game.prototype.draw();  }
@@ -166,7 +143,7 @@ Game.prototype.run = function(canvas) {
                 self.end(canvas);
             } 
 
-            else if (self.win == self.playerMass) {
+            else if (self.playerMass >= self.win) {
                 
                 clearInterval(self.intervalHandle);
                 
@@ -177,7 +154,7 @@ Game.prototype.run = function(canvas) {
                 canvas.ctx.clearRect(0, 0, canvas.w, canvas.h);
                 canvas.ctx.fillStyle = '#FFF';
                 canvas.ctx.font = "bold 50pt Sans-Serif";
-                canvas.ctx.fillText('Cleared '+(self.playerKills/(self.gameObjects.length-1)).toFixed(2)+'% of Level '+(self.level), canvas.w/2, canvas.h/2);
+                canvas.ctx.fillText('Cleared Level '+(self.level), canvas.w/2, canvas.h/2);
                 var showScore = setTimeout(function(){ self.makeLevel(canvas);}, 3000);
             }
             
@@ -197,47 +174,51 @@ Game.prototype.makeLevel = function(canvas){
         
         //3 levels
         var level = [
-            //w, h, num of enemies, player win state
-            [1000,800, 10, 60],
-            [1500,1000, 30, 100],
-            [3000, 3000, 50, 150]
+            //w, h, num of enemies, player win state (eg, player radius == 60), level clear message
+            [1000,800, 10, 70, "Reach 70 Tonnes in mass."],
+            [3000, 3000, 80, 150, "Conserve Matter. Reach 150 Tonnes in mass"]
         ];
         
 
-        if(this.level == 0){
-            
-            var showHelp = setTimeout(function(){
-                var helpImg = new Image(1024,768);
-                helpImg.onload = function(){canvas.ctx.drawImage(helpImg, 0 ,0, 1024, 768);}
-                helpImg.src = 'static/imgs/help.png';}, 2000);
-        }
-
         if (level[this.level]){
 
-            //console.log('trying to make level');
             canvas.ctx.clearRect(0, 0, canvas.w, canvas.h);
             canvas.ctx.fillStyle = '#FFF';
             canvas.ctx.font = "bold 80pt Sans-Serif";
             canvas.ctx.fillText('Level '+(this.level+1), canvas.w/2, canvas.h/2);
+            canvas.ctx.font = "bold 40pt Sans-Serif";
+            canvas.ctx.fillText(level[this.level][4], canvas.w/2, canvas.h/2 + 100);
+
             this.w = level[this.level][0];
             this.h = level[this.level][1];
             this.startEnemies = level[this.level][2];
+            
+            this.gameObjects = this.getElements();
+
+            if (this.level > 0){
+                //save player mass
+                this.gameObjects[0].r = level[this.level-1][3];  
+            }
+            
             this.win = level[this.level][3];
 
             this.bg.bgStars = this.bg.makeStars(Math.floor(this.w/20));
             this.bg.midStars = this.bg.makeStars(Math.floor(this.w/30));
             this.bg.fgStars = this.bg.makeStars(Math.floor(this.w/40));
-
-            //save player score
-            this.gameObjects = this.getElements();    
+  
     
             var self = this;
 
             var startGame = setTimeout(function(){            
              self.run(canvas);
-                }, 3000);
-
+                }, 2000);
         }
+
+        else {
+            //you beat the game, yay!
+            this.end(canvas);
+        }
+
 }
 
 //#########################################################################
@@ -254,23 +235,21 @@ Game.prototype.end = function(canvas) {
         canvas.ctx.fillStyle = '#FFF';
         canvas.ctx.textAlign = "center";
         canvas.ctx.font = "bold 50pt Sans-Serif";
-        //you need to clear the canvas for this instance of the Game object -- game -- not the Game object/class. 
-        canvas.ctx.fillText('YOU DIED! Ow.', canvas.w/2, canvas.h/2 - 50);
+        canvas.ctx.fillText('YOU DIED!', canvas.w/2, canvas.h/2 - 50);
         canvas.ctx.font = "bold 30pt Sans-Serif";
-        canvas.ctx.fillText((this.playerKills/(this.gameObjects.length-1)).toFixed(2)+'% of total enemies killed.', canvas.w/2, canvas.h/2+50);
+        canvas.ctx.fillText('Total Enemies Killed: '+this.playerKills, canvas.w/2, canvas.h/2 + 50);
     }
 
     //win state
-    if (this.gameObjects.length == 1 || this.playerMass > 150) {
+    if (this.playerMass > this.win) {
 
         canvas.ctx.clearRect(0, 0, canvas.w, canvas.h);
         canvas.ctx.fillStyle = '#FFF';
         canvas.ctx.textAlign = "center";
         canvas.ctx.font = "bold 50pt Sans-Serif";
-        //you need to clear the canvas for this instance of the Game object -- game -- not the Game object/class. 
-        canvas.ctx.fillText('YOU WON! YAY!', canvas.w/2, canvas.h/2 - 50);
+        canvas.ctx.fillText('YOU WON!', canvas.w/2, canvas.h/2 - 50);
         canvas.ctx.font = "bold 30pt Sans-Serif";
-        canvas.ctx.fillText((this.playerKills/(this.gameObjects.length-1)).toFixed(2)+'% of total enemies killed.', canvas.w/2, canvas.h/2+50);
+        canvas.ctx.fillText('Total Enemies Killed: '+this.playerKills, canvas.w/2, canvas.h/2 + 50);
         } 
 
     var replayGame = setTimeout(function(){
@@ -315,7 +294,18 @@ Game.prototype.start = function(canvas) {
 
         if (evt.keyCode == 13 || evt.keyCode == 32) {
             $(window).off('keydown');
-            return self.makeLevel(canvas);
+            
+            if (self.level == 0) { 
+                
+                canvas.ctx.clearRect(0, 0, canvas.w, canvas.h);
+                var helpImg = new Image(1024,768);
+                helpImg.onload = function(){canvas.ctx.drawImage(helpImg, (canvas.w/2 - 1024/2), (canvas.h/2 - 768/2), 1024, 768);}
+                helpImg.src = 'static/imgs/help.png';
+                
+                var showHelp = setTimeout(function(){
+                    self.makeLevel(canvas);}
+                        , 3000);
+                }
         }
     });
 }
@@ -326,7 +316,7 @@ Game.prototype.score = function() {
     //offset scoreboard according to game width height
     this.canvas.ctx.save();
     this.canvas.ctx.shadowColor = '#00F';
-    this.canvas.ctx.shadowBlur = 1;
+    this.canvas.ctx.shadowBlur = 2;
     this.canvas.ctx.shadowOffsetX = 2;
     this.canvas.ctx.shadowOffsetY = 2;
     this.canvas.ctx.fillStyle = '#FFF';
@@ -334,22 +324,12 @@ Game.prototype.score = function() {
     this.canvas.ctx.textAlign = "start";
     this.canvas.ctx.fillText('Score Board', this.canvas.x+10, this.canvas.y+50);
     this.canvas.ctx.font = "bold 26pt Sans-Serif";
+    this.canvas.ctx.fillStyle = '#0FF';
     this.canvas.ctx.fillText('Enemies Killed: ' + this.playerKills, this.canvas.x+10, this.canvas.y+100);
-    this.canvas.ctx.fillText('Your mass is ' + Math.floor(this.playerMass) + '.', this.canvas.x+10, this.canvas.y+150);
+    this.canvas.ctx.fillText('Your mass is ' + Math.floor(this.playerMass) + ' Tonnes.', this.canvas.x+10, this.canvas.y+150);
     this.canvas.ctx.fillText('Total Enemies '+(this.gameObjects.length-1)+ '.', this.canvas.x+10, this.canvas.y+200);
     this.canvas.ctx.restore();
 }
-
-
-// Object.defineProperty(Game.prototype, 'zoom', {get: function(){ 
-
-//     if (this.playerKills > 0) {
-//         return this.startEnemies/this.playerKills;
-//     }
-
-//     else {
-//         return this.maxEnemies; }
-//     }});
 
 
 //get offset values by calculating the player's current distance from translated origin
@@ -359,7 +339,7 @@ Object.defineProperty(Game.prototype, 'playerDeath', {get: function(){ return th
 Object.defineProperty(Game.prototype, 'playerMass', {get: function(){ return this.gameObjects[0].r; }});
 Object.defineProperty(Game.prototype, 'playerKills', {get: function(){ return this.gameObjects[0].kills; }});
 
-//monitors player movement
+
 Game.prototype.mouseClick = function(){
 
     var self = this;
