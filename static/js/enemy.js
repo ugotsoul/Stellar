@@ -43,13 +43,6 @@ Object.defineProperty(Enemy.prototype, 'mood', {get: function(){
 }}); 
 
 
-// Enemy.prototype.update = function(dt) {
-
-//     this.matterLoss = true, this.payment();
-
-//     return GameObject.prototype.update.call(this, dt);
-// }
-
 Enemy.prototype.interact = function(dt) {
 
     this.radar();

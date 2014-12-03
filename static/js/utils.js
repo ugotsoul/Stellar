@@ -5,11 +5,11 @@
 //Reminder: Both these functions are inclusive for both min & max
 function getRandomInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+};
 
 function getRandomNum(min, max) {
     return Math.random() * (max - min + 1) + min;
-}
+};
 
 //stop right click menu from displaying
 window.oncontextmenu = function(evt) {
@@ -21,11 +21,7 @@ window.oncontextmenu = function(evt) {
 //stops mouse scroll wheel
 window.onscroll = function(evt) {
     evt.preventDefault();
-    return false;
-}
-
-//window resize
-window.onresize = function(evt){ };
+};
 
 //########################################################################
 // Vector Math Functions
@@ -119,7 +115,8 @@ Canvas.prototype.prepare = function(create){
         //create a hidden canvas dom object
         this.canvas = document.createElement('canvas');
         this.canvas.width = this.w;
-        this.canvas.height = this.h;   
+        this.canvas.height = this.h;
+
         return document.body.appendChild(this.canvas), this.canvas;
     }
 
