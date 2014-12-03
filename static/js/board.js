@@ -186,9 +186,9 @@ Game.prototype.makeLevel = function(canvas){
             // },
             // {
             // },
-            [1000, 800, 20, 70, "Reach 70 Tonnes in mass."],
-            [2000, 1500, 100, 100, "Conserve Matter. Reach 150 Tonnes in mass"],
-            [3000, 3000, 100, 300, "Beware The Red Stellar Objects. Reach 300 Tonnes in mass"]
+            [1000, 800, 20, 80, "Reach 80 Tonnes in mass."],
+            [2000, 1500, 100, 200, "Reach 200 Tonnes in mass"],
+            [3000, 3000, 100, 300, "Reach 300 Tonnes in mass"]
         ];
         
 
@@ -214,9 +214,9 @@ Game.prototype.makeLevel = function(canvas){
             
             this.win = level[this.level][3];
 
-            this.bg.bgStars = this.bg.makeStars(Math.floor(this.w/20));
-            this.bg.midStars = this.bg.makeStars(Math.floor(this.w/30));
-            this.bg.fgStars = this.bg.makeStars(Math.floor(this.w/30));
+            this.bg.bgStars = this.bg.makeStars(Math.floor(this.w/10));
+            this.bg.midStars = this.bg.makeStars(Math.floor(this.w/10));
+            this.bg.fgStars = this.bg.makeStars(Math.floor(this.w/10));
   
     
             var self = this;
@@ -316,7 +316,7 @@ Game.prototype.start = function(canvas) {
                 
                 var showHelp = setTimeout(function(){
                     self.makeLevel(canvas);}
-                        , 3000);
+                        , 8000);
                 }
         }
     });

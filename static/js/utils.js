@@ -21,6 +21,7 @@ window.oncontextmenu = function(evt) {
 //stops mouse scroll wheel
 window.onscroll = function(evt) {
     evt.preventDefault();
+    return false;
 };
 
 //########################################################################

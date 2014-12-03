@@ -8,7 +8,7 @@ function Enemy(x, y, r, id) {
 
     //death and win state criteria 
     this.minMass = 10;
-    this.maxMass = 150;
+    this.maxMass = 100;
 
     this.maxV =  100; //this.velocity();
     this.strength = this.r/10;
@@ -99,7 +99,7 @@ Enemy.prototype.attack = function (element) {
         //get the current this object to manipulate the instance
         var self = this;
 
-        if (self.r < self.minMass) {
+        if (self.r <= self.minMass) {
             element.r += self.strength;
             self.death = true;
             return;
@@ -112,7 +112,7 @@ Enemy.prototype.attack = function (element) {
                 return;
             }
 
-        if (self.r > element.r) {
+        if (self.r > element.r && self.r < self.maxMass) {
                 self.r += self.strength;
                 element.r -= self.strength;
         }
@@ -124,7 +124,7 @@ Enemy.prototype.attack = function (element) {
         }
 
         //fight! randomly choose between two objects of the same size
-        else if (self.r == element.r) {
+        else if (self.r == element.r && self.r < self.maxMass) {
             
             //randomly choose which one will be eaten
             var killArr = new Array();

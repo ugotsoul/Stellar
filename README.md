@@ -9,8 +9,12 @@ Tested on the latest version of Google Chrome 64 Bit: Firefox users, beware.
 ![How To Play](https://raw.githubusercontent.com/ugotsoul/Stellar/master/static/imgs/help.png "How To Play")
 
 ### Features
- - Custom-Made 2D Physics Engine.  
+ - Custom-Made 2D Physics Engine: 
+ 	- Collision Detection
+ 	- Collision Response
+ 	-   
  - Modified Flocking Algorithm (Elements of Cohesion & Repulsion) for the Enemy AI.
+   
  - Double Buffering
 
 ### Tech

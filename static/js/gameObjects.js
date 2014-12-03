@@ -199,7 +199,7 @@ GameObject.prototype.payment = function() {
         //add the food to the array of game objects
         game.gameObjects.push(tempFood);
 
-        self.r -= 2;
+        self.r -= foodR/2;
         self.matterLoss = false;
 
         if (self instanceof Player){
