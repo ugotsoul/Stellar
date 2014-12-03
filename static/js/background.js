@@ -50,7 +50,6 @@ Background.prototype.update = function(layer, speed, dt) {
 
         if (speed > 0){
 
-            //note: speed of 1 == player movement
             layer[i].drawX += targetX/speed;
             layer[i].drawY += targetY/speed;
 
@@ -97,7 +96,6 @@ Background.prototype.draw = function(canvas, fill, layer) {
 
 Background.prototype.render = function(canvas){
    
-    //redraw stars on canvas
     this.draw(canvas, 'blue', this.bgStars);
     this.draw(canvas, 'red', this.midStars);
     this.draw(canvas, 'violet', this.fgStars);

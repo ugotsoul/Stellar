@@ -155,7 +155,7 @@ GameObject.prototype.interact = function (dt) {
 
 GameObject.prototype.poop = function() {
 
-    //the scalar below is trival distance away from player
+    //the scalar below is trival distance away from player, so the player does not consume the matter lost.
     var tail = Math.floor(this.r * 1.5);
 
 
@@ -168,10 +168,8 @@ GameObject.prototype.poop = function() {
 }
 
 
-//this is a unique id to identify objects during collision response // attack
-//so objects do not colide with themselves or hurt themselves
+//this is a unique id to identify objects during collision response // attack, equivillent to the id assigned in the gameObjects array.
 var foodID = 100;
-
 
 GameObject.prototype.payment = function() {
 

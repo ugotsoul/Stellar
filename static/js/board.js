@@ -33,7 +33,7 @@ Game.prototype.getElements = function() {
     //keeps track of how many enemies have been added to the game objects array
     var enemiesAdded = 0;
 
-    //primary key of enemy - to optimize collision detection
+    //primary key of enemy - used to optimize collision detection
     var enemyID = 1;
 
     while (enemiesAdded < this.startEnemies) {
@@ -49,7 +49,7 @@ Game.prototype.getElements = function() {
 
         var tempEnemy = new Enemy(enemyX, enemyY, enemyR, enemyID);
 
-        //preform a collision test to make sure enemies don't appear in the same spot
+        //preform a collision test to make sure enemies are not drawn in the same spot
         var collision = tempEnemy.collisionDetect(gameElements[n]);
 
         if (!collision) {
@@ -122,18 +122,18 @@ Game.prototype.render = function(canvas) {
 
 Game.prototype.run = function(canvas) {
 
-    //get player position
     this.mouseClick();
 
-    //frames per second
+    //######## Global - Frames Per Second ########
     FPS = 50;
+    //############################################
 
-    //####### Below code is for debugging ######################
+    //####### Below code is for debugging ########
     // This incriments the game by 1 time step
     //this.step = function() {
     //      Game.prototype.update(1 / FPS);
     //      Game.prototype.draw();  }
-    //###########################################################
+    //############################################
     
     //inherted variable scope
     var self = this;
@@ -176,16 +176,6 @@ Game.prototype.makeLevel = function(canvas){
         
         //3 levels
         var level = [
-            //world width, world height, num of enemies, player win state (eg, player radius == 60), level clear message
-            // {
-            //     worldHeight: 1000,
-            //     worldWidth: 800,
-            //     numEnemies: 20,
-            //     winMass: 70,
-            //     helpText: "Reach 70 tonnes in mass."
-            // },
-            // {
-            // },
             [1000, 800, 20, 80, "Reach 80 Tonnes in mass."],
             [2000, 1500, 100, 200, "Reach 200 Tonnes in mass"],
             [3000, 3000, 100, 300, "Reach 300 Tonnes in mass"]
@@ -215,8 +205,8 @@ Game.prototype.makeLevel = function(canvas){
             this.win = level[this.level][3];
 
             this.bg.bgStars = this.bg.makeStars(Math.floor(this.w/10));
-            this.bg.midStars = this.bg.makeStars(Math.floor(this.w/10));
-            this.bg.fgStars = this.bg.makeStars(Math.floor(this.w/10));
+            this.bg.midStars = this.bg.makeStars(Math.floor(this.w/15));
+            this.bg.fgStars = this.bg.makeStars(Math.floor(this.w/20));
   
     
             var self = this;
@@ -233,14 +223,11 @@ Game.prototype.makeLevel = function(canvas){
 
 }
 
-//#########################################################################
-// Refactor: End should just check for player death & clear state, not draw
-//#########################################################################
 
 Game.prototype.end = function(canvas) {
 
     var self = this;
-    //loss state
+
     if (this.playerDeath == true) {
 
         canvas.ctx.clearRect(0, 0, canvas.w, canvas.h);
@@ -249,10 +236,9 @@ Game.prototype.end = function(canvas) {
         canvas.ctx.font = "bold 50pt Sans-Serif";
         canvas.ctx.fillText('YOU DIED!', canvas.w/2, canvas.h/2 - 50);
         canvas.ctx.font = "bold 30pt Sans-Serif";
-        //canvas.ctx.fillText('Total Enemies Killed: '+this.playerKills, canvas.w/2, canvas.h/2 + 50);
+        canvas.ctx.fillText('Total Enemies Killed: '+this.playerKills, canvas.w/2, canvas.h/2 + 50);
     }
 
-    //win state
     if (this.playerMass > this.win) {
 
         canvas.ctx.clearRect(0, 0, canvas.w, canvas.h);
@@ -261,7 +247,7 @@ Game.prototype.end = function(canvas) {
         canvas.ctx.font = "bold 50pt Sans-Serif";
         canvas.ctx.fillText('YOU WON!', canvas.w/2, canvas.h/2 - 50);
         canvas.ctx.font = "bold 30pt Sans-Serif";
-        //canvas.ctx.fillText('Total Enemies Killed: '+this.playerKills, canvas.w/2, canvas.h/2 + 50);
+        canvas.ctx.fillText('Total Enemies Killed: '+this.playerKills, canvas.w/2, canvas.h/2 + 50);
         } 
 
     var replayGame = setTimeout(function(){
@@ -280,7 +266,6 @@ Game.prototype.start = function(canvas) {
     canvas.ctx.fillStyle = '#FFF';
     canvas.ctx.font = "bold 80pt Sans-Serif";
     canvas.ctx.textAlign = "center";
-    //you need to clear the canvas for this instance of the Game object -- game -- not the Game object. 
     canvas.ctx.save();
     canvas.ctx.shadowColor = 'black';
     canvas.ctx.shadowBlur = 4;
@@ -322,10 +307,8 @@ Game.prototype.start = function(canvas) {
     });
 }
 
-//make this a div - draw operations are expensive
 Game.prototype.score = function() {
 
-    //offset scoreboard according to game width height
     this.canvas.ctx.save();
     this.canvas.ctx.shadowColor = '#00F';
     this.canvas.ctx.shadowBlur = 2;
@@ -363,7 +346,7 @@ Game.prototype.mouseClick = function(){
     var xClick = evt.pageX - self.canvas.offsetX;
     var yClick = evt.pageY - self.canvas.offsetY;
 
-    //player is the first object in the game Objects array
+    //Note: player is the first object in the gameObjects array
     return self.gameObjects[0].mouseClick = [xClick, yClick];
     });
 }
@@ -374,9 +357,8 @@ Game.prototype.init = function(){
     
     this.bg = background;
     
-    // ####### Invisable canvases ############
+    // ####### Invisable canvas ############
     this.canvas = new Canvas('buffer', true); 
-    //this.bg.canvas = new Canvas('bg', true);
     //########################################
     
     //######## Visible canvas ############## 

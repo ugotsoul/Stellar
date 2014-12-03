@@ -8,7 +8,7 @@ function Enemy(x, y, r, id) {
 
     //death and win state criteria 
     this.minMass = 10;
-    this.maxMass = 100;
+    this.maxMass = 75;
 
     this.maxV =  100; //this.velocity();
     this.strength = this.r/10;
@@ -53,7 +53,7 @@ Enemy.prototype.interact = function(dt) {
 
 Enemy.prototype.radar = function() {
 
-    //check for neighbors within 5 times the radius
+    //check for neighbors within 5 times the radius of the current enemy object
 
     for (var i = 0; i < game.gameObjects.length; i++) {
         
@@ -63,7 +63,6 @@ Enemy.prototype.radar = function() {
         
         if (element.id != self.id) {
 
-            //raw distance from other object
             var distance = vector.distance(self, element);
 
             var neighboorLength = vector.magnitude(distance);
@@ -96,37 +95,35 @@ Enemy.prototype.radar = function() {
 
 Enemy.prototype.attack = function (element) {
 
-        //get the current this object to manipulate the instance
         var self = this;
 
-        if (self.r <= self.minMass) {
+        if (self.r <= self.minMass){
             element.r += self.strength;
             self.death = true;
+            if (element instanceof Player){
+                element.kills++;
+            }
+            
             return;
         }
 
-        else if (self.r < self.minMass && element instanceof Player)  {
-                element.r += self.strength;
-                self.death = true;
-                element.kills++
-                return;
-            }
+        if (self.r >= self.maxMass){
+            return;
+        }
 
-        if (self.r > element.r && self.r < self.maxMass) {
+        if (self.r > element.r) {
                 self.r += self.strength;
                 element.r -= self.strength;
         }
 
-        //eat enemies smaller than yourself
         else if (self.r < element.r) {
             self.r -= element.strength;
             element.r += element.strength;
         }
 
         //fight! randomly choose between two objects of the same size
-        else if (self.r == element.r && self.r < self.maxMass) {
+        else if (self.r == element.r) {
             
-            //randomly choose which one will be eaten
             var killArr = new Array();
             
             killArr.push(self.r);
@@ -134,7 +131,6 @@ Enemy.prototype.attack = function (element) {
 
             var i = Math.floor(Math.random()*killArr.length);
 
-            //hurt one of the game objects
             if (i == 0) {
                 self.r -= self.strength;
                 killArr[1] += self.strength;
