@@ -29,8 +29,6 @@ Tested on the latest version of Google Chrome 64 Bit: Firefox users, beware.
 - Arcade Style Scoreboard  
 - Custom Graphics & Loadscreens
 - More Physics! Rotation, Planets, Different Enemy Objects
-- More Math! - Transformation Matricies
-
 
 
 
