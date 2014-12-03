@@ -116,8 +116,9 @@ Canvas.prototype.prepare = function(create){
         this.canvas = document.createElement('canvas');
         this.canvas.width = this.w;
         this.canvas.height = this.h;
-
-        return document.body.appendChild(this.canvas), this.canvas;
+        this.canvas.style = "display: hidden";
+        this.canvas.setAttribute("id", "buffer");
+        return document.body.appendChild(this.canvas);
     }
 
     else {
