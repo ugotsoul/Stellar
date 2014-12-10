@@ -30,8 +30,9 @@ Background.prototype.makeStars = function(numOfStars) {
         x: getRandomInteger(this.x, this.w),
         y: getRandomInteger(this.y, this.h),
         r: getRandomInteger(0, 2),
-        drawX: 50,
-        drawY: 50
+        drawX: 0,
+        drawY: 0,
+        offscreen: false
         });
     }
     return stars;
@@ -54,12 +55,12 @@ Background.prototype.update = function(layer, speed, dt) {
             layer[i].drawY += targetY/speed;
 
             //never have stars draw off canvas
-            if (layer[i].drawX - this.viewX < this.x) {
-                layer[i].drawX = targetX;
+            if (layer[i].drawX < this.x) {
+                layer[i].drawX = this.viewX;
             }
 
-            if (layer[i].drawY - this.viewY < this.y) {
-                layer[i].drawY = targetY;
+            if (layer[i].drawY < this.y) {
+                layer[i].drawY = this.viewY;
             }
   
             if (layer[i].drawX - this.viewX > this.w) {

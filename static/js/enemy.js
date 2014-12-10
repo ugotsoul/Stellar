@@ -97,33 +97,37 @@ Enemy.prototype.attack = function (element) {
 
         var self = this;
 
-        if (self.r <= self.minMass){
-            element.r += self.strength;
-            self.death = true;
-            if (element instanceof Player){
-                element.kills++;
-            }
-            
-            return;
-        }
-
-        if (self.r >= self.maxMass){
-            return;
-        }
-
         if (self.r > element.r) {
+            
+            if (self.r < self.maxMass){
                 self.r += self.strength;
                 element.r -= self.strength;
+
+            }
         }
 
         else if (self.r < element.r) {
-            self.r -= element.strength;
-            element.r += element.strength;
+            
+            if (self.r <= self.minMass){
+                element.r += self.strength;
+                self.death = true;
+                
+                if (element instanceof Player){
+                    element.kills++;
+                }
+            }
+
+            else {
+                self.r -= element.strength;
+                element.r += element.strength;
+            }
         }
 
         //fight! randomly choose between two objects of the same size
         else if (self.r == element.r) {
             
+            console.log('equal-to test');
+
             var killArr = new Array();
             
             killArr.push(self.r);
