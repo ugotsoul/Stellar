@@ -29,10 +29,10 @@ Background.prototype.makeStars = function(numOfStars) {
 
         x: getRandomInteger(this.x, this.w),
         y: getRandomInteger(this.y, this.h),
-        r: getRandomInteger(0, 2),
+        r: 7, //getRandomInteger(0, 7),
         drawX: 0,
         drawY: 0,
-        offscreen: false
+        on: true
         });
     }
     return stars;
@@ -51,25 +51,42 @@ Background.prototype.update = function(layer, speed, dt) {
 
         if (speed > 0){
 
-            layer[i].drawX += targetX/speed;
-            layer[i].drawY += targetY/speed;
+            layer[i].drawX -= this.viewX/speed;
+            layer[i].drawY -= this.viewY/speed;
+            layer[i].on = true;
 
-            //never have stars draw off canvas
-            if (layer[i].drawX < this.x) {
-                layer[i].drawX = this.viewX;
+            if (layer[i].drawY < this.viewY + layer[i].r){
+                console.log('out of bounds');
+                layer[i].on = false;
             }
 
-            if (layer[i].drawY < this.y) {
-                layer[i].drawY = this.viewY;
+            if (layer[i].drawX < this.viewX + layer[i].r){
+                console.log('out of bounds');
+                layer[i].on = false;
             }
+
+        //     //never have stars draw off canvas
+        //     if (layer[i].drawX <  targetX) {
+        //         layer[i].drawX = targetX;
+        //     }
+
+        //     if (layer[i].drawY < this.viewY) {
+        //         layer[i].drawY = targetY;
+        //         //console.log('top check');
+
+        //     }
   
-            if (layer[i].drawX - this.viewX > this.w) {
-                layer[i].drawX = this.viewX;
-            }
+        //     if (layer[i].drawX > this.w) {
+        //         layer[i].drawX = targetX;
+        //         //console.log('right check');
 
-            if (layer[i].drawY - this.viewY > this.h) {
-                layer[i].drawY = this.viewY;
-            } 
+        //     }
+
+        //     if (layer[i].drawY - this.viewY > this.h) {
+        //         layer[i].drawY = this.viewY;
+        //         //console.log('bottom check');
+
+        //     } 
         }
     }
 }
@@ -80,13 +97,23 @@ Background.prototype.draw = function(canvas, fill, layer) {
     canvas.ctx.beginPath();
 
     for (var i=0; i<layer.length; i++) {
-
-        canvas.ctx.moveTo(layer[i].drawX, layer[i].drawY);
-        canvas.ctx.arc(layer[i].drawX, layer[i].drawY, layer[i].r, 0, Math.PI * 2, false);
+        if (layer[i].on === true){
+            canvas.ctx.moveTo(layer[i].drawX, layer[i].drawY);
+            canvas.ctx.arc(layer[i].drawX, layer[i].drawY, layer[i].r, 0, Math.PI * 2, false);
+            }
         }
 
     canvas.ctx.fill();
     canvas.ctx.closePath();
+
+            //center coordinates of player object
+        // ctx.fillStyle = '#000';
+        // ctx.font = "bold 8pt Sans-Serif";
+        // ctx.textAlign = 'center';
+        // ctx.fillText('Game World', drawX, drawY-10);
+        // ctx.fillText('X: ' + Math.floor(this.x) + ' Y: ' + Math.floor(this.y), drawX, drawY);
+        // ctx.fillText('Draw World', drawX, drawY+10);
+        // ctx.fillText('X: ' + Math.floor(drawX) + ' Y: ' + Math.floor(drawY), drawX, drawY+20);
 
     //make a game world bounding rectangle for reference
     canvas.ctx.strokeStyle = 'blue';
@@ -99,5 +126,5 @@ Background.prototype.render = function(canvas){
    
     this.draw(canvas, 'blue', this.bgStars);
     this.draw(canvas, 'red', this.midStars);
-    this.draw(canvas, 'violet', this.fgStars);
+    //this.draw(canvas, 'green', this.fgStars);
 }

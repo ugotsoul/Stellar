@@ -91,9 +91,9 @@ Game.prototype.draw = function() {
 Game.prototype.update = function(dt) {
 
     //check for changes in x, y coordinate plane of player view
-    this.bg.update(this.bg.bgStars, 0);
-    this.bg.update(this.bg.midStars, 2);
-    this.bg.update(this.bg.fgStars, 5);
+    this.bg.update(this.bg.bgStars, 0, dt);
+    this.bg.update(this.bg.midStars, 2, dt);
+    //this.bg.update(this.bg.fgStars, 5, dt);
 
     //update positions of game elements
     for (var d = 0; d < this.gameObjects.length; d++) {
@@ -176,7 +176,7 @@ Game.prototype.makeLevel = function(canvas){
         
         //3 levels
         var level = [
-            [1000, 800, 20, 80, "Reach 80 Tonnes in mass."],
+            [1000, 800, 1, 80, "Reach 80 Tonnes in mass."],
             [2000, 1500, 100, 200, "Reach 200 Tonnes in mass"],
             [3000, 3000, 100, 300, "Reach 300 Tonnes in mass"]
         ];
@@ -204,16 +204,16 @@ Game.prototype.makeLevel = function(canvas){
             
             this.win = level[this.level][3];
 
-            this.bg.bgStars = this.bg.makeStars(Math.floor(this.w/10));
-            this.bg.midStars = this.bg.makeStars(Math.floor(this.w/15));
-            this.bg.fgStars = this.bg.makeStars(Math.floor(this.w/20));
+            this.bg.bgStars = this.bg.makeStars(Math.floor(20));
+            this.bg.midStars = this.bg.makeStars(Math.floor(10));
+            //this.bg.fgStars = this.bg.makeStars(Math.floor(5));
   
     
             var self = this;
 
             var startGame = setTimeout(function(){            
              self.run(canvas);
-                }, 2000);
+                }, 500);
         }
 
         else {
@@ -301,7 +301,7 @@ Game.prototype.start = function(canvas) {
                 
                 var showHelp = setTimeout(function(){
                     self.makeLevel(canvas);}
-                        , 8000);
+                        , 500);
                 }
         }
     });
@@ -357,7 +357,7 @@ Game.prototype.init = function(){
     
     this.bg = background;
     
-    // ####### Invisable canvas ############
+    // ####### Invisible canvas ############
     this.canvas = new Canvas('buffer', true); 
     //########################################
     

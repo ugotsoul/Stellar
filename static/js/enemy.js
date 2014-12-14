@@ -11,7 +11,7 @@ function Enemy(x, y, r, id) {
     this.maxMass = 75;
 
     this.maxV =  100; //this.velocity();
-    this.strength = this.r/10;
+    this.strength = this.r/5;
 
     //assign random directions/speeds to each enemy
     this.vX = getRandomInteger(-20, 20);
@@ -77,6 +77,7 @@ Enemy.prototype.radar = function() {
                 if (self.r > element.r) {
                     self.vX -= self.speed *Math.cos(angle);
                     self.vY -= self.speed *Math.sin(angle);
+
                 }
 
                 else if (self.r < element.r) {
@@ -104,6 +105,10 @@ Enemy.prototype.attack = function (element) {
                 element.r -= self.strength;
 
             }
+
+            else {
+                element.r -= self.strength;
+            }
         }
 
         else if (self.r < element.r) {
@@ -125,8 +130,7 @@ Enemy.prototype.attack = function (element) {
 
         //fight! randomly choose between two objects of the same size
         else if (self.r == element.r) {
-            
-            console.log('equal-to test');
+        
 
             var killArr = new Array();
             
@@ -164,7 +168,7 @@ Enemy.prototype.draw = function(ctx) {
 
         var new_opacity = getRandomNum(.5, .6);
 
-        var g = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, drawR * .95);
+        var g = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, drawR);
         g.addColorStop(0.0, 'rgba(255,'+this.mood+','+this.mood+',' + new_opacity + ')');
         g.addColorStop(.75, 'rgba(200,'+this.mood+',0,' + (new_opacity * .7) + ')');
         g.addColorStop(1.0, 'rgba(200,'+this.mood+',0,0)');
