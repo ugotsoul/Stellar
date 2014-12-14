@@ -56,15 +56,22 @@ Background.prototype.update = function(layer, speed, dt) {
             layer[i].on = true;
 
             if (layer[i].drawY < this.viewY + layer[i].r){
-                console.log('out of bounds');
                 layer[i].on = false;
             }
 
             if (layer[i].drawX < this.viewX + layer[i].r){
-                console.log('out of bounds');
                 layer[i].on = false;
             }
 
+
+            if (layer[i].drawX > this.viewX + this.w - layer[i].r){
+                layer[i].on = false;
+            }
+
+
+            if (layer[i].drawY > this.viewY + this.h - layer[i].r){
+                layer[i].on = false;
+            }
         //     //never have stars draw off canvas
         //     if (layer[i].drawX <  targetX) {
         //         layer[i].drawX = targetX;

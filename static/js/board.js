@@ -205,7 +205,7 @@ Game.prototype.makeLevel = function(canvas){
             this.win = level[this.level][3];
 
             this.bg.bgStars = this.bg.makeStars(Math.floor(20));
-            this.bg.midStars = this.bg.makeStars(Math.floor(10));
+            this.bg.midStars = this.bg.makeStars(Math.floor(20));
             //this.bg.fgStars = this.bg.makeStars(Math.floor(5));
   
     
