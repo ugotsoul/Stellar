@@ -29,7 +29,7 @@ Background.prototype.makeStars = function(numOfStars) {
 
         x: getRandomInteger(this.x, this.w),
         y: getRandomInteger(this.y, this.h),
-        r: 7, //getRandomInteger(0, 7),
+        r: getRandomInteger(0, 3),
         drawX: 0,
         drawY: 0,
         on: true
@@ -51,8 +51,8 @@ Background.prototype.update = function(layer, speed, dt) {
 
         if (speed > 0){
 
-            layer[i].drawX -= this.viewX/speed;
-            layer[i].drawY -= this.viewY/speed;
+            layer[i].drawX += this.viewX/speed;
+            layer[i].drawY += this.viewY/speed;
             layer[i].on = true;
 
             if (layer[i].drawY < this.viewY + layer[i].r){
@@ -72,28 +72,6 @@ Background.prototype.update = function(layer, speed, dt) {
             if (layer[i].drawY > this.viewY + this.h - layer[i].r){
                 layer[i].on = false;
             }
-        //     //never have stars draw off canvas
-        //     if (layer[i].drawX <  targetX) {
-        //         layer[i].drawX = targetX;
-        //     }
-
-        //     if (layer[i].drawY < this.viewY) {
-        //         layer[i].drawY = targetY;
-        //         //console.log('top check');
-
-        //     }
-  
-        //     if (layer[i].drawX > this.w) {
-        //         layer[i].drawX = targetX;
-        //         //console.log('right check');
-
-        //     }
-
-        //     if (layer[i].drawY - this.viewY > this.h) {
-        //         layer[i].drawY = this.viewY;
-        //         //console.log('bottom check');
-
-        //     } 
         }
     }
 }
