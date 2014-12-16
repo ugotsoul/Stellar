@@ -3,7 +3,7 @@ function Enemy(x, y, r, id) {
     
     //enemy attributes
     this.id = id;
-    this.drag = .000001*this.r;
+    this.drag = .001*this.r;
     this.speed = 100/this.r;
 
     //death and win state criteria 
@@ -12,6 +12,9 @@ function Enemy(x, y, r, id) {
 
     this.maxV =  100; //this.velocity();
     this.strength = this.r/5;
+
+    //player score
+    this.points = this.r*10;
 
     //assign random directions/speeds to each enemy
     this.vX = getRandomInteger(-20, 20);
@@ -103,7 +106,6 @@ Enemy.prototype.attack = function (element) {
             if (self.r < self.maxMass){
                 self.r += self.strength;
                 element.r -= self.strength;
-
             }
 
             else {
@@ -131,7 +133,6 @@ Enemy.prototype.attack = function (element) {
         //fight! randomly choose between two objects of the same size
         else if (self.r == element.r) {
         
-
             var killArr = new Array();
             
             killArr.push(self.r);

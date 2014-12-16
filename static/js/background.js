@@ -10,6 +10,7 @@ var Background = function() {
     this.bgStars = null;
     this.midStars = null;
     this.fgStars = null;
+    this.twinkStars = null;
 }
 
 Object.defineProperty(Background.prototype, 'viewX', {get: function(){ return -Math.floor(game.viewX); }});
@@ -29,18 +30,18 @@ Background.prototype.makeStars = function(numOfStars) {
 
         x: getRandomInteger(this.x, this.w),
         y: getRandomInteger(this.y, this.h),
-        r: getRandomInteger(0, 3),
+        r: getRandomInteger(1, 3),
         drawX: 0,
         drawY: 0,
-        on: true
+        on: true,
+        waitTime: Date.now()
         });
     }
     return stars;
 }
 
-Background.prototype.update = function(layer, speed, dt) {
+Background.prototype.update = function(layer, speed) {
 
-    //move stars in player direction of movement
     for (var i=0; i < layer.length; i++){
 
         var targetX = layer[i].x + this.viewX;
@@ -49,6 +50,7 @@ Background.prototype.update = function(layer, speed, dt) {
         layer[i].drawX = targetX;
         layer[i].drawY = targetY;
 
+        //move stars in player direction of movement
         if (speed > 0){
 
             layer[i].drawX += this.viewX/speed;
@@ -74,9 +76,34 @@ Background.prototype.update = function(layer, speed, dt) {
             }
         }
     }
+
+    if (layer == this.twinkStars){
+
+            var randomStar = getRandomInteger(1,this.twinkStars.length-1);
+            var currentTime = Date.now();
+
+            for (var i = 1; i < this.twinkStars.length; i++){
+                    if (i == randomStar){
+                        if (currentTime - layer[i].waitTime  > 1000){
+                            if (layer[i].r > 0){
+                                layer[i].r -= 1;
+                                layer[i].waitTime = Date.now();
+                                currentTime = Date.now();
+                            }
+                            else {
+                                layer[i].r += 1;
+                                layer[i].waitTime = Date.now();
+
+                            }
+                        }
+                    }
+                } 
+              
+    }
 }
 
 Background.prototype.draw = function(canvas, fill, layer) {
+
 
     canvas.ctx.fillStyle = fill;
     canvas.ctx.beginPath();
@@ -91,15 +118,6 @@ Background.prototype.draw = function(canvas, fill, layer) {
     canvas.ctx.fill();
     canvas.ctx.closePath();
 
-            //center coordinates of player object
-        // ctx.fillStyle = '#000';
-        // ctx.font = "bold 8pt Sans-Serif";
-        // ctx.textAlign = 'center';
-        // ctx.fillText('Game World', drawX, drawY-10);
-        // ctx.fillText('X: ' + Math.floor(this.x) + ' Y: ' + Math.floor(this.y), drawX, drawY);
-        // ctx.fillText('Draw World', drawX, drawY+10);
-        // ctx.fillText('X: ' + Math.floor(drawX) + ' Y: ' + Math.floor(drawY), drawX, drawY+20);
-
     //make a game world bounding rectangle for reference
     canvas.ctx.strokeStyle = 'blue';
     canvas.ctx.lineWidth = 4;
@@ -109,7 +127,8 @@ Background.prototype.draw = function(canvas, fill, layer) {
 
 Background.prototype.render = function(canvas){
    
-    this.draw(canvas, 'blue', this.bgStars);
-    this.draw(canvas, 'red', this.midStars);
-    //this.draw(canvas, 'green', this.fgStars);
+    this.draw(canvas, '#91046E', this.bgStars);
+    this.draw(canvas, 'pink', this.midStars);
+    this.draw(canvas, 'blue', this.fgStars);
+    this.draw(canvas, 'aqua', this.twinkStars);
 }

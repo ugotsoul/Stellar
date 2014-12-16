@@ -5,8 +5,8 @@ function Player(x, y, r) {
 
     //player attributes
     this.id = 0;
-    this.drag = .000001;
-    this.speed = 20;
+    this.drag = .001;
+    this.speed = 50;
     this.maxV = 150;
     this.mouseClick = null;
     
@@ -62,6 +62,7 @@ Player.prototype.draw = function(ctx) {
 
     if (this.r > 0) {
 
+        ctx.save();
         ctx.beginPath();
         ctx.arc(drawX, drawY, drawR, 0, Math.PI * 2, false);
         ctx.closePath();
@@ -77,6 +78,21 @@ Player.prototype.draw = function(ctx) {
         g.addColorStop(1.0, 'rgba(255,239,0,0)');
         ctx.fillStyle = g;
         ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(drawX, drawY, drawR-3, 0, Math.PI * 2, false);
+        ctx.closePath();
+
+        //ctx.setLineDash([3,2]);
+        ctx.strokeStyle = 'green';
+        ctx.lineWidth = 3;
+        // ctx.shadowColor = '#green';
+        // ctx.shadowBlur = 10;
+        // ctx.shadowOffsetX = 0;
+        // ctx.shadowOffsetY = 0;
+        ctx.stroke();
+
+        ctx.restore();
 
         //#####################################################################
         // Test code below - Displays player coordinates in canvas & game world

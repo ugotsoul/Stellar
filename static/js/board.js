@@ -15,7 +15,8 @@ var Game = function() {
     this.gameObjects = null;
     this.win = null;
     //save state of player win/loss score
-    this.totalScore = null;
+    this.totalScore = 0;
+
 };
 
 
@@ -90,10 +91,14 @@ Game.prototype.draw = function() {
 
 Game.prototype.update = function(dt) {
 
+    //update score
+    this.totalScore = this.playerKills*100
+
     //check for changes in x, y coordinate plane of player view
-    this.bg.update(this.bg.bgStars, 0, dt);
-    this.bg.update(this.bg.midStars, 2, dt);
-    //this.bg.update(this.bg.fgStars, 5, dt);
+    this.bg.update(this.bg.bgStars, 0);
+    this.bg.update(this.bg.midStars, 3);
+    this.bg.update(this.bg.fgStars, 1.5);
+    this.bg.update(this.bg.twinkStars, 0);
 
     //update positions of game elements
     for (var d = 0; d < this.gameObjects.length; d++) {
@@ -174,47 +179,82 @@ Game.prototype.run = function(canvas) {
 
 Game.prototype.makeLevel = function(canvas){
         
-        //3 levels
-        var level = [
-            [1000, 800, 1, 80, "Reach 80 Tonnes in mass."],
-            [2000, 1500, 100, 200, "Reach 200 Tonnes in mass"],
-            [3000, 3000, 100, 300, "Reach 300 Tonnes in mass"]
-        ];
-        
+        var levels = {
 
-        if (level[this.level]){
+            0 : 
+            {   gameW:1500,
+                gameH:900,
+                gameEnemies:30,
+                levelClear: 80,
+                levelMessage: "Reach 80 Tonnes in mass."
+            },
+
+            1 :
+            {   gameW:2000,
+                gameH:1500,
+                gameEnemies: 100,
+                levelClear: 200,
+                levelMessage: "Reach 200 Tonnes in mass."
+            },
+
+            2 : 
+            {   gameW:3000,
+                gameH:3000,
+                gameEnemies: 150,
+                levelClear: 300,
+                levelMessage: "Reach 300 Tonnes in mass."
+            }
+        }; 
+
+        if (levels[this.level]){
 
             canvas.ctx.clearRect(0, 0, canvas.w, canvas.h);
             canvas.ctx.fillStyle = '#FFF';
             canvas.ctx.font = "bold 80pt Sans-Serif";
             canvas.ctx.fillText('Level '+(this.level+1), canvas.w/2, canvas.h/2);
             canvas.ctx.font = "bold 40pt Sans-Serif";
-            canvas.ctx.fillText(level[this.level][4], canvas.w/2, canvas.h/2 + 100);
+            canvas.ctx.fillText(levels[this.level]['levelMessage'], canvas.w/2, canvas.h/2 + 100);
 
-            this.w = level[this.level][0];
-            this.h = level[this.level][1];
-            this.startEnemies = level[this.level][2];
-            
-            this.gameObjects = this.getElements();
-
+            this.w = levels[this.level]['gameW'];
+            this.h = levels[this.level]['gameH'];
+            this.startEnemies = levels[this.level]['gameEnemies'];
+               
             if (this.level > 0){
-                //bonus: player gets extra mass
-                this.gameObjects[0].r += level[this.level-1][3]/10;  
-            }
-            
-            this.win = level[this.level][3];
+                //save score
+                if (localStorage.score && localStorage.kills){
+                    localStorage.score += this.totalScore;
+                    localStorage.kills += this.playerKills;
+                }
 
-            this.bg.bgStars = this.bg.makeStars(Math.floor(this.w/10));
-            this.bg.midStars = this.bg.makeStars(Math.floor(this.w/20));
-            //this.bg.fgStars = this.bg.makeStars(Math.floor(5));
+                else {
+                    localStorage.score = this.totalScore;
+                    localStorage.kills = this.playerKills;
+                }
+
+                //set score to prev level score
+                this.totalScore = localStorage.score;
+                this.gameObjects = this.getElements();
+                this.gameObjects[0].kills = localStorage.kills;
+            }
+
+            else {
+                this.gameObjects = this.getElements();
+            }
+                    
+            this.win = levels[this.level]['levelClear'];
+
+            this.bg.bgStars = this.bg.makeStars(Math.floor(game.w/50));
+            this.bg.midStars = this.bg.makeStars(Math.floor(game.w/70));
+            this.bg.fgStars = this.bg.makeStars(Math.floor(game.w/70));
+            this.bg.twinkStars = this.bg.makeStars(Math.floor(game.w/20));
   
     
             var self = this;
 
             var startGame = setTimeout(function(){            
              self.run(canvas);
-                }, 500);
-        }
+                }, 1000);
+            }
 
         else {
             //you beat the game, yay!
@@ -235,10 +275,11 @@ Game.prototype.end = function(canvas) {
         canvas.ctx.textAlign = "center";
         canvas.ctx.font = "bold 50pt Sans-Serif";
         canvas.ctx.fillText('YOU DIED!', canvas.w/2, canvas.h/2 - 50);
-        canvas.ctx.font = "bold 30pt Sans-Serif";
-        canvas.ctx.fillText('Total Enemies Killed: '+this.playerKills, canvas.w/2, canvas.h/2 + 50);
+        canvas.ctx.font = "bold 40pt Sans-Serif";
+        canvas.ctx.fillText('Total Score: '+this.totalScore, canvas.w/2, canvas.h/2 + 50);
     }
 
+    //this needs to be game win state (last level cleared)
     if (this.playerMass > this.win) {
 
         canvas.ctx.clearRect(0, 0, canvas.w, canvas.h);
@@ -246,8 +287,8 @@ Game.prototype.end = function(canvas) {
         canvas.ctx.textAlign = "center";
         canvas.ctx.font = "bold 50pt Sans-Serif";
         canvas.ctx.fillText('YOU WON!', canvas.w/2, canvas.h/2 - 50);
-        canvas.ctx.font = "bold 30pt Sans-Serif";
-        canvas.ctx.fillText('Total Enemies Killed: '+this.playerKills, canvas.w/2, canvas.h/2 + 50);
+        canvas.ctx.font = "bold 40pt Sans-Serif";
+        canvas.ctx.fillText('Total Score: '+this.totalScore, canvas.w/2, canvas.h/2 + 50);
         } 
 
     var replayGame = setTimeout(function(){
@@ -257,6 +298,9 @@ Game.prototype.end = function(canvas) {
 }
 
 Game.prototype.start = function(canvas) {
+
+    //clear localstorage
+    localStorage.clear();
 
     //drawn on main canvas, not buffer canvas (this.canvas)
     var bgImage = new Image(1800,1000);
@@ -299,11 +343,11 @@ Game.prototype.start = function(canvas) {
                 helpImg.onload = function(){canvas.ctx.drawImage(helpImg, (canvas.w/2 - 1024/2), (canvas.h/2 - 768/2), 1024, 768);}
                 helpImg.src = 'static/imgs/help.png';
                 
-                var showHelp = setTimeout(function(){
-                    self.makeLevel(canvas);}
-                        , 500);
+                $(window).click(function (evt) {
+                    $(window).off('click');
+                    self.makeLevel(canvas); });
                 }
-        }
+            }
     });
 }
 
@@ -320,7 +364,7 @@ Game.prototype.score = function() {
     this.canvas.ctx.fillText('Score Board', this.canvas.x+10, this.canvas.y+50);
     this.canvas.ctx.font = "bold 26pt Sans-Serif";
     this.canvas.ctx.fillStyle = '#0FF';
-    this.canvas.ctx.fillText('Enemies Killed: ' + this.playerKills, this.canvas.x+10, this.canvas.y+100);
+    this.canvas.ctx.fillText('Points: ' + this.totalScore, this.canvas.x+10, this.canvas.y+100);
     this.canvas.ctx.fillText('Your mass is ' + Math.floor(this.playerMass) + ' Tonnes.', this.canvas.x+10, this.canvas.y+150);
     this.canvas.ctx.fillText('Total Enemies '+(this.gameObjects.length-1)+ '.', this.canvas.x+10, this.canvas.y+200);
     this.canvas.ctx.restore();
