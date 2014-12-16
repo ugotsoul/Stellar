@@ -10,11 +10,13 @@ function Enemy(x, y, r, id) {
     this.minMass = 10;
     this.maxMass = 75;
 
-    this.maxV =  100; //this.velocity();
+    this.maxV =  75; //this.velocity();
     this.strength = this.r/5;
 
     //player score
     this.points = this.r*10;
+
+    this.poopVector = this.checkMatterLoss();
 
     //assign random directions/speeds to each enemy
     this.vX = getRandomInteger(-20, 20);
@@ -33,11 +35,7 @@ Object.defineProperty(Enemy.prototype, 'mood', {get: function(){
     }
 
     else if (this.r < Math.floor(game.playerMass*.85)){
-        return 100;
-    }
-
-    else if (this.r < game.playerMass){
-        return 50;
+        return 120;
     }
 
     else {
@@ -49,10 +47,33 @@ Object.defineProperty(Enemy.prototype, 'mood', {get: function(){
 Enemy.prototype.interact = function(dt) {
 
     this.radar();
+   
+    this.payment();
     
     return GameObject.prototype.interact.call(this, dt);
 }
 
+
+Enemy.prototype.checkMatterLoss = function(){
+
+        //record x, y for distance calculation
+        var currentPayment = Date.now();
+
+        var self = this;
+        
+        if (currentPayment - self.lastPayment > 1000){
+
+            self.lastPayment = currentPayment;
+            var distTime = vector.times(self, 50);
+            var displacement = vector.magnitude(distTime);
+            console.log('distTime:'+ distTime );
+            console.log('displacement:'+ displacement);            
+            if (displacement > self.r*2){
+                self.matterLoss = true; 
+                return distTime;
+            }
+        }
+}
 
 Enemy.prototype.radar = function() {
 

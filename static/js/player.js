@@ -84,12 +84,12 @@ Player.prototype.draw = function(ctx) {
         ctx.closePath();
 
         //ctx.setLineDash([3,2]);
-        ctx.strokeStyle = 'green';
+        ctx.strokeStyle = '#2eff69';
         ctx.lineWidth = 3;
-        // ctx.shadowColor = '#green';
-        // ctx.shadowBlur = 10;
-        // ctx.shadowOffsetX = 0;
-        // ctx.shadowOffsetY = 0;
+        ctx.shadowColor = '#2eff69';
+        ctx.shadowBlur = 10;
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
         ctx.stroke();
 
         ctx.restore();

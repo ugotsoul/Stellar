@@ -104,7 +104,6 @@ Background.prototype.update = function(layer, speed) {
 
 Background.prototype.draw = function(canvas, fill, layer) {
 
-
     canvas.ctx.fillStyle = fill;
     canvas.ctx.beginPath();
 
@@ -129,6 +128,6 @@ Background.prototype.render = function(canvas){
    
     this.draw(canvas, '#91046E', this.bgStars);
     this.draw(canvas, 'pink', this.midStars);
-    this.draw(canvas, 'blue', this.fgStars);
-    this.draw(canvas, 'aqua', this.twinkStars);
+    this.draw(canvas, 'aqua', this.fgStars);
+    this.draw(canvas, '#FFF', this.twinkStars);
 }

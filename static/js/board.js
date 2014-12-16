@@ -184,7 +184,7 @@ Game.prototype.makeLevel = function(canvas){
             0 : 
             {   gameW:1500,
                 gameH:900,
-                gameEnemies:30,
+                gameEnemies: 30,
                 levelClear: 80,
                 levelMessage: "Reach 80 Tonnes in mass."
             },
@@ -243,12 +243,11 @@ Game.prototype.makeLevel = function(canvas){
                     
             this.win = levels[this.level]['levelClear'];
 
-            this.bg.bgStars = this.bg.makeStars(Math.floor(game.w/50));
+            this.bg.bgStars = this.bg.makeStars(Math.floor(game.w/20));
             this.bg.midStars = this.bg.makeStars(Math.floor(game.w/70));
             this.bg.fgStars = this.bg.makeStars(Math.floor(game.w/70));
             this.bg.twinkStars = this.bg.makeStars(Math.floor(game.w/20));
-  
-    
+
             var self = this;
 
             var startGame = setTimeout(function(){            
@@ -308,7 +307,7 @@ Game.prototype.start = function(canvas) {
     bgImage.onload = function(){
     canvas.ctx.drawImage(bgImage, -100 ,0, 1800, 1000);
     canvas.ctx.fillStyle = '#FFF';
-    canvas.ctx.font = "bold 80pt Sans-Serif";
+    canvas.ctx.font = "bold 100pt Sans-Serif";
     canvas.ctx.textAlign = "center";
     canvas.ctx.save();
     canvas.ctx.shadowColor = 'black';
@@ -318,9 +317,9 @@ Game.prototype.start = function(canvas) {
     canvas.ctx.fillText('Stellar', canvas.w/2, canvas.h/2 - 150);
     canvas.ctx.font = "20pt Sans-Serif";
     canvas.ctx.fillText('Be a star. Consume the universe.', canvas.w/2, (canvas.h/2)-100);
-    canvas.ctx.font = "bold 22pt Sans-Serif";
+    canvas.ctx.font = "bold 30pt Sans-Serif";
     canvas.ctx.fillStyle = '#FFF';
-    canvas.ctx.fillText('Hit enter or space to start', canvas.w/2, (canvas.h/2)+100);
+    canvas.ctx.fillText('Click to Start', canvas.w/2, (canvas.h/2)+100);
     canvas.ctx.restore();
     }
     
@@ -331,10 +330,9 @@ Game.prototype.start = function(canvas) {
 
     var self = this;
     
-    $(window).keydown(function(evt) {
-
-        if (evt.keyCode == 13 || evt.keyCode == 32) {
-            $(window).off('keydown');
+    $(window).click(function (evt) {
+        
+        $(window).off('click');
             
             if (self.level == 0) { 
                 
@@ -347,7 +345,7 @@ Game.prototype.start = function(canvas) {
                     $(window).off('click');
                     self.makeLevel(canvas); });
                 }
-            }
+        
     });
 }
 

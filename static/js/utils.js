@@ -36,6 +36,9 @@ Vector.prototype.distance = function(a, b){
     return [Math.floor(a.x - b.x), Math.floor(a.y - b.y)];
 };
 
+Vector.prototype.times = function(a, factor){
+    return [Math.floor(a.vX * factor), Math.floor(a.vY * factor)];
+}
 //length of vector
 Vector.prototype.magnitude = function(distance){
 

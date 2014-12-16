@@ -149,8 +149,9 @@ GameObject.prototype.interact = function (dt) {
 
 
 //##############################################
-// Payment System - Object Pooling & Creation
+// Matter Payment System 
 //##############################################
+
 
 
 GameObject.prototype.poop = function() {
@@ -158,13 +159,28 @@ GameObject.prototype.poop = function() {
     //the scalar below is trival distance away from player, so the player does not consume the matter lost.
     var tail = Math.floor(this.r * 1.5);
 
+    if (this instanceof Player){
 
-    var angle = vector.angle(this.mouseClick);
+        var angle = vector.angle(this.mouseClick);        
+        //length of food - poop tail from game object
+        var foodArr = [this.x - tail*Math.cos(angle), this.y - tail*Math.sin(angle)];
+        return foodArr;
 
-    //length of food - poop tail from game object
-    var foodArr = [this.x - tail*Math.cos(angle), this.y - tail*Math.sin(angle)];
+    }
+  
+    // if (this instanceof Enemy) {
+
+    //     var self = this;
+        
+    //     // if (distTime){
+
+    //     //         var angleEnemy = vector.angle(distTime);
+    //     //         var foodArrEnemy = [this.x - tail*Math.cos(distTime), this.y - tail*Math.sin(distTime)];
+    //     //         console.log('Enemy trying to poop');
+    //     //         return foodArrEnemy;
+    //     // }
     
-    return foodArr;
+    // }
 }
 
 
@@ -177,35 +193,35 @@ GameObject.prototype.payment = function() {
     
     var currentPayment = Date.now();
 
-    var maxEnemies = 150;
-
     if (self.matterLoss && (currentPayment - self.lastPayment > 500)){
 
         var foodVector = self.poop();
         
-        var foodX = foodVector[0];
-        var foodY = foodVector[1];
+        if (foodVector){
+            var foodX = foodVector[0];
+            var foodY = foodVector[1];
 
-        var foodR = Math.floor(self.r/5);
+            var foodR = Math.floor(self.r/5);
 
-        //console.log(foodID);
-        var tempFood = new Enemy(foodX, foodY, foodR, foodID);
+            //console.log(foodID);
+            var tempFood = new Enemy(foodX, foodY, foodR, foodID);
 
-        tempFood.vX = (self.vX*-1);
-        tempFood.vY = (self.vY*-1);
+            tempFood.vX = (self.vX*-1);
+            tempFood.vY = (self.vY*-1);
 
-        //add the food to the array of game objects
-        game.gameObjects.push(tempFood);
+            //add the food to the array of game objects
+            game.gameObjects.push(tempFood);
 
-        self.r -= foodR/2;
-        self.matterLoss = false;
-
-        if (self instanceof Player){
-            self.mouseClick = null;
+            self.r -= foodR/2;
+            self.matterLoss = false;
+            
             self.lastPayment = Date.now();
+            
+            if (self instanceof Player){
+                self.mouseClick = null;
+            }
+            
+            foodID++;
         }
-        
-        foodID++;
     }
-
 }
