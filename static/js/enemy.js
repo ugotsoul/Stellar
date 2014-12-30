@@ -1,9 +1,9 @@
 function Enemy(x, y, r, id) {
-    GameObject.apply(this, arguments); 
+    GameObject.apply(this, arguments);
     
     //enemy attributes
     this.id = id;
-    this.drag = .001*this.r;
+    this.drag = 0.001*this.r;
     this.speed = 100/this.r;
 
     //death and win state criteria 
@@ -15,8 +15,6 @@ function Enemy(x, y, r, id) {
 
     //player score
     this.points = this.r*10;
-
-    this.poopVector = this.checkMatterLoss();
 
     //assign random directions/speeds to each enemy
     this.vX = getRandomInteger(-20, 20);
@@ -30,28 +28,36 @@ Object.defineProperty(Enemy.prototype, 'mood', {get: function(){
 
     //find the difference between enemy and player radii
 
-    if (this.r < Math.floor(game.playerMass*.50)){
+    if (this.r < Math.floor(game.playerMass*0.50)){
         return 200;
     }
 
-    else if (this.r < Math.floor(game.playerMass*.85)){
+    else if (this.r < Math.floor(game.playerMass*0.85)){
         return 120;
     }
 
     else {
         return 0;
     }
-}}); 
+}});
 
 
 Enemy.prototype.interact = function(dt) {
 
     this.radar();
    
-    this.payment();
+    var self = this;
+
+    self.checkMatterLoss();
+
+    self.unhide();
+
+    if (self.matterLoss === true){
+        self.payment();
+    }
     
     return GameObject.prototype.interact.call(this, dt);
-}
+};
 
 
 Enemy.prototype.checkMatterLoss = function(){
@@ -63,17 +69,17 @@ Enemy.prototype.checkMatterLoss = function(){
         
         if (currentPayment - self.lastPayment > 1000){
 
-            self.lastPayment = currentPayment;
-            var distTime = vector.times(self, 50);
-            var displacement = vector.magnitude(distTime);
-            console.log('distTime:'+ distTime );
-            console.log('displacement:'+ displacement);            
-            if (displacement > self.r*2){
-                self.matterLoss = true; 
-                return distTime;
+            //check vX or vY is greater than 20:
+
+            var speed = vector.magnitude([self.vX, self.vY]);
+
+            //console.log('Enemy speed' + speed);
+
+            if (speed > 20){
+                self.matterLoss = true;
             }
         }
-}
+};
 
 Enemy.prototype.radar = function() {
 
@@ -85,13 +91,13 @@ Enemy.prototype.radar = function() {
             
         var self = this;
         
-        if (element.id != self.id) {
+        if ((element.id != self.id) && (element.hide === false)) {
 
             var distance = vector.distance(self, element);
 
             var neighboorLength = vector.magnitude(distance);
 
-            var radarLength = Math.floor(self.r*5);
+            var radarLength = Math.floor(self.r*6);
 
             var angle = vector.angle(distance);
 
@@ -116,7 +122,19 @@ Enemy.prototype.radar = function() {
             }
         }
     }
-}
+};
+
+Enemy.prototype.unhide = function(){
+
+    var self = this;
+
+    if (self.hide){
+
+        var visable = setInterval(function(){
+            self.hide = false;
+        }, 5000);
+    }
+};
 
 Enemy.prototype.attack = function (element) {
 
@@ -154,14 +172,14 @@ Enemy.prototype.attack = function (element) {
         //fight! randomly choose between two objects of the same size
         else if (self.r == element.r) {
         
-            var killArr = new Array();
+            var killArr = [];
             
             killArr.push(self.r);
             killArr.push(element.r);
 
             var i = Math.floor(Math.random()*killArr.length);
 
-            if (i == 0) {
+            if (i === 0) {
                 self.r -= self.strength;
                 killArr[1] += self.strength;
             }
@@ -170,7 +188,7 @@ Enemy.prototype.attack = function (element) {
                 killArr[0] -= self.strength;
             }
         }
-    }
+};
 
 Enemy.prototype.draw = function(ctx) {
 
@@ -188,14 +206,14 @@ Enemy.prototype.draw = function(ctx) {
         //Twinkle Effect
         //##################################
 
-        var new_opacity = getRandomNum(.5, .6);
+        var new_opacity = getRandomNum(0.5, 0.6);
 
         var g = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, drawR);
         g.addColorStop(0.0, 'rgba(255,'+this.mood+','+this.mood+',' + new_opacity + ')');
-        g.addColorStop(.75, 'rgba(200,'+this.mood+',0,' + (new_opacity * .7) + ')');
+        g.addColorStop(0.75, 'rgba(200,'+this.mood+',0,' + (new_opacity * 0.7) + ')');
         g.addColorStop(1.0, 'rgba(200,'+this.mood+',0,0)');
         ctx.fillStyle = g;
         ctx.fill();
     }
-}
+};
 

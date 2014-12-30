@@ -5,6 +5,7 @@
 
 
 //Put inside Game.prototype.run
+    
     //get arrow key types
     this.keyPress(player);
 
@@ -73,7 +74,7 @@ Game.prototype.keyPress = function(player) {
 
 
 //#####################################################################
-// Code Below for Keypress handler
+//Player Keypress handler
 //#####################################################################
 
 

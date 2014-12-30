@@ -14,7 +14,7 @@ var Game = function() {
     this.startEnemies = null;
     this.gameObjects = null;
     this.win = null;
-    //save state of player win/loss score
+    //save score with local storage
     this.totalScore = 0;
 
 };
@@ -46,7 +46,7 @@ Game.prototype.getElements = function() {
         // note: bounds are restricted to account for max radius
         var enemyX = getRandomInteger(50, this.w-50);
         var enemyY = getRandomInteger(50, this.h-50);
-        var enemyR = getRandomInteger(10, 15);
+        var enemyR = getRandomInteger(10, 20);
 
         var tempEnemy = new Enemy(enemyX, enemyY, enemyR, enemyID);
 
@@ -55,23 +55,23 @@ Game.prototype.getElements = function() {
 
         if (!collision) {
 
-            enemiesAdded++
+            enemiesAdded++;
             
             //add enemy to the array
             gameElements.push(tempEnemy);
             
             //incriment unique id
-            enemyID++
+            enemyID++;
             }
-        n++
+        n++;
         }
 
     return gameElements;
-}
+};
 
 Game.prototype.draw = function() {
        
-    if (this.playerDeath == true) {
+    if (this.playerDeath === true) {
         return;
     }
 
@@ -92,7 +92,7 @@ Game.prototype.draw = function() {
 Game.prototype.update = function(dt) {
 
     //update score
-    this.totalScore = this.playerKills*100
+    this.totalScore = this.playerKills*100;
 
     //check for changes in x, y coordinate plane of player view
     this.bg.update(this.bg.bgStars, 0);
@@ -103,7 +103,7 @@ Game.prototype.update = function(dt) {
     //update positions of game elements
     for (var d = 0; d < this.gameObjects.length; d++) {
         //check if element is dead or not
-        if (this.gameObjects[d].death == true) {
+        if (this.gameObjects[d].death === true) {
             
             //if dead, remove enemy from array
             this.gameObjects.splice(d, 1);
@@ -113,17 +113,17 @@ Game.prototype.update = function(dt) {
             this.gameObjects[d].update(dt);
             }
     }
-}
+};
 
 //calls the buffer canvas when ready
 Game.prototype.render = function(canvas) {
 
-    var buffer = this.canvas.canvas
+    var buffer = this.canvas.canvas;
 
     canvas.ctx.clearRect(0, 0, canvas.w, canvas.h);
 
     return canvas.ctx.drawImage(buffer, 0, 0);
-}
+};
 
 Game.prototype.run = function(canvas) {
 
@@ -145,19 +145,17 @@ Game.prototype.run = function(canvas) {
 
     this.intervalHandle = setInterval( function() {
             
-            if (self.playerDeath == true) {
+            if (self.playerDeath === true) {
                 clearInterval(self.intervalHandle);
                 self.end(canvas);
-            } 
+            }
 
             else if (self.playerMass >= self.win) {
                 
                 clearInterval(self.intervalHandle);
                 
-                self.level +=1;
+                self.level++;
                 
-                //below is a cheap method to show the player score - store this in the session cookie or db session
-                //save the score of the player, or save the player attributes
                 canvas.ctx.clearRect(0, 0, canvas.w, canvas.h);
                 canvas.ctx.fillStyle = '#FFF';
                 canvas.ctx.font = "bold 50pt Sans-Serif";
@@ -168,23 +166,23 @@ Game.prototype.run = function(canvas) {
             else {
                 
                 self.update(1 / FPS);
-                self.draw();               
+                self.draw();
                 self.render(canvas);
                 return;
             }
         },
     1000 / FPS);
-}
+};
 
 
 Game.prototype.makeLevel = function(canvas){
         
         var levels = {
 
-            0 : 
+            0 :
             {   gameW:1500,
                 gameH:900,
-                gameEnemies: 30,
+                gameEnemies: 10,
                 levelClear: 80,
                 levelMessage: "Reach 80 Tonnes in mass."
             },
@@ -197,14 +195,14 @@ Game.prototype.makeLevel = function(canvas){
                 levelMessage: "Reach 200 Tonnes in mass."
             },
 
-            2 : 
+            2 :
             {   gameW:3000,
                 gameH:3000,
                 gameEnemies: 150,
                 levelClear: 300,
                 levelMessage: "Reach 300 Tonnes in mass."
             }
-        }; 
+        };
 
         if (levels[this.level]){
 
@@ -250,7 +248,7 @@ Game.prototype.makeLevel = function(canvas){
 
             var self = this;
 
-            var startGame = setTimeout(function(){            
+            var startGame = setTimeout(function(){
              self.run(canvas);
                 }, 1000);
             }
@@ -260,14 +258,14 @@ Game.prototype.makeLevel = function(canvas){
             this.end(canvas);
         }
 
-}
+};
 
 
 Game.prototype.end = function(canvas) {
 
     var self = this;
 
-    if (this.playerDeath == true) {
+    if (this.playerDeath === true) {
 
         canvas.ctx.clearRect(0, 0, canvas.w, canvas.h);
         canvas.ctx.fillStyle = '#FFF';
@@ -288,13 +286,13 @@ Game.prototype.end = function(canvas) {
         canvas.ctx.fillText('YOU WON!', canvas.w/2, canvas.h/2 - 50);
         canvas.ctx.font = "bold 40pt Sans-Serif";
         canvas.ctx.fillText('Total Score: '+this.totalScore, canvas.w/2, canvas.h/2 + 50);
-        } 
+        }
 
     var replayGame = setTimeout(function(){
         //refresh the page to reload the game
         document.location.href = "";
     }, 5000);
-}
+};
 
 Game.prototype.start = function(canvas) {
 
@@ -321,7 +319,7 @@ Game.prototype.start = function(canvas) {
     canvas.ctx.fillStyle = '#FFF';
     canvas.ctx.fillText('Click to Start', canvas.w/2, (canvas.h/2)+100);
     canvas.ctx.restore();
-    }
+    };
     
     bgImage.src = 'static/imgs/bg.png';
     
@@ -334,11 +332,11 @@ Game.prototype.start = function(canvas) {
         
         $(window).off('click');
             
-            if (self.level == 0) { 
+            if (self.level === 0) {
                 
                 canvas.ctx.clearRect(0, 0, canvas.w, canvas.h);
                 var helpImg = new Image(1024,768);
-                helpImg.onload = function(){canvas.ctx.drawImage(helpImg, (canvas.w/2 - 1024/2), (canvas.h/2 - 768/2), 1024, 768);}
+                helpImg.onload = function(){canvas.ctx.drawImage(helpImg, (canvas.w/2 - 1024/2), (canvas.h/2 - 768/2), 1024, 768);};
                 helpImg.src = 'static/imgs/help.png';
                 
                 $(window).click(function (evt) {
@@ -347,7 +345,7 @@ Game.prototype.start = function(canvas) {
                 }
         
     });
-}
+};
 
 Game.prototype.score = function() {
 
@@ -366,7 +364,7 @@ Game.prototype.score = function() {
     this.canvas.ctx.fillText('Your mass is ' + Math.floor(this.playerMass) + ' Tonnes.', this.canvas.x+10, this.canvas.y+150);
     this.canvas.ctx.fillText('Total Enemies '+(this.gameObjects.length-1)+ '.', this.canvas.x+10, this.canvas.y+200);
     this.canvas.ctx.restore();
-}
+};
 
 
 //get offset values by calculating the player's current distance from translated origin
@@ -391,7 +389,7 @@ Game.prototype.mouseClick = function(){
     //Note: player is the first object in the gameObjects array
     return self.gameObjects[0].mouseClick = [xClick, yClick];
     });
-}
+};
 
 Game.prototype.init = function(){
 
@@ -400,7 +398,7 @@ Game.prototype.init = function(){
     this.bg = background;
     
     // ####### Invisible canvas ############
-    this.canvas = new Canvas('buffer', true); 
+    this.canvas = new Canvas('buffer', true);
     //########################################
     
     //######## Visible canvas ############## 

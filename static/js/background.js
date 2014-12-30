@@ -11,7 +11,7 @@ var Background = function() {
     this.midStars = null;
     this.fgStars = null;
     this.twinkStars = null;
-}
+};
 
 Object.defineProperty(Background.prototype, 'viewX', {get: function(){ return -Math.floor(game.viewX); }});
 Object.defineProperty(Background.prototype, 'viewY', {get: function(){ return -Math.floor(game.viewY); }});
@@ -38,7 +38,7 @@ Background.prototype.makeStars = function(numOfStars) {
         });
     }
     return stars;
-}
+};
 
 Background.prototype.update = function(layer, speed) {
 
@@ -82,25 +82,25 @@ Background.prototype.update = function(layer, speed) {
             var randomStar = getRandomInteger(1,this.twinkStars.length-1);
             var currentTime = Date.now();
 
-            for (var i = 1; i < this.twinkStars.length; i++){
-                    if (i == randomStar){
-                        if (currentTime - layer[i].waitTime  > 1000){
-                            if (layer[i].r > 0){
-                                layer[i].r -= 1;
-                                layer[i].waitTime = Date.now();
+            for (var n = 1; n < this.twinkStars.length; n++){
+                    if (n == randomStar){
+                        if (currentTime - layer[n].waitTime  > 1000){
+                            if (layer[n].r > 0){
+                                layer[n].r -= 1;
+                                layer[n].waitTime = Date.now();
                                 currentTime = Date.now();
                             }
                             else {
-                                layer[i].r += 1;
-                                layer[i].waitTime = Date.now();
+                                layer[n].r += 1;
+                                layer[n].waitTime = Date.now();
 
                             }
                         }
                     }
-                } 
+                }
               
     }
-}
+};
 
 Background.prototype.draw = function(canvas, fill, layer) {
 
@@ -122,12 +122,12 @@ Background.prototype.draw = function(canvas, fill, layer) {
     canvas.ctx.lineWidth = 4;
     canvas.ctx.strokeRect(this.viewX, this.viewY, this.w, this.h);
 
-}
+};
 
 Background.prototype.render = function(canvas){
    
-    this.draw(canvas, '#91046E', this.bgStars);
-    this.draw(canvas, 'pink', this.midStars);
-    this.draw(canvas, 'aqua', this.fgStars);
-    this.draw(canvas, '#FFF', this.twinkStars);
-}
+    this.draw(canvas, '#570386', this.bgStars);
+    this.draw(canvas, '#FF0090', this.midStars);
+    this.draw(canvas, '#FF78FF', this.fgStars);
+    this.draw(canvas, 'aqua', this.twinkStars);
+};

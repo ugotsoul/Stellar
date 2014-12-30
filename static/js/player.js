@@ -5,7 +5,7 @@ function Player(x, y, r) {
 
     //player attributes
     this.id = 0;
-    this.drag = .001;
+    this.drag = 0.001;
     this.speed = 50;
     this.maxV = 150;
     this.mouseClick = null;
@@ -19,7 +19,7 @@ function Player(x, y, r) {
 
 Player.prototype = Object.create(GameObject.prototype);
 
-Object.defineProperty(Player.prototype, 'death', {get: function(){ 
+Object.defineProperty(Player.prototype, 'death', {get: function(){
 
     var self = this;
 
@@ -34,13 +34,13 @@ Object.defineProperty(Player.prototype, 'death', {get: function(){
 
 Player.prototype.update = function(dt) {
 
-    if (this.mouseClick != null) {
+    if (this.mouseClick !== null) {
         
         this.move(dt);
     }
 
     return GameObject.prototype.update.call(this, dt);
-}
+};
 
 
 Player.prototype.move = function (dt) {
@@ -51,7 +51,7 @@ Player.prototype.move = function (dt) {
     this.vY += Math.sin(angle) * this.speed;
 
     return this.matterLoss = true, this.payment();
-}
+};
 
 
 Player.prototype.draw = function(ctx) {
@@ -71,10 +71,10 @@ Player.prototype.draw = function(ctx) {
         //Twinkle effect - Change rgba to a fill param in player
         //######################################################
 
-        var new_opacity = getRandomNum(.7, .8);
+        var new_opacity = getRandomNum(0.7, 0.8);
         var g = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, drawR);
         g.addColorStop(0.0, 'rgba(255,255,255,' + new_opacity + ')');
-        g.addColorStop(.85, 'rgba(255,239,0,' + (new_opacity * .70) + ')');
+        g.addColorStop(0.85, 'rgba(255,239,0,' + (new_opacity * 0.70) + ')');
         g.addColorStop(1.0, 'rgba(255,239,0,0)');
         ctx.fillStyle = g;
         ctx.fill();
@@ -108,5 +108,5 @@ Player.prototype.draw = function(ctx) {
         // ctx.fillText('X: ' + Math.floor(drawX) + ' Y: ' + Math.floor(drawY), drawX, drawY+20);
     }
         
-}
+};
 

@@ -29,7 +29,7 @@ window.onscroll = function(evt) {
 // Vector Math Functions
 //########################################################################
 
-function Vector(){};
+function Vector(){}
 
 Vector.prototype.distance = function(a, b){
 
@@ -38,7 +38,7 @@ Vector.prototype.distance = function(a, b){
 
 Vector.prototype.times = function(a, factor){
     return [Math.floor(a.vX * factor), Math.floor(a.vY * factor)];
-}
+};
 //length of vector
 Vector.prototype.magnitude = function(distance){
 
@@ -47,15 +47,14 @@ Vector.prototype.magnitude = function(distance){
 
 Vector.prototype.angle = function(distance){
 
-  	return Math.atan2(distance[1], distance[0]);
+	return Math.atan2(distance[1], distance[0]);
 };
 
 //returns the unit vector
 Vector.prototype.normalize = function(v){
 
 	var length = this.magnitude(v);
-
-	return [ v[0]/length, v[1]/length ]; 
+	return [ v[0]/length, v[1]/length ];
 };
 
 Vector.prototype.rotation = function(a, b, collisionAngle){
@@ -141,7 +140,6 @@ Canvas.prototype.context = function(){
 
     return this.ctx;
 }
-
 
 // ######################################
 //  High Score Table
