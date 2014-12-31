@@ -1,4 +1,3 @@
-
 //####################################
 //Game Object Constructor Function
 //####################################
@@ -42,7 +41,7 @@ GameObject.prototype.update = function(dt) {
     //calculate angle of movement along a vector
     this.dx = (this.vX * dt);
     this.dy = (this.vY * dt);
-    
+
     //move element along vector
     this.x += this.dx;
     this.y += this.dy;
@@ -50,17 +49,13 @@ GameObject.prototype.update = function(dt) {
     //limit speed of vectors
     if (this.vX > this.maxV) {
         this.vX = this.maxV;
-    }
-
-    else if (this.vX < -this.maxV) {
+    } else if (this.vX < -this.maxV) {
         this.vX = -this.maxV;
     }
 
     if (this.vY > this.maxV) {
         this.vY = this.maxV;
-    }
-
-    else if (this.vY < -this.maxV) {
+    } else if (this.vY < -this.maxV) {
         this.vY = -this.maxV;
     }
 
@@ -73,79 +68,76 @@ GameObject.prototype.update = function(dt) {
 
 };
 
-GameObject.prototype.collisionDetect = function (element) {
-	//get the length of the distance from center of player to element
-    var distance = vector.distance(this, element);
+GameObject.prototype.collisionDetect = function(element) {
+    //get the length of the distance from center of player to element
+    var distance = window.math.vectorDistance(this, element);
 
-	return vector.magnitude(distance) <= (this.r+element.r);
+    return window.math.vectorMagnitude(distance) <= (this.r + element.r);
 };
 
 GameObject.prototype.reboundDirection = function(element, dt) {
 
-	//###############################################################################################
-	//Modified HTML5 Canvas Book code for Multiple Collisions
-	//###############################################################################################
+    //###############################################################################################
+    //Modified HTML5 Canvas Book code for Multiple Collisions
+    //###############################################################################################
 
-    //displacement vector (x,y) array
-    var displacement = vector.distance(this, element);
+    //displacement window.math.vector(x,y) array
+    var displacement = window.math.vectorDistance(this, element);
 
     //note: atan2 calculates the right handed coordinate system using (y, x) - canvas world is left handed coordinate system
-    var collisionAngle = vector.angle(displacement);
+    var collisionAngle = window.math.vectorAngle(displacement);
 
     //get the rotation matrix
-    var rotation = vector.rotation(this, element, collisionAngle);
+    var rotation = window.math.rotationMatrix(this, element, collisionAngle);
 
-    var finalV = vector.momentum(this, element, rotation);
+    var finalV = window.math.momentumMatrix(this, element, rotation);
 
-	//rotate the angles back again so the collision angle is preserved
-	this.vX = Math.cos(collisionAngle) * finalV[0][0]+ Math.cos(collisionAngle + Math.PI/2) * finalV[0][1]; 	
-    this.vY = Math.sin(collisionAngle) * finalV[0][0]+ Math.sin(collisionAngle + Math.PI/2) * finalV[0][1];
-	
-	element.vX = Math.cos(collisionAngle) * finalV[1][0] + Math.cos(collisionAngle + Math.PI/2) * finalV[1][1];
-	element.vY = Math.sin(collisionAngle) * finalV[1][0] + Math.sin(collisionAngle + Math.PI/2) * finalV[1][1];
+    //rotate the angles back again so the collision angle is preserved
+    this.vX = Math.cos(collisionAngle) * finalV[0][0] + Math.cos(collisionAngle + Math.PI / 2) * finalV[0][1];
+    this.vY = Math.sin(collisionAngle) * finalV[0][0] + Math.sin(collisionAngle + Math.PI / 2) * finalV[0][1];
 
-	//update objects position @ x,y
-	this.x = (this.x += this.vX * dt);
-	this.y = (this.y += this.vY * dt);
-	element.x = (element.x += element.vX * dt);
-	element.y = (element.y += element.vY * dt);
+    element.vX = Math.cos(collisionAngle) * finalV[1][0] + Math.cos(collisionAngle + Math.PI / 2) * finalV[1][1];
+    element.vY = Math.sin(collisionAngle) * finalV[1][0] + Math.sin(collisionAngle + Math.PI / 2) * finalV[1][1];
+
+    //update objects position @ x,y
+    this.x = (this.x += this.vX * dt);
+    this.y = (this.y += this.vY * dt);
+    element.x = (element.x += element.vX * dt);
+    element.y = (element.y += element.vY * dt);
 
 };
 
-GameObject.prototype.interact = function (dt) {
+GameObject.prototype.interact = function(dt) {
 
-	if ((this.x+this.r) >= game.w) {
-		this.vX = -this.vX;
-		this.x = game.w - this.r;
-	} 
-	else if ((this.x-this.r) <= game.x) {
-		this.vX = -this.vX;
-		this.x = this.r; 
-	} 
-	else if ((this.y-this.r) <= game.y) {
-		this.vY = -this.vY;	
-		this.y = this.r; 
-	}
-	else if (this.y+this.r >= game.h) {
-		this.vY = -this.vY;
-		this.y = game.h - this.r;
-	}
+    if ((this.x + this.r) >= game.w) {
+        this.vX = -this.vX;
+        this.x = game.w - this.r;
+    } else if ((this.x - this.r) <= game.x) {
+        this.vX = -this.vX;
+        this.x = this.r;
+    } else if ((this.y - this.r) <= game.y) {
+        this.vY = -this.vY;
+        this.y = this.r;
+    } else if (this.y + this.r >= game.h) {
+        this.vY = -this.vY;
+        this.y = game.h - this.r;
+    }
 
-	for (var i = 0; i < game.gameObjects.length; i++) {
-		var element = game.gameObjects[i];
-		
+    for (var i = 0; i < game.gameObjects.length; i++) {
+        var element = game.gameObjects[i];
+
         if (element.id != this.id) {
-	    	
+
             if (this.collisionDetect(element)) {
-            
-	    		this.reboundDirection(element, dt);
+
+                this.reboundDirection(element, dt);
 
                 //Note: enemy handles all attack behavior
                 if (element instanceof Enemy) {
                     element.attack(this);
                 }
-    		}
-	    }
+            }
+        }
     }
 };
 
@@ -156,83 +148,73 @@ GameObject.prototype.interact = function (dt) {
 
 GameObject.prototype.poop = function() {
 
-    //the scalar below is trival distance away from player, so the player does not consume the matter lost.
-    var tail;
+    //the scalar below is trival distance away from player, so the player does not immediately consume the matter lost.
+    var tail = Math.floor(this.r * 1.5);
 
-    if (this instanceof Player){
+    if (this instanceof Player) {
 
-        tail = Math.floor(this.r * 1.5);
-        var angle = vector.angle(this.mouseClick);
-        //length of food - poop tail from game object
-        var foodArr = [this.x - tail*Math.cos(angle), this.y - tail*Math.sin(angle)];
+        var angle = window.math.vectorAngle(this.mouseClick);
+        var foodArr = [this.x - tail * Math.cos(angle), this.y - tail * Math.sin(angle)];
         return foodArr;
 
     }
-  
+
     if (this instanceof Enemy) {
 
-        tail = Math.floor(this.r * 2);
-        var angleEnemy = vector.angle([this.x+this.vX*60, this.y+this.vY*60]);
-        console.log('Enemy Angle: '+ angleEnemy);
-        var foodArrEnemy = [this.x - tail*Math.cos(angleEnemy), this.y - tail*Math.sin(angleEnemy)];
+        var angleEnemy = window.math.vectorAngle([this.x + this.vX * 60, this.y + this.vY * 60]);
+        var foodArrEnemy = [this.x - tail * Math.cos(angleEnemy), this.y - tail * Math.sin(angleEnemy)];
         return foodArrEnemy;
     }
 };
 
 
-//this is a unique id to identify objects during collision response // attack, equivillent to the id assigned in the gameObjects array.
-var foodID = 100;
-
 GameObject.prototype.payment = function() {
 
     var self = this;
-    
+
     var currentPayment = Date.now();
 
-    if (self.matterLoss && (currentPayment - self.lastPayment > 500) && self.r > 10){
+    if (self.matterLoss && (currentPayment - self.lastPayment > 500) && self.r > 10) {
 
         var foodVector = self.poop();
         var deathState = 10;
-        
-        if (foodVector){
+
+        if (foodVector) {
 
             var foodX = foodVector[0];
             var foodY = foodVector[1];
 
             //restrict size of poop to greater than radius = 5
-            var foodR = Math.floor(self.r/5);
+            var foodR = Math.floor(self.r / 5);
 
-            if (foodR < 10){
+            if (foodR < 10) {
                 foodR = 5;
             }
 
-            var tempFood = new Enemy(foodX, foodY, foodR, foodID);
+            var tempFood = new Enemy(foodX, foodY, foodR, localStorage.foodID);
 
             tempFood.hide = true;
 
-            tempFood.vX = (self.vX*-1);
-            tempFood.vY = (self.vY*-1);
+            tempFood.vX = (self.vX * -1);
+            tempFood.vY = (self.vY * -1);
 
             //add the food to the array of game objects
             game.gameObjects.push(tempFood);
 
-            self.r -= foodR/2;
 
             if (self.r < self.minMass) {
                 self.death = true;
-            }
+            } else {
 
-            else {
+                self.r -= foodR / 2;
                 self.matterLoss = false;
-                
                 self.lastPayment = Date.now();
-                
-                if (self instanceof Player){
+
+                if (self instanceof Player) {
                     self.mouseClick = null;
                 }
             }
-
-            foodID++;
+            localStorage.foodID++;
         }
     }
 };

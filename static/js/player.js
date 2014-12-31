@@ -9,7 +9,7 @@ function Player(x, y, r) {
     this.speed = 50;
     this.maxV = 150;
     this.mouseClick = null;
-    
+
     //death and win state criteria 
     this.minMass = 20;
     this.maxMass = 150;
@@ -19,23 +19,23 @@ function Player(x, y, r) {
 
 Player.prototype = Object.create(GameObject.prototype);
 
-Object.defineProperty(Player.prototype, 'death', {get: function(){
+Object.defineProperty(Player.prototype, 'death', {
+    get: function() {
 
-    var self = this;
+        var self = this;
 
-    if (self.r < self.minMass) {
-        return self.death = true;
+        if (self.r < self.minMass) {
+            return self.death = true;
+        } else {
+            return self.death = false;
+        }
     }
-
-    else {
-        return self.death = false;
-    }
-}});
+});
 
 Player.prototype.update = function(dt) {
 
     if (this.mouseClick !== null) {
-        
+
         this.move(dt);
     }
 
@@ -43,9 +43,9 @@ Player.prototype.update = function(dt) {
 };
 
 
-Player.prototype.move = function (dt) {
+Player.prototype.move = function(dt) {
 
-    var angle = vector.angle(this.mouseClick);
+    var angle = window.math.vectorAngle(this.mouseClick);
 
     this.vX += Math.cos(angle) * this.speed;
     this.vY += Math.sin(angle) * this.speed;
@@ -55,24 +55,23 @@ Player.prototype.move = function (dt) {
 
 
 Player.prototype.draw = function(ctx) {
-    
+
     var drawX = this.x - game.viewX;
     var drawY = this.y - game.viewY;
-    var drawR = this.r;
 
     if (this.r > 0) {
 
         ctx.save();
         ctx.beginPath();
-        ctx.arc(drawX, drawY, drawR, 0, Math.PI * 2, false);
+        ctx.arc(drawX, drawY, this.r, 0, Math.PI * 2, false);
         ctx.closePath();
 
         //######################################################
         //Twinkle effect - Change rgba to a fill param in player
         //######################################################
 
-        var new_opacity = getRandomNum(0.7, 0.8);
-        var g = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, drawR);
+        var new_opacity = window.math.getRandomNum(0.7, 0.8);
+        var g = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, this.r);
         g.addColorStop(0.0, 'rgba(255,255,255,' + new_opacity + ')');
         g.addColorStop(0.85, 'rgba(255,239,0,' + (new_opacity * 0.70) + ')');
         g.addColorStop(1.0, 'rgba(255,239,0,0)');
@@ -80,7 +79,7 @@ Player.prototype.draw = function(ctx) {
         ctx.fill();
 
         ctx.beginPath();
-        ctx.arc(drawX, drawY, drawR-3, 0, Math.PI * 2, false);
+        ctx.arc(drawX, drawY, this.r - 3, 0, Math.PI * 2, false);
         ctx.closePath();
 
         //ctx.setLineDash([3,2]);
@@ -107,6 +106,5 @@ Player.prototype.draw = function(ctx) {
         // ctx.fillText('Draw World', drawX, drawY+10);
         // ctx.fillText('X: ' + Math.floor(drawX) + ' Y: ' + Math.floor(drawY), drawX, drawY+20);
     }
-        
-};
 
+};

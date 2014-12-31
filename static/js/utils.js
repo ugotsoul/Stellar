@@ -1,15 +1,6 @@
 //##################################
-// General Math & Utility Functions
+// Utility Functions
 //##################################
-
-//Reminder: Both these functions are inclusive for both min & max
-function getRandomInteger(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-};
-
-function getRandomNum(min, max) {
-    return Math.random() * (max - min + 1) + min;
-};
 
 //stop right click menu from displaying
 window.oncontextmenu = function(evt) {
@@ -25,97 +16,100 @@ window.onscroll = function(evt) {
 };
 
 
-//########################################################################
-// Vector Math Functions
-//########################################################################
+//######################################
+// Math Functions
+//######################################
+(function() {
 
-function Vector(){}
+    window.math = {
 
-Vector.prototype.distance = function(a, b){
+        //Reminder: this is inclusive.
+        getRandomInteger: function(min, max) {
 
-    return [Math.floor(a.x - b.x), Math.floor(a.y - b.y)];
-};
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        },
 
-Vector.prototype.times = function(a, factor){
-    return [Math.floor(a.vX * factor), Math.floor(a.vY * factor)];
-};
-//length of vector
-Vector.prototype.magnitude = function(distance){
+        getRandomNum: function(min, max) {
+            return Math.random() * (max - min + 1) + min;
+        },
 
-	return Math.floor(Math.sqrt(distance[0]*distance[0] + distance[1]*distance[1]));
-};
+        vectorDistance: function(a, b) {
 
-Vector.prototype.angle = function(distance){
+            return [Math.floor(a.x - b.x), Math.floor(a.y - b.y)];
+        },
 
-	return Math.atan2(distance[1], distance[0]);
-};
+        vectorMagnitude: function(distance) {
 
-//returns the unit vector
-Vector.prototype.normalize = function(v){
+            return Math.floor(Math.sqrt(distance[0] * distance[0] + distance[1] * distance[1]));
+        },
 
-	var length = this.magnitude(v);
-	return [ v[0]/length, v[1]/length ];
-};
+        vectorAngle: function(distance) {
 
-Vector.prototype.rotation = function(a, b, collisionAngle){
+            return Math.atan2(distance[1], distance[0]);
+        },
 
-    //length of velocity vector
-	var speedA = vector.magnitude([a.vX, a.vY]);
-	var speedB = vector.magnitude([b.vX, b.vY]);
+        vectorUnit: function(distance) {
 
-	var angleA = vector.angle([a.vX, a.vY]) - collisionAngle; 
-	var angleB = vector.angle([b.vX, b.vY]) - collisionAngle;
+            var length = this.magnitude(v);
 
-	return [
-		[speedA*Math.cos(angleA), speedA*Math.sin(angleA)],
-		[speedB*Math.cos(angleB), speedB*Math.sin(angleB)]
-		];
-};
+            return [v[0] / length, v[1] / length];
+        },
 
-Vector.prototype.momentum = function(a, b, matrix){
+        rotationMatrix: function(a, b, collisionAngle) {
 
-    //Cofficient of Restitution - here an arbitrary scalar to make the collision less bouncy
-    //Adapted from Wiki - Partially inelastic collision response
-    var coefficientOfRestitution = .2; 
-    
-    var finalVxA = (a.r * matrix[0][0] +  b.r * matrix[1][0] + coefficientOfRestitution*b.r*(matrix[1][0] - matrix[0][0]))/ (a.r + b.r);
-   	var finalVyA = matrix[0][1];
-    var finalVxB = (a.r * matrix[0][0] +  b.r * matrix[1][0] + coefficientOfRestitution*a.r*(matrix[0][0] - matrix[1][0]))/ (a.r + b.r);
-	var finalVyB = matrix[1][1];
+            //length of velocity vector
+            var speedA = this.vectorMagnitude([a.vX, a.vY]);
+            var speedB = this.vectorMagnitude([b.vX, b.vY]);
 
-	return [
-		[finalVxA, finalVyA],
-		[finalVxB, finalVyB]
-	];
+            var angleA = this.vectorAngle([a.vX, a.vY]) - collisionAngle;
+            var angleB = this.vectorAngle([b.vX, b.vY]) - collisionAngle;
 
-};
+            return [
+                [speedA * Math.cos(angleA), speedA * Math.sin(angleA)],
+                [speedB * Math.cos(angleB), speedB * Math.sin(angleB)]
+            ];
+        },
 
+        momentumMatrix: function(a, b, matrix) {
 
-//#### Global Vector Object ######
-var vector = new Vector();
-//################################
+            //Cofficient of Restitution: defined as an arbitrary scalar to make the collision less bouncy
+            //Adapted from Wikipedia's entry on Partially Inelastic Collision Response
+            var coefficientOfRestitution = 0.2;
+
+            var finalVxA = (a.r * matrix[0][0] + b.r * matrix[1][0] + coefficientOfRestitution * b.r * (matrix[1][0] - matrix[0][0])) / (a.r + b.r);
+            var finalVyA = matrix[0][1];
+            var finalVxB = (a.r * matrix[0][0] + b.r * matrix[1][0] + coefficientOfRestitution * a.r * (matrix[0][0] - matrix[1][0])) / (a.r + b.r);
+            var finalVyB = matrix[1][1];
+
+            return [
+                [finalVxA, finalVyA],
+                [finalVxB, finalVyB]
+            ];
+        }
+    };
+})();
 
 
 // ######################################
 //  HTML5 Canvas Constructor Function
 // ######################################
 
-var Canvas = function(name, create){
+var Canvas = function(name, create) {
 
     this.x = 0;
     this.y = 0;
     this.w = window.innerWidth;
     this.h = window.innerHeight;
-    this.offsetX = this.w/2;
-    this.offsetY = this.h/2;
+    this.offsetX = this.w / 2;
+    this.offsetY = this.h / 2;
     this.name = name;
     this.canvas = this.prepare(create);
     this.ctx = this.context();
 };
 
-Canvas.prototype.prepare = function(create){
+Canvas.prototype.prepare = function(create) {
 
-    if (create){
+    if (create) {
         //create a hidden canvas dom object
         this.canvas = document.createElement('canvas');
         this.canvas.width = this.w;
@@ -123,23 +117,21 @@ Canvas.prototype.prepare = function(create){
         this.canvas.style = "display: hidden";
         this.canvas.setAttribute("id", "buffer");
         return document.body.appendChild(this.canvas);
-    }
-
-    else {
+    } else {
         //create a visable canvas dom object
         this.canvas = document.getElementById(this.name);
         this.canvas.width = this.w;
-        this.canvas.height = this.h;   
+        this.canvas.height = this.h;
         return this.canvas;
-        }
+    }
 };
 
-Canvas.prototype.context = function(){
+Canvas.prototype.context = function() {
 
     this.ctx = this.canvas.getContext('2d');
 
     return this.ctx;
-}
+};
 
 // ######################################
 //  High Score Table
