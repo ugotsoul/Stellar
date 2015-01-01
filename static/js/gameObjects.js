@@ -4,9 +4,9 @@
 
 function GameObject(x, y, r) {
 
-    this.x = Math.floor(x);
-    this.y = Math.floor(y);
-    this.r = r;
+    this.x = Math.floor(x) || null;
+    this.y = Math.floor(y) || null;
+    this.r = r || null;
 
     this.lastPayment = Date.now();
     this.matterLoss = false;
@@ -70,9 +70,9 @@ GameObject.prototype.update = function(dt) {
 
 GameObject.prototype.collisionDetect = function(element) {
     //get the length of the distance from center of player to element
-    var distance = window.math.vectorDistance(this, element);
+    var distance = window.math.vector.distance(this, element);
 
-    return window.math.vectorMagnitude(distance) <= (this.r + element.r);
+    return window.math.vector.magnitude(distance) <= (this.r + element.r);
 };
 
 GameObject.prototype.reboundDirection = function(element, dt) {
@@ -82,15 +82,15 @@ GameObject.prototype.reboundDirection = function(element, dt) {
     //###############################################################################################
 
     //displacement window.math.vector(x,y) array
-    var displacement = window.math.vectorDistance(this, element);
+    var displacement = window.math.vector.distance(this, element);
 
     //note: atan2 calculates the right handed coordinate system using (y, x) - canvas world is left handed coordinate system
-    var collisionAngle = window.math.vectorAngle(displacement);
+    var collisionAngle = window.math.vector.angle(displacement);
 
     //get the rotation matrix
-    var rotation = window.math.rotationMatrix(this, element, collisionAngle);
+    var rotation = window.math.vector.rotation(this, element, collisionAngle);
 
-    var finalV = window.math.momentumMatrix(this, element, rotation);
+    var finalV = window.math.vector.momentum(this, element, rotation);
 
     //rotate the angles back again so the collision angle is preserved
     this.vX = Math.cos(collisionAngle) * finalV[0][0] + Math.cos(collisionAngle + Math.PI / 2) * finalV[0][1];
@@ -153,7 +153,7 @@ GameObject.prototype.poop = function() {
 
     if (this instanceof Player) {
 
-        var angle = window.math.vectorAngle(this.mouseClick);
+        var angle = window.math.vector.angle(this.mouseClick);
         var foodArr = [this.x - tail * Math.cos(angle), this.y - tail * Math.sin(angle)];
         return foodArr;
 
@@ -161,7 +161,7 @@ GameObject.prototype.poop = function() {
 
     if (this instanceof Enemy) {
 
-        var angleEnemy = window.math.vectorAngle([this.x + this.vX * 60, this.y + this.vY * 60]);
+        var angleEnemy = window.math.vector.angle([this.x + this.vX * 60, this.y + this.vY * 60]);
         var foodArrEnemy = [this.x - tail * Math.cos(angleEnemy), this.y - tail * Math.sin(angleEnemy)];
         return foodArrEnemy;
     }

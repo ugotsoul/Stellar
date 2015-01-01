@@ -69,8 +69,8 @@ Enemy.prototype.checkMatterLoss = function() {
 
         //check vX or vY is greater than 20:
 
-        var speed = window.math.vectorMagnitude([self.vX, self.vY]);
-        var angleSpeed = window.math.vectorAngle([self.x + self.vX * 60, self.y + self.vY * 60]) * (180 / Math.PI);
+        var speed = window.math.vector.magnitude([self.vX, self.vY]);
+        var angleSpeed = window.math.vector.angle([self.x + self.vX * 60, self.y + self.vY * 60]) * (180 / Math.PI);
         var matterLossSpeed = 30;
 
         if (speed > matterLossSpeed) {
@@ -92,13 +92,13 @@ Enemy.prototype.radar = function() {
 
         if ((element.id != self.id) && (element.hide === false)) {
 
-            var distance = window.math.vectorDistance(self, element);
+            var distance = window.math.vector.distance(self, element);
 
-            var neighboorLength = window.math.vectorMagnitude(distance);
+            var neighboorLength = window.math.vector.magnitude(distance);
 
             var radarLength = Math.floor(self.r * 8);
 
-            var angle = window.math.vectorAngle(distance);
+            var angle = window.math.vector.angle(distance);
 
             //check if element falls within radar length
             if (radarLength > neighboorLength) {

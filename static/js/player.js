@@ -1,9 +1,8 @@
 function Player(x, y, r) {
     GameObject.apply(this, arguments);
 
-    this.r = r || 50;
-
     //player attributes
+    this.r = r || 50;
     this.id = 0;
     this.drag = 0.001;
     this.speed = 50;
@@ -45,7 +44,7 @@ Player.prototype.update = function(dt) {
 
 Player.prototype.move = function(dt) {
 
-    var angle = window.math.vectorAngle(this.mouseClick);
+    var angle = window.math.vector.angle(this.mouseClick);
 
     this.vX += Math.cos(angle) * this.speed;
     this.vY += Math.sin(angle) * this.speed;
@@ -106,5 +105,4 @@ Player.prototype.draw = function(ctx) {
         // ctx.fillText('Draw World', drawX, drawY+10);
         // ctx.fillText('X: ' + Math.floor(drawX) + ' Y: ' + Math.floor(drawY), drawX, drawY+20);
     }
-
 };

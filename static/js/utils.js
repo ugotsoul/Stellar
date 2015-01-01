@@ -19,6 +19,7 @@ window.onscroll = function(evt) {
 //######################################
 // Math Functions
 //######################################
+
 (function() {
 
     window.math = {
@@ -31,62 +32,67 @@ window.onscroll = function(evt) {
 
         getRandomNum: function(min, max) {
             return Math.random() * (max - min + 1) + min;
-        },
-
-        vectorDistance: function(a, b) {
-
-            return [Math.floor(a.x - b.x), Math.floor(a.y - b.y)];
-        },
-
-        vectorMagnitude: function(distance) {
-
-            return Math.floor(Math.sqrt(distance[0] * distance[0] + distance[1] * distance[1]));
-        },
-
-        vectorAngle: function(distance) {
-
-            return Math.atan2(distance[1], distance[0]);
-        },
-
-        vectorUnit: function(distance) {
-
-            var length = this.magnitude(v);
-
-            return [v[0] / length, v[1] / length];
-        },
-
-        rotationMatrix: function(a, b, collisionAngle) {
-
-            //length of velocity vector
-            var speedA = this.vectorMagnitude([a.vX, a.vY]);
-            var speedB = this.vectorMagnitude([b.vX, b.vY]);
-
-            var angleA = this.vectorAngle([a.vX, a.vY]) - collisionAngle;
-            var angleB = this.vectorAngle([b.vX, b.vY]) - collisionAngle;
-
-            return [
-                [speedA * Math.cos(angleA), speedA * Math.sin(angleA)],
-                [speedB * Math.cos(angleB), speedB * Math.sin(angleB)]
-            ];
-        },
-
-        momentumMatrix: function(a, b, matrix) {
-
-            //Cofficient of Restitution: defined as an arbitrary scalar to make the collision less bouncy
-            //Adapted from Wikipedia's entry on Partially Inelastic Collision Response
-            var coefficientOfRestitution = 0.2;
-
-            var finalVxA = (a.r * matrix[0][0] + b.r * matrix[1][0] + coefficientOfRestitution * b.r * (matrix[1][0] - matrix[0][0])) / (a.r + b.r);
-            var finalVyA = matrix[0][1];
-            var finalVxB = (a.r * matrix[0][0] + b.r * matrix[1][0] + coefficientOfRestitution * a.r * (matrix[0][0] - matrix[1][0])) / (a.r + b.r);
-            var finalVyB = matrix[1][1];
-
-            return [
-                [finalVxA, finalVyA],
-                [finalVxB, finalVyB]
-            ];
         }
     };
+
+    function Vector() {}
+
+    Vector.prototype.distance = function(a, b) {
+
+        return [Math.floor(a.x - b.x), Math.floor(a.y - b.y)];
+    };
+
+    Vector.prototype.magnitude = function(distance) {
+
+        return Math.floor(Math.sqrt(distance[0] * distance[0] + distance[1] * distance[1]));
+    };
+
+    Vector.prototype.angle = function(distance) {
+
+        return Math.atan2(distance[1], distance[0]);
+    };
+
+    //returns the unit vector
+    Vector.prototype.normalize = function(v) {
+
+        var length = this.magnitude(v);
+        return [v[0] / length, v[1] / length];
+    };
+
+    Vector.prototype.rotation = function(a, b, collisionAngle) {
+
+        //length of velocity vector
+        var speedA = this.magnitude([a.vX, a.vY]);
+        var speedB = this.magnitude([b.vX, b.vY]);
+
+        var angleA = this.angle([a.vX, a.vY]) - collisionAngle;
+        var angleB = this.angle([b.vX, b.vY]) - collisionAngle;
+
+        return [
+            [speedA * Math.cos(angleA), speedA * Math.sin(angleA)],
+            [speedB * Math.cos(angleB), speedB * Math.sin(angleB)]
+        ];
+    };
+
+    Vector.prototype.momentum = function(a, b, matrix) {
+
+        //Cofficient of Restitution - here an arbitrary scalar to make the collision less bouncy
+        //Adapted from Wiki - Partially inelastic collision response
+        var coefficientOfRestitution = 0.2;
+
+        var finalVxA = (a.r * matrix[0][0] + b.r * matrix[1][0] + coefficientOfRestitution * b.r * (matrix[1][0] - matrix[0][0])) / (a.r + b.r);
+        var finalVyA = matrix[0][1];
+        var finalVxB = (a.r * matrix[0][0] + b.r * matrix[1][0] + coefficientOfRestitution * a.r * (matrix[0][0] - matrix[1][0])) / (a.r + b.r);
+        var finalVyB = matrix[1][1];
+
+        return [
+            [finalVxA, finalVyA],
+            [finalVxB, finalVyB]
+        ];
+    };
+
+    window.math.vector = new Vector();
+
 })();
 
 
