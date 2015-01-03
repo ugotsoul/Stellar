@@ -1,5 +1,7 @@
-/txt
-/env
-/status/js/protoEx.js
-/status/js/keypress.js
-/status/js/resize.js
+env/
+static/js/keyPress.js
+static/js/rotation.js
+static/css/demo.css
+
+demo.html
+*log

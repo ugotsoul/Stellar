@@ -36,11 +36,10 @@ Tested on the latest version of Google Chrome 64 Bit (Version 38.0.2125.111).
  - Flocking Algorithm [Link](http://harry.me/blog/2011/02/17/neat-algorithms-flocking/)
  
 ### Version
-1.0
+1.5 - Added Matter Payment System for Enemies. 
 
 ### Planned Features
-- Arcade Style Scoreboard (Top 10 Players) using SQLITE3/Memcache.
-- Matter Payment System for the Enemies.
+- Arcade Style Scoreboard.
 - Refactoring of Physics Engine: Adding Transformation Matricies, Orbital Rotation, and Gravity Wells.
 - Enhanced Level Design and Graphics: Different Types of Stars, Player Level Bonuses, Perlin Noise generation for Nebula Effect.
 - Optimizing the game for other browsers & mobile devices.

@@ -1,20 +1,59 @@
+//##############################
+//  GLOBAL GAME NAMESPACE
+//##############################
+
+/* 
+
+The global ENGINE object references to all the constructor 
+functions for the game entities and utilties within its properties, 
+listed below:
+
+Math: 
+randomInteger
+randomFloat
+Vector Class
+
+Game Sprite Constructors:
+GameObject Parent Sprite Class
+Player Child
+Enemy Child
+
+Game Element Constructors:
+HTML5 Canvas DOM element
+Parallax Star Background (3 Layers)
+
+Game Constructor:
+Game Class
+
+Class Instances:
+Game: ENGINE.GAME
+Vector: ENGINE.vector
+
+*/
+
+var ENGINE = {} || window.ENGINE;
+
+
 //##################################
 // Utility Functions
 //##################################
 
-//stop right click menu from displaying
+/* 
+    Mouse Menu Event Listener: prevents right click menu from displaying.
+*/
 window.oncontextmenu = function(evt) {
     evt.preventDefault();
     evt.stopPropagation();
     return false;
 };
 
-//stops mouse scroll wheel
+/* 
+    Mouse Wheel Event Listener: prevents mouse wheel from scrolling.
+*/
 window.onscroll = function(evt) {
     evt.preventDefault();
     return false;
 };
-
 
 //######################################
 // Math Functions
@@ -22,18 +61,14 @@ window.onscroll = function(evt) {
 
 (function() {
 
-    window.math = {
-
-        //Reminder: this is inclusive.
-        getRandomInteger: function(min, max) {
-
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-        },
-
-        getRandomNum: function(min, max) {
-            return Math.random() * (max - min + 1) + min;
-        }
+    var getRandomInteger = ENGINE.randomInteger = function(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
     };
+
+    var randomFloat = ENGINE.randomFloat = function(min, max) {
+        return Math.random() * (max - min + 1) + min;
+    };
+
 
     function Vector() {}
 
@@ -91,54 +126,52 @@ window.onscroll = function(evt) {
         ];
     };
 
-    window.math.vector = new Vector();
+    ENGINE.vector = new Vector();
 
 })();
-
 
 // ######################################
 //  HTML5 Canvas Constructor Function
 // ######################################
 
-var Canvas = function(name, create) {
+(function() {
 
-    this.x = 0;
-    this.y = 0;
-    this.w = window.innerWidth;
-    this.h = window.innerHeight;
-    this.offsetX = this.w / 2;
-    this.offsetY = this.h / 2;
-    this.name = name;
-    this.canvas = this.prepare(create);
-    this.ctx = this.context();
-};
+    var Canvas = ENGINE.canvasConstr = function(name, visable) {
+        this.x = 0;
+        this.y = 0;
+        this.w = window.innerWidth;
+        this.h = window.innerHeight;
+        this.offsetX = this.w / 2;
+        this.offsetY = this.h / 2;
+        this.name = name;
+        this.canvas = this.prepare(visable);
+        this.ctx = this.context();
+    };
 
-Canvas.prototype.prepare = function(create) {
+    Canvas.prototype.prepare = function(visable) {
 
-    if (create) {
-        //create a hidden canvas dom object
-        this.canvas = document.createElement('canvas');
-        this.canvas.width = this.w;
-        this.canvas.height = this.h;
-        this.canvas.style = "display: hidden";
-        this.canvas.setAttribute("id", "buffer");
-        return document.body.appendChild(this.canvas);
-    } else {
-        //create a visable canvas dom object
-        this.canvas = document.getElementById(this.name);
-        this.canvas.width = this.w;
-        this.canvas.height = this.h;
-        return this.canvas;
-    }
-};
+        if (visable) {
+            //create a hidden canvas dom object
+            this.canvas = document.createElement('canvas');
+            this.canvas.width = this.w;
+            this.canvas.height = this.h;
+            this.canvas.style = "display: hidden";
+            this.canvas.setAttribute("id", "buffer");
+            return document.body.appendChild(this.canvas);
+        } else {
+            //create a visable canvas dom object
+            this.canvas = document.getElementById(this.name);
+            this.canvas.width = this.w;
+            this.canvas.height = this.h;
+            return this.canvas;
+        }
+    };
 
-Canvas.prototype.context = function() {
+    Canvas.prototype.context = function() {
 
-    this.ctx = this.canvas.getContext('2d');
+        this.ctx = this.canvas.getContext('2d');
 
-    return this.ctx;
-};
+        return this.ctx;
+    };
 
-// ######################################
-//  High Score Table
-// ######################################
+})();
