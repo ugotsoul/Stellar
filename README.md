@@ -4,7 +4,7 @@
 
 Stellar is an arcade style game about becoming the biggest, baddest, stellar object in the universe. In this universe, there is one law: eat, or be eaten! Stellar is my adaption of an amazing physics based game called [Osmos](http://www.osmos-game.com/). Stellar currently has 3 levels of gameplay, with a strategic element of matter loss/matter aquisition.
 
-![ScreenShot](https://raw.githubusercontent.com/ugotsoul/Stellar/master/static/imgs/s1.png 'ScreenShot') 
+![GamePlay](https://raw.githubusercontent.com/ugotsoul/Stellar/master/static/imgs/s1.png 'GamePlay') 
 
 ### [Play The Game](http://ugotsoul.github.io/Stellar/)  
 Tested on the latest version of Google Chrome 64 Bit (Version 38.0.2125.111).
