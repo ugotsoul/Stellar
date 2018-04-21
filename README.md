@@ -6,7 +6,7 @@ Stellar is an arcade style game about becoming the biggest, baddest, stellar obj
 
 ![GamePlay](https://raw.githubusercontent.com/ugotsoul/Stellar/master/static/imgs/s1.png 'GamePlay') 
 
-### [Play The Game](http://ugotsoul.github.io/Stellar/)  
+### [Play The Game]
 Tested on the latest version of Google Chrome 64 Bit (Version 38.0.2125.111).
 
 ### How to Play
